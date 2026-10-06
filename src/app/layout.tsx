@@ -4,6 +4,7 @@ import "./globals.css";
 import { TopBar } from "@/components/TopBar";
 import { SiteFooter } from "@/components/SiteFooter";
 import { GlobalAmbient } from "@/components/immersive/GlobalAmbient";
+import { Intro } from "@/components/immersive/Intro";
 import { WalletProvider } from "@/components/wallet/WalletProvider";
 import { cn } from "@/lib/utils";
 
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <SiteFooter />
         </WalletProvider>
+        <Intro />
       </body>
     </html>
   );
