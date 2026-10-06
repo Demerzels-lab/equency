@@ -100,37 +100,60 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         </div>
       </Panel>
 
+      {/* VERDICT · the quick read: score, direction, confidence, one-line thesis + dimension strip */}
+      <section className="mb-3 overflow-hidden rounded-sm border border-border bg-card">
+        <div className="grid gap-px bg-border lg:grid-cols-[300px_1fr]">
+          <div
+            className="flex flex-col justify-between bg-card px-5 py-4"
+            style={{ background: `linear-gradient(145deg, color-mix(in oklab, ${dirColor} 9%, var(--color-card)), var(--color-card) 60%)` }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="label" style={{ color: dirColor }}>{thesis.direction}</span>
+              <span className="mono inline-flex items-center gap-1.5 text-[9px]" style={{ color: "var(--color-pos)" }}>
+                <Dot color="var(--color-pos)" pulse /> ACTIVE
+              </span>
+            </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="mono text-6xl font-semibold leading-none" style={{ color: dirColor }}>{score.overall ?? "·"}</span>
+              <span className="label">/ 100</span>
+            </div>
+            <div className="mt-4">
+              <div className="flex items-center justify-between">
+                <span className="label">Confidence</span>
+                <span className="mono text-xs">{Math.round(thesis.confidence * 100)}%</span>
+              </div>
+              <Progress
+                value={Math.round(thesis.confidence * 100)}
+                className="mt-1.5 h-1.5 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--dir)]"
+                style={{ ["--dir" as string]: dirColor }}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col justify-between gap-4 bg-card px-5 py-4">
+            <p className="max-w-[72ch] text-pretty text-sm leading-relaxed text-foreground/90">{thesis.summary}</p>
+            <div className="grid gap-x-5 gap-y-3 sm:grid-cols-2 lg:grid-cols-5">
+              {score.dimensions.map((d) => <DimChip key={d.key} d={d} />)}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* PRICE CHART */}
       <Panel title="Price · since IPO" badge={<DataModeBadge mode={priceSeries ? "LIVE" : "SIMULATED"} />} className="mb-3">
         <PriceChart symbol={symbol} daysPublic={ci.ipo.daysPublic} initial={priceSeries} />
       </Panel>
 
-      {/* THREE COLUMNS */}
-      <div className="grid gap-3 lg:grid-cols-[320px_1fr_300px]">
-        {/* INTELLIGENCE CORE */}
-        <div className="flex flex-col gap-3">
-          <Panel
-            title="Intelligence Core"
-            badge={<span className="mono inline-flex items-center gap-1.5 text-[9px]" style={{ color: "var(--color-pos)" }}><Dot color="var(--color-pos)" pulse /> ACTIVE</span>}
-          >
-            <div className="flex items-baseline gap-2">
-              <span className="mono text-5xl font-semibold leading-none" style={{ color: dirColor }}>{score.overall ?? "·"}</span>
-              <span className="label">/ 100</span>
-            </div>
-            <div className="mt-4 flex flex-col gap-3">
-              {score.dimensions.map((d) => <ScoreRow key={d.key} d={d} />)}
-            </div>
-          </Panel>
-
-          <Panel title="Reasoning Engine" badge={<DataModeBadge mode={reasoningMode} />}>
-            <div className="label normal-case tracking-normal text-muted-foreground">{engine}</div>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{thesis.summary}</p>
-          </Panel>
-
-          <ThesisHistory direction={thesis.direction} since={ci.ipo.ipoDate} />
+      {/* INTELLIGENCE THESIS · the reasoning, up front */}
+      <Panel title="Intelligence Thesis" badge={<DataModeBadge mode={reasoningMode} />} className="mb-3" bodyClassName="p-4">
+        <div className="grid gap-x-8 gap-y-6 md:grid-cols-3">
+          <ThesisList title="Why" items={thesis.keyDrivers} sign="+" color="var(--color-pos)" />
+          <ThesisList title="Risks" items={thesis.risks} sign="−" color="var(--color-danger)" />
+          <ThesisList title="Catalysts" items={thesis.catalysts} sign="→" color="var(--color-warn)" />
         </div>
+      </Panel>
 
-        {/* RESEARCH ENVIRONMENT */}
+      {/* READING LAYOUT · research on the left, market data rail on the right */}
+      <div className="grid gap-3 lg:grid-cols-[1fr_340px]">
         <div className="flex flex-col gap-3">
           <Panel title="Research Environment" badge={<DataModeBadge mode="LIVE" />}>
             <ResearchConsole items={feed} />
@@ -138,8 +161,14 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
           <NewsPanel items={news} />
         </div>
 
-        {/* LIVE MARKET */}
         <div className="flex flex-col gap-3">
+          <Panel title="Reasoning Engine" badge={<DataModeBadge mode={reasoningMode} />}>
+            <div className="label normal-case tracking-normal text-muted-foreground">{engine}</div>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              Dimensions are scored deterministically from filings and market data. The engine narrates the thesis · it never sets the score.
+            </p>
+          </Panel>
+
           <Panel title="Live Market" badge={<DataModeBadge mode={m.mode} />}>
             <Row label="Price" value={fmtUsd(m.value.price)} />
             <Row label="Open" value={fmtUsd(m.value.open)} />
@@ -171,23 +200,10 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
               ))}
             </div>
           </Panel>
+
+          <ThesisHistory direction={thesis.direction} since={ci.ipo.ipoDate} />
         </div>
       </div>
-
-      {/* INTELLIGENCE THESIS */}
-      <Panel title="Intelligence Thesis" badge={<DataModeBadge mode={reasoningMode} />} className="mt-3" bodyClassName="p-4">
-        <div className="text-xl font-semibold" style={{ color: dirColor }}>{thesis.direction}</div>
-        <div className="mt-4 grid gap-6 md:grid-cols-3">
-          <ThesisList title="Why" items={thesis.keyDrivers} sign="+" color="var(--color-pos)" />
-          <ThesisList title="Risks" items={thesis.risks} sign="−" color="var(--color-danger)" />
-          <ThesisList title="Catalysts" items={thesis.catalysts} sign="→" color="var(--color-warn)" />
-        </div>
-        <div className="mt-5 flex items-center gap-3">
-          <span className="label">Confidence</span>
-          <Progress value={Math.round(thesis.confidence * 100)} className="h-1.5 w-40 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--dir)]" style={{ ["--dir" as string]: dirColor }} />
-          <span className="mono text-sm">{Math.round(thesis.confidence * 100)}%</span>
-        </div>
-      </Panel>
 
       {/* EVIDENCE TABLE */}
       <Panel title="Evidence · filing timeline" className="mt-3" bodyClassName="p-0">
@@ -227,20 +243,20 @@ function Sep() {
   return <span className="text-border">/</span>;
 }
 
-function ScoreRow({ d }: { d: Dimension }) {
+function DimChip({ d }: { d: Dimension }) {
   const color = d.key === "risk" ? "var(--color-danger)" : "var(--color-pos)";
   return (
     <div>
-      <div className="flex items-center justify-between text-xs">
-        <span className="text-muted-foreground">{d.label}</span>
-        <span className="mono" style={{ color: d.value == null ? "var(--color-ink-faint)" : "var(--color-ink)" }}>{d.value ?? "n/a"}</span>
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="label truncate normal-case tracking-normal text-muted-foreground">{d.label}</span>
+        <span className="mono text-sm leading-none" style={{ color: d.value == null ? "var(--color-ink-faint)" : "var(--color-ink)" }}>{d.value ?? "n/a"}</span>
       </div>
       <Progress
         value={d.value ?? 0}
-        className="mt-1.5 h-1 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--c)]"
+        className="mt-2 h-1 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--c)]"
         style={{ ["--c" as string]: color, opacity: d.value == null ? 0.3 : 1 }}
       />
-      <div className="mt-1 text-[10px] leading-snug text-muted-foreground">{d.basis}</div>
+      <div className="mt-1.5 text-[10px] leading-snug text-muted-foreground">{d.basis}</div>
     </div>
   );
 }

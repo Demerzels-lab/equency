@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input as UiInput } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useWallet } from "@/components/wallet/WalletProvider";
 import { cn } from "@/lib/utils";
 
 function buildChain(d: VaultDeployment): Chain {
@@ -57,8 +58,8 @@ interface Position { addr: Address; sym: string; value6: bigint; bal: bigint }
 interface State { usdg: bigint; vault: Address | null; paused: boolean; nav: bigint; idle: bigint; shares: bigint; positions: Position[] }
 
 export function VaultApp() {
-  const [account, setAccount] = useState<Address | null>(null);
-  const [chainHex, setChainHex] = useState<string | null>(null);
+  const { account: acctStr, chainId: chainHex, connect, switchChain } = useWallet();
+  const account = acctStr as Address | null;
   const [pub, setPub] = useState<PublicClient | null>(null);
   const [wallet, setWallet] = useState<WalletClient | null>(null);
   const [st, setSt] = useState<State | null>(null);
@@ -89,41 +90,17 @@ export function VaultApp() {
     setWallet(createWalletClient({ chain: ch, transport, account }));
   }, [account, chainHex]);
 
-  // ---- react to wallet chain/account changes ----
-  useEffect(() => {
-    const eth = getEth();
-    if (!eth?.on) return;
-    const onChain = (c: unknown) => { setChainHex(c as string); setSt(null); };
-    const onAccts = (a: unknown) => setAccount(((a as string[])?.[0] as Address) ?? null);
-    eth.on("chainChanged", onChain);
-    eth.on("accountsChanged", onAccts);
-    return () => { eth.removeListener?.("chainChanged", onChain); eth.removeListener?.("accountsChanged", onAccts); };
-  }, []);
-
-  async function connect() {
-    const eth = getEth();
-    if (!eth) { setMsg({ kind: "err", text: "No EVM wallet detected (MetaMask / Rabby / …)." }); return; }
-    try {
-      const accts = (await eth.request({ method: "eth_requestAccounts" })) as Address[];
-      setAccount(accts[0]);
-      setChainHex((await eth.request({ method: "eth_chainId" })) as string);
-    } catch { setMsg({ kind: "err", text: "Connection rejected." }); }
-  }
+  // wallet account/chain changes are tracked by the shared WalletProvider; clear stale state on chain change
+  useEffect(() => { setSt(null); }, [chainHex]);
 
   async function switchTo(chainId: number) {
-    const eth = getEth(); if (!eth) return;
-    const hex = CHAIN_HEX[chainId];
     const d = DEPLOYMENTS[chainId];
     const rpc = chainId === 46630 ? "https://rpc.testnet.chain.robinhood.com/rpc" : "https://rpc.mainnet.chain.robinhood.com/rpc";
-    try {
-      await eth.request({ method: "wallet_switchEthereumChain", params: [{ chainId: hex }] });
-    } catch {
-      await eth.request({ method: "wallet_addEthereumChain", params: [{
-        chainId: hex, chainName: d.label, nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-        rpcUrls: [rpc], blockExplorerUrls: [d.explorer],
-      }] });
-    }
-    setChainHex((await eth.request({ method: "eth_chainId" })) as string);
+    await switchChain(CHAIN_HEX[chainId], {
+      chainId: CHAIN_HEX[chainId], chainName: d.label,
+      nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+      rpcUrls: [rpc], blockExplorerUrls: [d.explorer],
+    });
   }
 
   const refresh = useCallback(async () => {

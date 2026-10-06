@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { TopBar } from "@/components/TopBar";
+import { GlobalAmbient } from "@/components/immersive/GlobalAmbient";
+import { WalletProvider } from "@/components/wallet/WalletProvider";
 import { cn } from "@/lib/utils";
 
 const archivo = Archivo({
@@ -27,8 +29,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={cn("dark", archivo.variable, mono.variable)}>
       <body className="font-sans">
-        <TopBar />
-        {children}
+        <GlobalAmbient />
+        <WalletProvider>
+          <TopBar />
+          {children}
+        </WalletProvider>
       </body>
     </html>
   );
