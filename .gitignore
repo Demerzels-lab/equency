@@ -1,0 +1,12 @@
+.env
+.env*.local
+
+/node_modules
+/.next
+/out
+/.turbo
+*.tsbuildinfo
+next-env.d.ts
+
+/deployments/robinhood-chain.verified.json
+/.agents/*

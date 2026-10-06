@@ -1,0 +1,35 @@
+import type { Metadata } from "next";
+import { Archivo, JetBrains_Mono } from "next/font/google";
+import "./globals.css";
+import { TopBar } from "@/components/TopBar";
+import { cn } from "@/lib/utils";
+
+const archivo = Archivo({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-archivo",
+  display: "swap",
+});
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-jbmono",
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "EQUENCY · Intelligence for the newly public",
+  description:
+    "Every newly public company gets an Intelligence Core that continuously researches its market, business and signals.",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={cn("dark", archivo.variable, mono.variable)}>
+      <body className="font-sans">
+        <TopBar />
+        {children}
+      </body>
+    </html>
+  );
+}
