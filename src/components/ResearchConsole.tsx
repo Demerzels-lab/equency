@@ -30,13 +30,13 @@ export function ResearchConsole({ items }: { items: FeedItem[] }) {
   return (
     <div>
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="mono h-auto w-full justify-start gap-1 rounded-sm bg-transparent p-0">
+        <TabsList className="mono h-auto w-full flex-wrap justify-start gap-1 rounded-sm bg-transparent p-0">
           {TABS.map((t) => (
             <TabsTrigger
               key={t.value}
               value={t.value}
               disabled={t.value !== "all" && counts[t.value] === 0}
-              className="rounded-sm border border-border px-2 py-1 text-[10px] uppercase tracking-[0.12em] data-[state=active]:border-accent-surface data-[state=active]:bg-secondary data-[state=active]:text-foreground"
+              className="flex-none rounded-sm border border-border px-2 py-1 text-[10px] uppercase tracking-[0.12em] data-[state=active]:border-accent-surface data-[state=active]:bg-secondary data-[state=active]:text-foreground"
             >
               {t.label}
               {counts[t.value] > 0 && <span className="ml-1.5 text-muted-foreground">{counts[t.value]}</span>}

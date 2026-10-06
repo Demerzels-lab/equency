@@ -42,7 +42,7 @@ function VaultVerdict({ onTestnet, vaultCount, contractCount }: { onTestnet: boo
   ];
   return (
     <section className="mt-8 overflow-hidden rounded-sm border border-border bg-card">
-      <div className="grid gap-px bg-border lg:grid-cols-[300px_1fr]">
+      <div className="grid grid-cols-1 gap-px bg-border lg:grid-cols-[300px_1fr]">
         <div
           className="flex flex-col justify-between bg-card px-5 py-4"
           style={{ background: `linear-gradient(145deg, color-mix(in oklab, ${statusColor} 10%, var(--color-card)), var(--color-card) 60%)` }}

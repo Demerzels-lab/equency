@@ -3,7 +3,7 @@ import { Kicker, Display, Button, Stat, SectionMark } from "@/components/brand";
 export function Hero({ counts }: { counts: { week: number; d30: number; d90: number } }) {
   return (
     <section data-section="hero" className="relative flex min-h-[min(92vh,920px)] flex-col justify-center">
-      <div className="mx-auto w-full max-w-[1400px] px-6 py-20">
+      <div className="mx-auto w-full max-w-350 px-6 py-20">
         <Kicker>A living intelligence terminal</Kicker>
         <Display className="mt-6 max-w-[11ch] text-[clamp(2.75rem,8.5vw,7.5rem)]">
           Intelligence for the newly public.
@@ -21,7 +21,7 @@ export function Hero({ counts }: { counts: { week: number; d30: number; d90: num
 
       {/* hero footer bar */}
       <div className="border-t border-border">
-        <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-6 px-6 py-4">
+        <div className="mx-auto flex max-w-350 flex-wrap items-center justify-between gap-6 px-6 py-4">
           <div className="flex items-center gap-8">
             <Kicker>Scroll to travel</Kicker>
             <div className="hidden items-center gap-6 sm:flex">

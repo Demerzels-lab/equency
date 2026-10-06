@@ -41,18 +41,18 @@ export function TopBar() {
         background: `color-mix(in oklab, var(--color-bg) ${scrolled ? 88 : 72}%, transparent)`,
       }}
     >
-      <div className="flex items-center justify-between gap-4 px-4 py-3">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2" aria-label="EQUENCY home">
+      <div className="flex items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4">
+        <div className="flex min-w-0 items-center gap-4 sm:gap-6">
+          <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="EQUENCY home">
             <span style={{ width: 9, height: 9, background: "var(--color-accent)", display: "inline-block", transform: "rotate(45deg)" }} />
-            <span className="text-sm font-extrabold tracking-[0.22em]">EQUENCY</span>
+            <span className="text-sm font-extrabold tracking-[0.18em] sm:tracking-[0.22em]">EQUENCY</span>
           </Link>
           <nav className="hidden items-center gap-1 sm:flex">
             {NAV.map((n) => <NavItem key={n.href} href={n.href} label={n.label} active={n.match(pathname)} />)}
           </nav>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Link
             href="/watchlist"
             aria-label="Watchlist"

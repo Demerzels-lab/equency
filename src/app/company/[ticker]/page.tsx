@@ -67,7 +67,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
   ].sort((a, b) => (a.at < b.at ? 1 : -1));
 
   return (
-    <main className="mx-auto max-w-[1400px] px-4 py-5">
+    <main className="mx-auto max-w-350 px-4 py-5">
       {/* HEADER */}
       <Panel className="mb-3" bodyClassName="px-4 py-3">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -102,7 +102,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
 
       {/* VERDICT · the quick read: score, direction, confidence, one-line thesis + dimension strip */}
       <section className="mb-3 overflow-hidden rounded-sm border border-border bg-card">
-        <div className="grid gap-px bg-border lg:grid-cols-[300px_1fr]">
+        <div className="grid grid-cols-1 gap-px bg-border lg:grid-cols-[300px_1fr]">
           <div
             className="flex flex-col justify-between bg-card px-5 py-4"
             style={{ background: `linear-gradient(145deg, color-mix(in oklab, ${dirColor} 9%, var(--color-card)), var(--color-card) 60%)` }}
@@ -153,15 +153,15 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
       </Panel>
 
       {/* READING LAYOUT · research on the left, market data rail on the right */}
-      <div className="grid gap-3 lg:grid-cols-[1fr_340px]">
-        <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_340px]">
+        <div className="flex min-w-0 flex-col gap-3">
           <Panel title="Research Environment" badge={<DataModeBadge mode="LIVE" />}>
             <ResearchConsole items={feed} />
           </Panel>
           <NewsPanel items={news} />
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex min-w-0 flex-col gap-3">
           <Panel title="Reasoning Engine" badge={<DataModeBadge mode={reasoningMode} />}>
             <div className="label normal-case tracking-normal text-muted-foreground">{engine}</div>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
@@ -210,10 +210,10 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
-              <TableHead className="label h-8 w-[110px]">Filed</TableHead>
-              <TableHead className="label h-8 w-[110px]">Form</TableHead>
+              <TableHead className="label h-8 w-27.5">Filed</TableHead>
+              <TableHead className="label h-8 w-27.5">Form</TableHead>
               <TableHead className="label h-8">Document</TableHead>
-              <TableHead className="label h-8 w-[70px] text-right">Source</TableHead>
+              <TableHead className="label h-8 w-17.5 text-right">Source</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

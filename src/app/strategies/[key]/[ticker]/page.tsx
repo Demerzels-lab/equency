@@ -90,7 +90,7 @@ export default async function RecommendationDetail({ params }: { params: Promise
 
       {/* VERDICT · the quick read: fit, confidence, summary + the key facts */}
       <section className="mt-3 overflow-hidden rounded-sm border border-border bg-card">
-        <div className="grid gap-px bg-border lg:grid-cols-[300px_1fr]">
+        <div className="grid grid-cols-1 gap-px bg-border lg:grid-cols-[300px_1fr]">
           <div
             className="flex flex-col justify-between bg-card px-5 py-4"
             style={{ background: `linear-gradient(145deg, color-mix(in oklab, ${accent} 10%, var(--color-card)), var(--color-card) 60%)` }}
@@ -128,8 +128,8 @@ export default async function RecommendationDetail({ params }: { params: Promise
         </div>
       </section>
 
-      <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_320px]">
-        <div className="flex flex-col gap-3">
+      <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-[1fr_320px]">
+        <div className="flex min-w-0 flex-col gap-3">
           <Panel title="Why selected" badge={<DataModeBadge mode={mode} />}>
             <div className="label normal-case tracking-normal text-muted-foreground">{engine}</div>
             <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
@@ -154,7 +154,7 @@ export default async function RecommendationDetail({ params }: { params: Promise
           </div>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex min-w-0 flex-col gap-3">
           <Panel title="Fit breakdown · deterministic" badge={<DataModeBadge mode="LIVE" />}>
             <div className="flex flex-col gap-3">
               {contributions.map((c) => (

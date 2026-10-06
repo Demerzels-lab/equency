@@ -63,7 +63,7 @@ export function StrategyWorkbench({ strategy, recs }: { strategy: StrategyConfig
   const usd = (f: number) => `$${Math.round(capital * f).toLocaleString("en-US")}`;
 
   return (
-    <div className="grid gap-3 lg:grid-cols-[300px_1fr]" style={{ opacity: ready ? 1 : 0.6 }}>
+    <div className="grid grid-cols-1 gap-3 lg:grid-cols-[300px_1fr]" style={{ opacity: ready ? 1 : 0.6 }}>
       {/* Constraints */}
       <Panel title="Your constraints" className="h-max">
         <Field label="Capital">
@@ -106,7 +106,7 @@ export function StrategyWorkbench({ strategy, recs }: { strategy: StrategyConfig
       </Panel>
 
       {/* Ranked recommendations */}
-      <Panel title={`Ranked recommendations · ${recs.length}`} bodyClassName="p-0">
+      <Panel title={`Ranked recommendations · ${recs.length}`} className="min-w-0" bodyClassName="p-0">
         {recs.length === 0 ? (
           <div className="p-6 text-xs text-muted-foreground">No recommendations resolved from the live universe right now.</div>
         ) : (

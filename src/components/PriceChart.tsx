@@ -66,9 +66,9 @@ export function PriceChart({ symbol, daysPublic, initial }: { symbol: string; da
         {series && <span className="mono text-[10px] tracking-wide text-muted-foreground">Yahoo · {series.points.length} pts</span>}
       </div>
 
-      <div className="h-[180px]">
+      <div className="h-45">
         {data.length > 1 ? (
-          <ChartContainer config={config} className="aspect-auto h-[180px] w-full">
+          <ChartContainer config={config} className="aspect-auto h-45 w-full">
             <AreaChart data={data} margin={{ top: 6, right: 0, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="pc-fill" x1="0" y1="0" x2="0" y2="1">

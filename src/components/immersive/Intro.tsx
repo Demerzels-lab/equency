@@ -35,6 +35,15 @@ export function Intro() {
     try { seen = localStorage.getItem(SEEN_KEY) === "1"; } catch { /* ignore */ }
     if (seen) { setPhase("done"); return; }
 
+    // Only greet first-time visitors on the home route. A first visit that lands on a
+    // deep link (shared /company or /strategies URL) shouldn't get the splash — mark it
+    // seen silently so it never ambushes them mid-session later.
+    if (window.location.pathname !== "/") {
+      try { localStorage.setItem(SEEN_KEY, "1"); } catch { /* ignore */ }
+      setPhase("done");
+      return;
+    }
+
     const webgl = hasWebGL();
     const reduced = prefersReducedMotion();
     const t: Tier = !webgl || reduced

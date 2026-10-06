@@ -106,7 +106,9 @@
 @layer base {
   * { @apply border-border outline-ring/50; }
   body { @apply bg-background text-foreground; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-  html { @apply font-sans; }
+  /* overflow-x: clip prevents any stray wide element from creating a horizontal scroll on
+     small screens, without establishing a scroll container (so sticky headers keep working). */
+  html { @apply font-sans; overflow-x: clip; }
 }
 
 /* ── EQUENCY utilities ── */
