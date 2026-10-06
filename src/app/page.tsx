@@ -8,7 +8,6 @@ import { Capabilities } from "@/components/home/Capabilities";
 import { Constellation } from "@/components/home/Constellation";
 import { Faq } from "@/components/home/Faq";
 import { CtaDiamond } from "@/components/home/CtaDiamond";
-import { Display } from "@/components/brand";
 
 export const revalidate = 1800;
 
@@ -41,14 +40,6 @@ export default async function Home() {
       <Constellation companies={ranked.slice(0, 16)} />
       <Faq />
       <CtaDiamond />
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-4 px-6 py-8">
-          <Display as="div" className="text-xl">EQUENCY</Display>
-          <span className="label normal-case tracking-normal text-muted-foreground">
-            Intelligence → Strategy → Capital · built for Robinhood Chain · no fabricated metrics
-          </span>
-        </div>
-      </footer>
     </ScrollStage>
   );
 }

@@ -231,10 +231,9 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         </Table>
       </Panel>
 
-      <footer className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-        <span>Assembled {ago(ci.assembledAt)} · every panel labelled live or simulated · no fabricated metrics</span>
-        <span className="mono">EQUENCY</span>
-      </footer>
+      <p className="mt-4 text-xs text-muted-foreground">
+        Assembled {ago(ci.assembledAt)} · every panel labelled live or simulated · no fabricated metrics
+      </p>
     </main>
   );
 }

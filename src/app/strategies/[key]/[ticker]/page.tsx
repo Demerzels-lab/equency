@@ -53,6 +53,15 @@ export default async function RecommendationDetail({ params }: { params: Promise
   const confidence = Math.round((availDims / Math.max(1, contributions.length)) * 100);
   const accent = fitPct >= 66 ? "var(--color-pos)" : fitPct >= 45 ? "var(--color-warn)" : "var(--color-danger)";
 
+  const chg = ci.market.value.changePct;
+  const stats = [
+    { label: "Intelligence score", value: score.overall != null ? String(score.overall) : "·", sub: "/ 100 core" },
+    { label: "Suggested alloc", value: `${suggested}%`, sub: "cap · your limits" },
+    { label: "Days public", value: ci.ipo.daysPublic != null ? String(ci.ipo.daysPublic) : "?", sub: ci.ipo.ageBucket ?? "newly public" },
+    { label: "Last price", value: fmtUsd(ci.market.value.price), sub: ci.market.mode === "LIVE" ? "live quote" : "simulated" },
+    { label: "1d change", value: chg != null ? `${chg >= 0 ? "+" : ""}${chg.toFixed(2)}%` : "·", sub: "session" },
+  ];
+
   return (
     <main className="mx-auto max-w-[1100px] px-4 py-6">
       <Link href={`/strategies/${strategy.key}`} className="label hover:text-foreground">← {strategy.name} ranking</Link>
@@ -79,17 +88,50 @@ export default async function RecommendationDetail({ params }: { params: Promise
         </div>
       </Panel>
 
-      <div className="mt-3 grid gap-3 sm:grid-cols-3">
-        <Metric label="Strategy fit" value={`${fitPct}%`} color={accent} bar={fit} />
-        <Metric label="Suggested allocation" value={`${suggested}%`} sub="cap for this name · your constraints apply" />
-        <Metric label="Confidence" value={`${confidence}%`} sub={`${availDims}/${contributions.length} signals available`} bar={confidence / 100} color="var(--color-accent)" />
-      </div>
+      {/* VERDICT · the quick read: fit, confidence, summary + the key facts */}
+      <section className="mt-3 overflow-hidden rounded-sm border border-border bg-card">
+        <div className="grid gap-px bg-border lg:grid-cols-[300px_1fr]">
+          <div
+            className="flex flex-col justify-between bg-card px-5 py-4"
+            style={{ background: `linear-gradient(145deg, color-mix(in oklab, ${accent} 10%, var(--color-card)), var(--color-card) 60%)` }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="label" style={{ color: accent }}>{strategy.name} candidate</span>
+              <span className="mono inline-flex items-center gap-1.5 text-[9px]" style={{ color: "var(--color-pos)" }}>
+                <span className="pulse" style={{ display: "inline-block", width: 6, height: 6, borderRadius: 9999, background: "var(--color-pos)", color: "var(--color-pos)" }} /> RANKED
+              </span>
+            </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="mono text-6xl font-semibold leading-none" style={{ color: accent }}>{fitPct}</span>
+              <span className="label">/ 100 fit</span>
+            </div>
+            <div className="mt-4">
+              <div className="flex items-center justify-between">
+                <span className="label">Confidence</span>
+                <span className="mono text-xs">{confidence}%</span>
+              </div>
+              <Progress value={confidence} className="mt-1.5 h-1.5 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--color-accent)]" />
+            </div>
+          </div>
+          <div className="flex flex-col justify-between gap-4 bg-card px-5 py-4">
+            <p className="max-w-[72ch] text-pretty text-sm leading-relaxed text-foreground/90">{reasoning.summary}</p>
+            <div className="grid gap-x-5 gap-y-3 sm:grid-cols-3 lg:grid-cols-5">
+              {stats.map((s) => (
+                <div key={s.label}>
+                  <div className="label truncate normal-case tracking-normal text-muted-foreground">{s.label}</div>
+                  <div className="mono mt-1.5 text-xl font-semibold leading-none">{s.value}</div>
+                  <div className="mt-1.5 text-[10px] leading-snug text-muted-foreground">{s.sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_320px]">
         <div className="flex flex-col gap-3">
           <Panel title="Why selected" badge={<DataModeBadge mode={mode} />}>
             <div className="label normal-case tracking-normal text-muted-foreground">{engine}</div>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{reasoning.summary}</p>
             <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
               {reasoning.whySelected.map((w, i) => (
                 <li key={i} className="flex gap-2"><span className="mono" style={{ color: "var(--color-pos)" }}>+</span><span className="text-pretty">{w}</span></li>
@@ -143,18 +185,5 @@ export default async function RecommendationDetail({ params }: { params: Promise
         Fit &amp; allocation are deterministic and reproducible · the model only narrates · every claim traces to SEC / market evidence.
       </footer>
     </main>
-  );
-}
-
-function Metric({ label, value, sub, color, bar }: { label: string; value: string; sub?: string; color?: string; bar?: number }) {
-  return (
-    <Panel bodyClassName="p-4">
-      <div className="label">{label}</div>
-      <div className="mono mt-1.5 text-3xl font-semibold leading-none" style={{ color: color ?? "var(--color-ink)" }}>{value}</div>
-      {bar != null && (
-        <Progress value={Math.round(bar * 100)} className="mt-2 h-1 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--c)]" style={{ ["--c" as string]: color ?? "var(--color-accent)" }} />
-      )}
-      {sub && <div className="label mt-2 normal-case tracking-normal leading-snug text-muted-foreground">{sub}</div>}
-    </Panel>
   );
 }

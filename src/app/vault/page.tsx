@@ -30,16 +30,57 @@ const ARCH = [
   { t: "Oracle", art: "·◉·\n╱│╲\n· ·", d: "Chainlink on mainnet, owner-set on testnet. Freshness checked." },
 ];
 
-function StatCard({ ok, label, value }: { ok: boolean | "pending"; label: string; value: string }) {
-  const color = ok === true ? "var(--color-pos)" : ok === "pending" ? "var(--color-sim)" : "var(--color-danger)";
+/** The quick read of the vault's status: deployment headline, summary, and the live facts. */
+function VaultVerdict({ onTestnet, vaultCount, contractCount }: { onTestnet: boolean; vaultCount: number | null; contractCount: number }) {
+  const statusColor = onTestnet ? "var(--color-pos)" : "var(--color-sim)";
+  const stats = [
+    { label: "Contracts", value: String(contractCount), sub: "on-chain" },
+    { label: "Foundry tests", value: "14 / 14", sub: "passing" },
+    { label: "Testnet 46630", value: onTestnet ? "Live" : "Verify", sub: "robinhood chain" },
+    { label: "Mainnet 4663", value: "Pending", sub: "not deployed" },
+    { label: "Vaults", value: vaultCount != null ? String(vaultCount) : "·", sub: "created · live" },
+  ];
   return (
-    <Card className="gap-0 rounded-sm border-border bg-card px-4 py-3 shadow-none">
-      <div className="flex items-center gap-2">
-        <span style={{ width: 7, height: 7, borderRadius: 9999, background: color }} />
-        <span className="label">{label}</span>
+    <section className="mt-8 overflow-hidden rounded-sm border border-border bg-card">
+      <div className="grid gap-px bg-border lg:grid-cols-[300px_1fr]">
+        <div
+          className="flex flex-col justify-between bg-card px-5 py-4"
+          style={{ background: `linear-gradient(145deg, color-mix(in oklab, ${statusColor} 10%, var(--color-card)), var(--color-card) 60%)` }}
+        >
+          <div className="flex items-center justify-between">
+            <span className="label" style={{ color: statusColor }}>Strategy Vault</span>
+            <span className="mono inline-flex items-center gap-1.5 text-[9px]" style={{ color: statusColor }}>
+              <span className={onTestnet ? "pulse" : ""} style={{ display: "inline-block", width: 6, height: 6, borderRadius: 9999, background: statusColor, color: statusColor }} />
+              {onTestnet ? "DEPLOYED" : "PENDING"}
+            </span>
+          </div>
+          <div className="mt-3 text-5xl font-semibold leading-none" style={{ color: statusColor }}>
+            {onTestnet ? "LIVE" : "PENDING"}
+          </div>
+          <div className="mt-4 flex items-center justify-between">
+            <span className="label">Posture</span>
+            <span className="mono text-xs text-muted-foreground">Non-custodial</span>
+          </div>
+        </div>
+        <div className="flex flex-col justify-between gap-4 bg-card px-5 py-4">
+          <p className="max-w-[72ch] text-pretty text-sm leading-relaxed text-foreground/90">
+            The vault is built, fully tested{" "}
+            <span className="text-foreground">(14/14 Foundry, incl. a real-USDG mainnet fork)</span>, and{" "}
+            {onTestnet ? "live on Robinhood Chain testnet" : "awaiting on-chain verification"}. Mainnet is pending review ·
+            deposits stay closed until a deliberate unpause.
+          </p>
+          <div className="grid gap-x-5 gap-y-3 sm:grid-cols-3 lg:grid-cols-5">
+            {stats.map((s) => (
+              <div key={s.label}>
+                <div className="label truncate normal-case tracking-normal text-muted-foreground">{s.label}</div>
+                <div className="mono mt-1.5 text-xl font-semibold leading-none">{s.value}</div>
+                <div className="mt-1.5 text-[10px] leading-snug text-muted-foreground">{s.sub}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="mono mt-1.5 text-sm">{value}</div>
-    </Card>
+    </section>
   );
 }
 
@@ -59,12 +100,7 @@ export default async function VaultPage() {
             buys verified assets within limits enforced on-chain, and never lets the AI sign a transaction.
           </p>
 
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatCard ok label="Contracts" value="Built" />
-            <StatCard ok label="Foundry tests" value="14 / 14 pass" />
-            <StatCard ok={onTestnet} label="Testnet 46630" value={onTestnet ? "Live on-chain" : "Verify on explorer"} />
-            <StatCard ok="pending" label="Mainnet 4663" value="Not deployed" />
-          </div>
+          <VaultVerdict onTestnet={onTestnet} vaultCount={live.vaultCount} contractCount={Object.keys(TESTNET.contracts).length} />
 
           <div className="mt-8 max-w-xl">
             <VaultApp />

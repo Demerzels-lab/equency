@@ -146,9 +146,19 @@
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .marquee { animation: marquee 40s linear infinite; }
 
+/* Loading screen */
+.eq-loader-track { position: relative; height: 2px; width: 180px; overflow: hidden; border-radius: 9999px; background: color-mix(in oklab, var(--color-accent) 14%, transparent); }
+.eq-loader-seg { position: absolute; inset: 0; width: 40%; border-radius: 9999px; background: linear-gradient(90deg, transparent, var(--color-accent), transparent); animation: eqslide 1.25s var(--ease-out-quint) infinite; }
+@keyframes eqslide { 0% { transform: translateX(-120%); } 100% { transform: translateX(320%); } }
+.eq-spin { animation: eqspin 9s linear infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes eqspin { to { transform: rotate(360deg); } }
+.eq-dots::after { content: ""; animation: eqdots 1.4s steps(4, end) infinite; }
+@keyframes eqdots { 0% { content: ""; } 25% { content: "·"; } 50% { content: "··"; } 75% { content: "···"; } 100% { content: ""; } }
+
 @media (prefers-reduced-motion: reduce) {
-  .pulse::after, .chart-line, .chart-area, .marquee { animation: none; }
+  .pulse::after, .chart-line, .chart-area, .marquee, .eq-loader-seg, .eq-spin, .eq-dots::after { animation: none; }
   .chart-line { stroke-dashoffset: 0; } .chart-area { opacity: 1; }
+  .eq-loader-seg { width: 100%; opacity: 0.5; }
 }
 
 ::selection { background: color-mix(in oklab, var(--color-accent) 30%, transparent); }
