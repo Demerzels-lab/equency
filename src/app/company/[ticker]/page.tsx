@@ -4,12 +4,15 @@ import { buildCompanyIntelligence } from "@/lib/providers/company";
 import { getFundamentals } from "@/lib/providers/xbrl";
 import { getCompanyNews } from "@/lib/providers/finnhub";
 import { getPriceSeries } from "@/lib/providers/yahoo";
-import { computeScore } from "@/lib/intelligence/score";
+import { computeScore, type Dimension } from "@/lib/intelligence/score";
 import { reason, type ThesisDirection } from "@/lib/intelligence/reasoning";
 import { DataModeBadge, Dot, Panel, tierColor } from "@/components/primitives";
 import { PriceChart } from "@/components/PriceChart";
 import { WatchButton } from "@/components/WatchButton";
+import { ResearchConsole, type FeedItem } from "@/components/ResearchConsole";
 import { FundamentalsPanel, NewsPanel, ThesisHistory } from "@/components/sections";
+import { Progress } from "@/components/ui/progress";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ago, fmtDate } from "@/lib/util/dates";
 import { fmtUsd } from "@/lib/util/format";
 import type { CompanyIntelligence } from "@/lib/providers/types";
@@ -41,7 +44,6 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
   const symbol = ci.identity.ticker || ticker.toUpperCase();
   const today = new Date().toISOString().slice(0, 10);
 
-  // Everything else in parallel · each adapter is independent and fails soft.
   const [fundamentals, news, priceSeries] = await Promise.all([
     getFundamentals(cik),
     getCompanyNews(symbol, ci.ipo.ipoDate?.slice(0, 10) ?? isoDaysAgo(30), today),
@@ -57,34 +59,36 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
   const n13 = ci.filings.filter((f) => f.form.toUpperCase().startsWith("SCHEDULE 13")).length;
   const nInsider = ci.filings.filter((f) => ["3", "4"].includes(f.form.toUpperCase())).length;
 
+  const catOf = (kind: string): FeedItem["cat"] =>
+    kind === "Ownership" ? "Ownership" : kind === "Insider" ? "Insider" : "SEC";
+  const feed: FeedItem[] = [
+    ...ci.radar.map((e) => ({ cat: catOf(e.kind), label: e.label, at: e.at, url: e.url, tier: e.tier })),
+    ...(news ?? []).map((n) => ({ cat: "News" as const, label: n.headline, at: n.publishedAt, url: n.url, tier: 3, source: n.source })),
+  ].sort((a, b) => (a.at < b.at ? 1 : -1));
+
   return (
     <main className="mx-auto max-w-[1400px] px-4 py-5">
-      {/* ===== HEADER (§15) ===== */}
-      <header className="panel mb-3 px-4 py-3">
+      {/* HEADER */}
+      <Panel className="mb-3" bodyClassName="px-4 py-3">
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-2xl font-semibold tracking-tight" style={{ textWrap: "balance" } as React.CSSProperties}>
-                {ci.identity.name}
-              </h1>
+              <h1 className="text-2xl font-semibold tracking-tight text-balance">{ci.identity.name}</h1>
               <span className="label">{ci.identity.exchange}: {ci.identity.ticker}</span>
               <WatchButton ticker={symbol} name={ci.identity.name} />
             </div>
-            <div className="mono mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" style={{ color: "var(--color-ink-dim)" }}>
-              <span style={{ color: "var(--color-pos)" }}>{ci.ipo.daysPublic ?? "?"} DAYS PUBLIC</span>
-              <span style={{ color: "var(--color-ink-faint)" }}>·</span>
-              <span>{ci.ipo.ageBucket}</span>
-              <span style={{ color: "var(--color-ink-faint)" }}>·</span>
-              <span>IPO {fmtDate(ci.ipo.ipoDate)}</span>
-              <span style={{ color: "var(--color-ink-faint)" }}>·</span>
-              <span className="font-sans">{ci.identity.sicDescription}</span>
+            <div className="mono mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-muted-foreground">
+              <span style={{ color: "var(--color-pos)" }}>{ci.ipo.daysPublic ?? "?"} days public</span>
+              <Sep /><span>{ci.ipo.ageBucket}</span>
+              <Sep /><span>IPO {fmtDate(ci.ipo.ipoDate)}</span>
+              <Sep /><span className="font-sans">{ci.identity.sicDescription}</span>
             </div>
           </div>
           <div className="flex items-end gap-6">
-            <div>
+            <div className="text-right">
               <div className="mono text-3xl font-semibold leading-none">{fmtUsd(m.value.price)}</div>
               <div className="mono mt-1 text-xs" style={{ color: up ? "var(--color-pos)" : "var(--color-danger)" }}>
-                {m.value.change != null ? `${up ? "▲" : "▼"} ${Math.abs(m.value.change).toFixed(2)}` : "·"}
+                {m.value.change != null ? `${up ? "▲" : "▼"} ${Math.abs(m.value.change).toFixed(2)}` : ""}
                 {m.value.changePct != null ? ` (${up ? "+" : ""}${m.value.changePct.toFixed(2)}%)` : ""}
               </div>
             </div>
@@ -94,124 +98,66 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
             </div>
           </div>
         </div>
-      </header>
+      </Panel>
 
-      {/* ===== PRICE CHART (§15) ===== */}
-      <section className="panel mb-3 p-4">
-        <div className="mb-1 flex items-center justify-between">
-          <span className="label">Price · default Since IPO</span>
-          <DataModeBadge mode={priceSeries ? "LIVE" : "SIMULATED"} />
-        </div>
+      {/* PRICE CHART */}
+      <Panel title="Price · since IPO" badge={<DataModeBadge mode={priceSeries ? "LIVE" : "SIMULATED"} />} className="mb-3">
         <PriceChart symbol={symbol} daysPublic={ci.ipo.daysPublic} initial={priceSeries} />
-      </section>
+      </Panel>
 
-      {/* ===== THREE COLUMNS (§16) ===== */}
+      {/* THREE COLUMNS */}
       <div className="grid gap-3 lg:grid-cols-[320px_1fr_300px]">
-        {/* --- INTELLIGENCE CORE (§17) --- */}
+        {/* INTELLIGENCE CORE */}
         <div className="flex flex-col gap-3">
           <Panel
             title="Intelligence Core"
-            badge={
-              <span className="mono inline-flex items-center gap-1.5 text-[9px]" style={{ color: "var(--color-pos)" }}>
-                <Dot color="var(--color-pos)" pulse /> ACTIVE
-              </span>
-            }
+            badge={<span className="mono inline-flex items-center gap-1.5 text-[9px]" style={{ color: "var(--color-pos)" }}><Dot color="var(--color-pos)" pulse /> ACTIVE</span>}
           >
             <div className="flex items-baseline gap-2">
-              <span className="mono text-5xl font-semibold leading-none" style={{ color: dirColor }}>
-                {score.overall ?? "·"}
-              </span>
+              <span className="mono text-5xl font-semibold leading-none" style={{ color: dirColor }}>{score.overall ?? "·"}</span>
               <span className="label">/ 100</span>
             </div>
-            <div className="mt-4 flex flex-col gap-2.5">
-              {score.dimensions.map((d) => (
-                <div key={d.key} title={d.basis}>
-                  <div className="flex items-center justify-between text-xs">
-                    <span style={{ color: "var(--color-ink-dim)" }}>{d.label}</span>
-                    <span className="mono" style={{ color: d.value == null ? "var(--color-ink-faint)" : "var(--color-ink)" }}>
-                      {d.value ?? "n/a"}
-                    </span>
-                  </div>
-                  <div className="mt-1 h-1 overflow-hidden rounded-full" style={{ background: "var(--color-panel-2)" }}>
-                    <div
-                      className="h-1 rounded-full transition-[width] duration-700"
-                      style={{
-                        width: `${d.value ?? 0}%`,
-                        background: d.key === "risk" ? "var(--color-danger)" : "var(--color-pos)",
-                        opacity: d.value == null ? 0.15 : 0.85,
-                      }}
-                    />
-                  </div>
-                  <div className="label mt-1 normal-case leading-snug" style={{ letterSpacing: 0, fontSize: 9 }}>{d.basis}</div>
-                </div>
-              ))}
+            <div className="mt-4 flex flex-col gap-3">
+              {score.dimensions.map((d) => <ScoreRow key={d.key} d={d} />)}
             </div>
           </Panel>
 
           <Panel title="Reasoning Engine" badge={<DataModeBadge mode={reasoningMode} />}>
-            <div className="label normal-case" style={{ letterSpacing: 0, color: "var(--color-ink-dim)" }}>{engine}</div>
-            <p className="mt-2 text-xs leading-relaxed" style={{ color: "var(--color-ink-dim)" }}>{thesis.summary}</p>
+            <div className="label normal-case tracking-normal text-muted-foreground">{engine}</div>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{thesis.summary}</p>
           </Panel>
 
           <ThesisHistory direction={thesis.direction} since={ci.ipo.ipoDate} />
         </div>
 
-        {/* --- RESEARCH ENVIRONMENT (§18) --- */}
+        {/* RESEARCH ENVIRONMENT */}
         <div className="flex flex-col gap-3">
           <Panel title="Research Environment" badge={<DataModeBadge mode="LIVE" />}>
-            <div className="mb-3 flex flex-wrap gap-1.5">
-              {["OFFICIAL", "SEC", "EARNINGS", "NEWS", "X", "OPTIONS", "MARKET", "OWNERSHIP"].map((t) => {
-                const live = t === "SEC" || t === "OWNERSHIP" || t === "NEWS" || t === "MARKET";
-                return (
-                  <span key={t} className="label px-2 py-1" style={{ border: "1px solid var(--color-line)", color: live ? "var(--color-ink)" : "var(--color-ink-faint)" }}>
-                    {t}
-                  </span>
-                );
-              })}
-            </div>
-            <div className="mono flex flex-col text-xs">
-              {ci.radar.slice(0, 8).map((e, i) => (
-                <a key={i} href={e.url} target="_blank" rel="noreferrer" className="rowlink group flex items-start gap-3 border-b hairline px-1 py-2">
-                  <span style={{ color: "var(--color-ink-faint)" }}>{fmtDate(e.at)}</span>
-                  <span className="label" style={{ color: tierColor(e.tier) }}>{e.kind}</span>
-                  <span className="flex-1 font-sans" style={{ color: "var(--color-ink)" }}>{e.label}</span>
-                  <span style={{ color: "var(--color-accent)" }} className="opacity-0 transition-opacity group-hover:opacity-100">↗</span>
-                </a>
-              ))}
-            </div>
-            <div className="mt-3 flex items-center justify-center rounded border border-dashed p-6 text-xs" style={{ borderColor: "var(--color-line)", color: "var(--color-ink-faint)" }}>
-              <div className="text-center">
-                <div className="label">Browser research · VIEW ONLY</div>
-                <div className="mt-1 normal-case">Official-website capture not wired in this slice (Playwright adapter pending).</div>
-              </div>
-            </div>
+            <ResearchConsole items={feed} />
           </Panel>
-
           <NewsPanel items={news} />
         </div>
 
-        {/* --- LIVE MARKET (§19) --- */}
+        {/* LIVE MARKET */}
         <div className="flex flex-col gap-3">
           <Panel title="Live Market" badge={<DataModeBadge mode={m.mode} />}>
             <Row label="Price" value={fmtUsd(m.value.price)} />
             <Row label="Open" value={fmtUsd(m.value.open)} />
-            <Row label="Day High" value={fmtUsd(m.value.dayHigh)} />
-            <Row label="Day Low" value={fmtUsd(m.value.dayLow)} />
-            <Row label="Prev Close" value={fmtUsd(m.value.prevClose)} />
+            <Row label="Day high" value={fmtUsd(m.value.dayHigh)} />
+            <Row label="Day low" value={fmtUsd(m.value.dayLow)} />
+            <Row label="Prev close" value={fmtUsd(m.value.prevClose)} />
           </Panel>
 
           <FundamentalsPanel f={fundamentals} />
 
           <Panel title="Ownership" badge={<DataModeBadge mode="LIVE" />}>
-            <Row label="13D/13G on file" value={String(n13)} />
+            <Row label="13D / 13G on file" value={String(n13)} />
             <Row label="Insider forms" value={String(nInsider)} />
-            <div className="label mt-2 normal-case" style={{ letterSpacing: 0 }}>From SEC ownership filings (VERIFIED).</div>
+            <div className="label mt-2 normal-case tracking-normal text-muted-foreground">SEC ownership filings · verified</div>
           </Panel>
 
           <Panel title="Options" badge={<DataModeBadge mode="SIMULATED" />}>
-            <div className="text-xs" style={{ color: "var(--color-ink-faint)" }}>
-              Not wired in this slice · needs an options feed (Alpaca/Polygon). Shown to mark coverage, never faked.
-            </div>
+            <div className="text-xs text-muted-foreground">Options feed pending (Alpaca / Polygon). Shown to mark coverage, never faked.</div>
           </Panel>
 
           <Panel title="Event Radar">
@@ -219,8 +165,8 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
               {ci.radar.slice(0, 6).map((e, i) => (
                 <div key={i} className="flex items-center gap-2 text-xs">
                   <Dot color={tierColor(e.tier)} />
-                  <span className="mono" style={{ color: "var(--color-ink-faint)" }}>{ago(e.at)}</span>
-                  <span style={{ color: "var(--color-ink-dim)" }}>{e.kind}</span>
+                  <span className="mono text-muted-foreground">{ago(e.at)}</span>
+                  <span className="text-foreground/80">{e.kind}</span>
                 </div>
               ))}
             </div>
@@ -228,13 +174,9 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         </div>
       </div>
 
-      {/* ===== INTELLIGENCE THESIS (§21) ===== */}
-      <section className="panel mt-3 p-4">
-        <div className="flex items-center justify-between">
-          <span className="label">Intelligence Thesis</span>
-          <DataModeBadge mode={reasoningMode} />
-        </div>
-        <div className="mt-2 text-xl font-semibold" style={{ color: dirColor }}>{thesis.direction}</div>
+      {/* INTELLIGENCE THESIS */}
+      <Panel title="Intelligence Thesis" badge={<DataModeBadge mode={reasoningMode} />} className="mt-3" bodyClassName="p-4">
+        <div className="text-xl font-semibold" style={{ color: dirColor }}>{thesis.direction}</div>
         <div className="mt-4 grid gap-6 md:grid-cols-3">
           <ThesisList title="Why" items={thesis.keyDrivers} sign="+" color="var(--color-pos)" />
           <ThesisList title="Risks" items={thesis.risks} sign="−" color="var(--color-danger)" />
@@ -242,41 +184,72 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         </div>
         <div className="mt-5 flex items-center gap-3">
           <span className="label">Confidence</span>
-          <div className="h-1.5 w-40 overflow-hidden rounded-full" style={{ background: "var(--color-panel-2)" }}>
-            <div className="h-1.5 rounded-full" style={{ width: `${Math.round(thesis.confidence * 100)}%`, background: dirColor }} />
-          </div>
+          <Progress value={Math.round(thesis.confidence * 100)} className="h-1.5 w-40 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--dir)]" style={{ ["--dir" as string]: dirColor }} />
           <span className="mono text-sm">{Math.round(thesis.confidence * 100)}%</span>
         </div>
-      </section>
+      </Panel>
 
-      {/* ===== EVIDENCE / TIMELINE (§62, §22) ===== */}
-      <section className="panel mt-3 p-4">
-        <span className="label">Evidence · Filing Timeline</span>
-        <div className="mono mt-3 flex flex-col text-xs">
-          {ci.filings.slice(0, 16).map((f, i) => (
-            <a key={i} href={f.url} target="_blank" rel="noreferrer" className="rowlink grid grid-cols-[90px_96px_1fr_auto] items-center gap-3 border-b hairline px-1 py-1.5">
-              <span style={{ color: "var(--color-ink-faint)" }}>{f.filedAt}</span>
-              <span style={{ color: "var(--color-ink)" }}>{f.form}</span>
-              <span className="truncate font-sans" style={{ color: "var(--color-ink-dim)" }}>{f.title || ci.identity.name}</span>
-              <span className="label" style={{ color: "var(--color-accent)" }}>SEC ↗</span>
-            </a>
-          ))}
-        </div>
-      </section>
+      {/* EVIDENCE TABLE */}
+      <Panel title="Evidence · filing timeline" className="mt-3" bodyClassName="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow className="border-border hover:bg-transparent">
+              <TableHead className="label h-8 w-[110px]">Filed</TableHead>
+              <TableHead className="label h-8 w-[110px]">Form</TableHead>
+              <TableHead className="label h-8">Document</TableHead>
+              <TableHead className="label h-8 w-[70px] text-right">Source</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {ci.filings.slice(0, 16).map((f, i) => (
+              <TableRow key={i} className="border-border">
+                <TableCell className="mono text-xs text-muted-foreground">{f.filedAt}</TableCell>
+                <TableCell className="mono text-xs">{f.form}</TableCell>
+                <TableCell className="max-w-0 truncate text-xs text-muted-foreground">{f.title || ci.identity.name}</TableCell>
+                <TableCell className="text-right">
+                  <a href={f.url} target="_blank" rel="noreferrer" className="label" style={{ color: "var(--color-accent)" }}>SEC ↗</a>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Panel>
 
-      <footer className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs" style={{ color: "var(--color-ink-faint)" }}>
-        <span>Profile assembled {ago(ci.assembledAt)} · every panel tagged LIVE / SIMULATED · no fabricated metrics</span>
-        <span className="mono">EQUENCY · Intelligence for the newly public</span>
+      <footer className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        <span>Assembled {ago(ci.assembledAt)} · every panel labelled live or simulated · no fabricated metrics</span>
+        <span className="mono">EQUENCY</span>
       </footer>
     </main>
   );
 }
 
+function Sep() {
+  return <span className="text-border">/</span>;
+}
+
+function ScoreRow({ d }: { d: Dimension }) {
+  const color = d.key === "risk" ? "var(--color-danger)" : "var(--color-pos)";
+  return (
+    <div>
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-muted-foreground">{d.label}</span>
+        <span className="mono" style={{ color: d.value == null ? "var(--color-ink-faint)" : "var(--color-ink)" }}>{d.value ?? "n/a"}</span>
+      </div>
+      <Progress
+        value={d.value ?? 0}
+        className="mt-1.5 h-1 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--c)]"
+        style={{ ["--c" as string]: color, opacity: d.value == null ? 0.3 : 1 }}
+      />
+      <div className="mt-1 text-[10px] leading-snug text-muted-foreground">{d.basis}</div>
+    </div>
+  );
+}
+
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between border-b hairline py-1.5 text-xs last:border-0">
-      <span style={{ color: "var(--color-ink-dim)" }}>{label}</span>
-      <span className="mono" style={{ color: "var(--color-ink)" }}>{value}</span>
+    <div className="flex items-center justify-between border-b border-border py-1.5 text-xs last:border-0">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="mono text-foreground">{value}</span>
     </div>
   );
 }
@@ -285,11 +258,11 @@ function ThesisList({ title, items, sign, color }: { title: string; items: strin
   return (
     <div>
       <div className="label mb-2">{title}</div>
-      <ul className="flex flex-col gap-2 text-xs leading-relaxed" style={{ color: "var(--color-ink-dim)" }}>
+      <ul className="flex flex-col gap-2 text-xs leading-relaxed text-muted-foreground">
         {items.map((it, i) => (
           <li key={i} className="flex gap-2">
             <span className="mono" style={{ color }}>{sign}</span>
-            <span style={{ textWrap: "pretty" } as React.CSSProperties}>{it}</span>
+            <span className="text-pretty">{it}</span>
           </li>
         ))}
       </ul>

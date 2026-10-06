@@ -88,7 +88,7 @@ export function PriceChart({ symbol, daysPublic, initial }: { symbol: string; da
                   ) : null
                 }
               />
-              <Area type="monotone" dataKey="close" stroke={stroke} strokeWidth={1.6} fill="url(#pc-fill)" isAnimationActive />
+              <Area type="monotone" dataKey="close" stroke={stroke} strokeWidth={1.6} fill="url(#pc-fill)" isAnimationActive={false} />
             </AreaChart>
           </ChartContainer>
         ) : (

@@ -15,7 +15,7 @@ const LOOP = [
   { n: "02", title: "Research", art: "┌╌╌╌╌┐\n│ »__ │\n└╌╌╌╌┘", desc: "Reads SEC filings, market data, news and the company site." },
   { n: "03", title: "Cross-check", art: " ╲ ╱\n  ╳\n ╱ ╲", desc: "Weighs evidence by source tier before it trusts it." },
   { n: "04", title: "Think", art: "  ·°·\n ( ∴ )\n  ·°·", desc: "Synthesises a thesis grounded strictly in that evidence." },
-  { n: "05", title: "Update", art: "↺ ·· ↻\n ·  ·\n↻ ·· ↺", desc: "Revises score, thesis and risk · and records why it changed." },
+  { n: "05", title: "Update", art: "↺ ·· ↻\n ·  ·\n↻ ·· ↺", desc: "Revises score, thesis and risk, and records why it changed." },
   { n: "06", title: "Monitor", art: "▁▂▃▅▇\n▇▅▃▂▁", desc: "Sleeps until the next meaningful event, then wakes again." },
 ];
 
@@ -71,7 +71,7 @@ export default async function Home() {
             </Display>
             <p className="mt-7 max-w-md text-sm leading-relaxed" style={{ color: "var(--color-ink-dim)" }}>
               Every newly public company gets an Intelligence Core that continuously researches its
-              market, business and signals · grounded in SEC Tier-1 evidence, every number tagged
+              market, business and signals, grounded in SEC Tier-1 evidence. Every number is tagged
               live or simulated.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-4">
@@ -113,7 +113,7 @@ export default async function Home() {
             <Display as="h2" outline className="text-[clamp(2rem,4.5vw,3.6rem)]">NEW PUBLIC<br />MARKET, LIVE</Display>
             <p className="mt-6 max-w-sm text-sm leading-relaxed" style={{ color: "var(--color-ink-dim)" }}>
               The moment a company prices its IPO, EQUENCY detects the filing and spins up an
-              Intelligence Core. These are real SEC detections · timestamps and all.
+              Intelligence Core. These are real SEC detections, timestamps and all.
             </p>
             <div className="mt-8 grid grid-cols-4 gap-4">
               <Stat label="Today" value={counts.today} />

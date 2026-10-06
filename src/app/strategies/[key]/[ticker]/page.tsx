@@ -9,6 +9,8 @@ import { reasonRecommendation } from "@/lib/intelligence/reasoning";
 import { getStrategy } from "@/lib/strategy/strategies";
 import { DataModeBadge, Panel } from "@/components/primitives";
 import { WatchButton } from "@/components/WatchButton";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { fmtUsd } from "@/lib/util/format";
 import type { CompanyIntelligence } from "@/lib/providers/types";
 
@@ -43,9 +45,7 @@ export default async function RecommendationDetail({ params }: { params: Promise
   const fundamentals = await getFundamentals(cik);
   const score = computeScore(ci, fundamentals);
   const { fit, contributions, riskNote } = computeStrategyFit(score, strategy);
-  const { reasoning, mode, engine } = await reasonRecommendation(
-    buildEvidence(ci, score, strategy, fit, contributions),
-  );
+  const { reasoning, mode, engine } = await reasonRecommendation(buildEvidence(ci, score, strategy, fit, contributions));
 
   const fitPct = Math.round(fit * 100);
   const suggested = Math.round(strategy.maxPosition * 100);
@@ -55,97 +55,92 @@ export default async function RecommendationDetail({ params }: { params: Promise
 
   return (
     <main className="mx-auto max-w-[1100px] px-4 py-6">
-      <Link href={`/strategies/${strategy.key}`} className="label hover:text-[color:var(--color-ink)]">← {strategy.name} ranking</Link>
+      <Link href={`/strategies/${strategy.key}`} className="label hover:text-foreground">← {strategy.name} ranking</Link>
 
-      {/* Header */}
-      <header className="panel mt-3 flex flex-wrap items-start justify-between gap-4 px-4 py-4">
-        <div>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-semibold tracking-tight">{ci.identity.name}</h1>
-            <span className="label">{ci.identity.exchange}: {ci.identity.ticker}</span>
-            <span className="label" style={{ border: "1px solid var(--color-line)", padding: "2px 6px" }}>{strategy.name} candidate</span>
+      <Panel className="mt-3" bodyClassName="px-4 py-4">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-2xl font-semibold tracking-tight">{ci.identity.name}</h1>
+              <span className="label">{ci.identity.exchange}: {ci.identity.ticker}</span>
+              <Badge variant="outline" className="label rounded-sm border-border">{strategy.name} candidate</Badge>
+            </div>
+            <div className="mono mt-1.5 text-xs text-muted-foreground">
+              {ci.ipo.daysPublic ?? "?"} days public · {ci.identity.sicDescription} · {fmtUsd(ci.market.value.price)}
+              {ci.market.value.changePct != null ? ` (${ci.market.value.changePct >= 0 ? "+" : ""}${ci.market.value.changePct.toFixed(2)}%)` : ""}
+            </div>
           </div>
-          <div className="mono mt-1.5 text-xs" style={{ color: "var(--color-ink-dim)" }}>
-            {ci.ipo.daysPublic ?? "?"} days public · {ci.identity.sicDescription} · {fmtUsd(ci.market.value.price)}
-            {ci.market.value.changePct != null ? ` (${ci.market.value.changePct >= 0 ? "+" : ""}${ci.market.value.changePct.toFixed(2)}%)` : ""}
+          <div className="flex items-center gap-2">
+            <WatchButton ticker={ci.identity.ticker} name={ci.identity.name} />
+            <Link href={`/company/${ci.identity.ticker}`} className="label inline-flex items-center rounded-sm border border-border px-3 py-2 transition-colors hover:border-accent-surface hover:text-foreground">
+              Intelligence Core →
+            </Link>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <WatchButton ticker={ci.identity.ticker} name={ci.identity.name} />
-          <Link href={`/company/${ci.identity.ticker}`} className="label px-2.5 py-1.5" style={{ border: "1px solid var(--color-line-strong)", color: "var(--color-ink-dim)" }}>
-            Intelligence Core →
-          </Link>
-        </div>
-      </header>
+      </Panel>
 
-      {/* Key metrics (brief §28) */}
       <div className="mt-3 grid gap-3 sm:grid-cols-3">
-        <Metric label="Strategy Fit" value={`${fitPct}%`} color={accent} bar={fit} />
-        <Metric label="Suggested Allocation" value={`${suggested}%`} sub="cap for this name (your constraints apply)" />
-        <Metric label="Confidence" value={`${confidence}%`} sub={`${availDims}/${contributions.length} signals available`} bar={confidence / 100} />
+        <Metric label="Strategy fit" value={`${fitPct}%`} color={accent} bar={fit} />
+        <Metric label="Suggested allocation" value={`${suggested}%`} sub="cap for this name · your constraints apply" />
+        <Metric label="Confidence" value={`${confidence}%`} sub={`${availDims}/${contributions.length} signals available`} bar={confidence / 100} color="var(--color-accent)" />
       </div>
 
       <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_320px]">
-        {/* Why selected (Gemini, grounded) */}
         <div className="flex flex-col gap-3">
-          <Panel title="Why Selected" badge={<DataModeBadge mode={mode} />}>
-            <div className="label normal-case" style={{ letterSpacing: 0, color: "var(--color-ink-dim)" }}>{engine}</div>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--color-ink-dim)" }}>{reasoning.summary}</p>
-            <ul className="mt-3 flex flex-col gap-2 text-sm" style={{ color: "var(--color-ink-dim)" }}>
+          <Panel title="Why selected" badge={<DataModeBadge mode={mode} />}>
+            <div className="label normal-case tracking-normal text-muted-foreground">{engine}</div>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{reasoning.summary}</p>
+            <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
               {reasoning.whySelected.map((w, i) => (
-                <li key={i} className="flex gap-2"><span className="mono" style={{ color: "var(--color-pos)" }}>+</span><span>{w}</span></li>
+                <li key={i} className="flex gap-2"><span className="mono" style={{ color: "var(--color-pos)" }}>+</span><span className="text-pretty">{w}</span></li>
               ))}
             </ul>
           </Panel>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <Panel title="Risks" badge={<DataModeBadge mode={mode} />}>
-              <ul className="flex flex-col gap-2 text-xs" style={{ color: "var(--color-ink-dim)" }}>
+              <ul className="flex flex-col gap-2 text-xs text-muted-foreground">
                 {reasoning.risks.map((r, i) => (
-                  <li key={i} className="flex gap-2"><span className="mono" style={{ color: "var(--color-danger)" }}>−</span><span>{r}</span></li>
+                  <li key={i} className="flex gap-2"><span className="mono" style={{ color: "var(--color-danger)" }}>−</span><span className="text-pretty">{r}</span></li>
                 ))}
               </ul>
             </Panel>
-            <Panel title="Strategy Fit Rationale" badge={<DataModeBadge mode={mode} />}>
-              <p className="text-xs leading-relaxed" style={{ color: "var(--color-ink-dim)" }}>{reasoning.fitRationale}</p>
-              <div className="label mt-2 normal-case" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>{riskNote}</div>
+            <Panel title="Fit rationale" badge={<DataModeBadge mode={mode} />}>
+              <p className="text-xs leading-relaxed text-muted-foreground">{reasoning.fitRationale}</p>
+              <div className="label mt-2 normal-case tracking-normal text-muted-foreground">{riskNote}</div>
             </Panel>
           </div>
         </div>
 
-        {/* Deterministic fit breakdown (the real numbers) */}
         <div className="flex flex-col gap-3">
-          <Panel title="Fit Breakdown · Deterministic" badge={<DataModeBadge mode="LIVE" />}>
+          <Panel title="Fit breakdown · deterministic" badge={<DataModeBadge mode="LIVE" />}>
             <div className="flex flex-col gap-3">
               {contributions.map((c) => (
                 <div key={c.label}>
                   <div className="flex items-center justify-between text-xs">
-                    <span style={{ color: "var(--color-ink-dim)" }}>{c.label} <span className="label" style={{ letterSpacing: 0 }}>w{c.weight}</span></span>
+                    <span className="text-muted-foreground">{c.label} <span className="label">w{c.weight}</span></span>
                     <span className="mono" style={{ color: c.value == null ? "var(--color-ink-faint)" : "var(--color-ink)" }}>{c.value ?? "n/a"}</span>
                   </div>
-                  <div className="mt-1 h-1 overflow-hidden rounded-full" style={{ background: "var(--color-panel-2)" }}>
-                    <div className="h-1 rounded-full" style={{ width: `${c.value ?? 0}%`, background: "var(--color-accent)", opacity: c.value == null ? 0.15 : 0.85 }} />
-                  </div>
-                  <div className="label mt-0.5 normal-case leading-snug" style={{ letterSpacing: 0, fontSize: 9 }}>{c.basis}</div>
+                  <Progress value={c.value ?? 0} className="mt-1.5 h-1 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--color-accent)]" style={{ opacity: c.value == null ? 0.3 : 1 }} />
+                  <div className="mt-1 text-[10px] leading-snug text-muted-foreground">{c.basis}</div>
                 </div>
               ))}
             </div>
           </Panel>
 
-          <Panel title="Add to Vault">
-            <div className="text-xs leading-relaxed" style={{ color: "var(--color-ink-faint)" }}>
-              Connect a wallet to create a Strategy Vault position. Onchain execution on Robinhood Chain
-              arrives in Phase 3 · no capital moves here.
-            </div>
-            <button disabled className="label mt-3 w-full py-2" style={{ border: "1px dashed var(--color-line-strong)", color: "var(--color-ink-faint)", cursor: "not-allowed" }}>
-              Connect Wallet · Phase 3
-            </button>
+          <Panel title="Add to vault">
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Create a Strategy Vault position on Robinhood Chain. Onchain execution lives in the Vault tab.
+            </p>
+            <Link href="/vault" className="label mt-3 inline-flex w-full items-center justify-center rounded-sm border border-border py-2 transition-colors hover:border-accent-surface hover:text-foreground">
+              Open the Vault →
+            </Link>
           </Panel>
         </div>
       </div>
 
-      <footer className="mt-4 text-xs" style={{ color: "var(--color-ink-faint)" }}>
-        Fit & allocation are deterministic and reproducible; the model only narrates. Every claim traces to SEC/market evidence.
+      <footer className="mt-4 text-xs text-muted-foreground">
+        Fit &amp; allocation are deterministic and reproducible · the model only narrates · every claim traces to SEC / market evidence.
       </footer>
     </main>
   );
@@ -153,15 +148,13 @@ export default async function RecommendationDetail({ params }: { params: Promise
 
 function Metric({ label, value, sub, color, bar }: { label: string; value: string; sub?: string; color?: string; bar?: number }) {
   return (
-    <div className="panel p-4">
+    <Panel bodyClassName="p-4">
       <div className="label">{label}</div>
       <div className="mono mt-1.5 text-3xl font-semibold leading-none" style={{ color: color ?? "var(--color-ink)" }}>{value}</div>
       {bar != null && (
-        <div className="mt-2 h-1 overflow-hidden rounded-full" style={{ background: "var(--color-panel-2)" }}>
-          <div className="h-1 rounded-full" style={{ width: `${Math.round(bar * 100)}%`, background: color ?? "var(--color-accent)" }} />
-        </div>
+        <Progress value={Math.round(bar * 100)} className="mt-2 h-1 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--c)]" style={{ ["--c" as string]: color ?? "var(--color-accent)" }} />
       )}
-      {sub && <div className="label mt-2 normal-case leading-snug" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>{sub}</div>}
-    </div>
+      {sub && <div className="label mt-2 normal-case tracking-normal leading-snug text-muted-foreground">{sub}</div>}
+    </Panel>
   );
 }

@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { allocateCapital } from "@/lib/strategy/allocate";
+import { Panel } from "@/components/primitives";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { Recommendation, StrategyConfig, UserConstraints } from "@/lib/strategy/types";
 
 const RISK_CAP: Record<UserConstraints["riskTolerance"], number> = { low: 60, medium: 78, high: 101 };
@@ -41,15 +47,11 @@ export function StrategyWorkbench({ strategy, recs }: { strategy: StrategyConfig
       return next;
     });
   }
-  function setCap(v: number) {
-    setCapital(v);
-    localStorage.setItem("equency.capital", String(v));
-  }
+  function setCap(v: number) { setCapital(v); localStorage.setItem("equency.capital", String(v)); }
   function toggleExclude(t: string) {
     update({ excluded: c.excluded.includes(t) ? c.excluded.filter((x) => x !== t) : [...c.excluded, t] });
   }
 
-  // Risk tolerance gates eligibility; excluded names drop out; rest ranked by fit.
   const eligible = recs.filter((r) => (r.risk ?? 0) <= RISK_CAP[c.riskTolerance]);
   const alloc = allocateCapital(
     eligible.map((r) => ({ ticker: r.ticker, fit: r.fit })),
@@ -62,138 +64,116 @@ export function StrategyWorkbench({ strategy, recs }: { strategy: StrategyConfig
 
   return (
     <div className="grid gap-3 lg:grid-cols-[300px_1fr]" style={{ opacity: ready ? 1 : 0.6 }}>
-      {/* ---- Constraints (brief §29) ---- */}
-      <aside className="panel h-max p-4">
-        <div className="label mb-3">Your Constraints</div>
-
+      {/* Constraints */}
+      <Panel title="Your constraints" className="h-max">
         <Field label="Capital">
-          <div className="flex items-center gap-1">
-            <span className="mono text-sm" style={{ color: "var(--color-ink-faint)" }}>$</span>
-            <input
-              type="number"
-              value={capital}
-              min={1000}
-              step={1000}
+          <div className="flex items-center gap-1.5 rounded-sm border border-border px-2">
+            <span className="mono text-sm text-muted-foreground">$</span>
+            <Input
+              type="number" value={capital} min={1000} step={1000}
               onChange={(e) => setCap(Math.max(0, Number(e.target.value)))}
-              className="mono w-full bg-transparent text-sm outline-none"
-              style={{ color: "var(--color-ink)" }}
+              className="mono h-8 border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0"
             />
           </div>
         </Field>
 
-        <Slider label="Max position" value={c.maxPosition} min={0.05} max={0.5} step={0.05}
-          display={pct(c.maxPosition)} onChange={(v) => update({ maxPosition: v })} />
-        <Slider label="Cash reserve" value={c.cashReserve} min={0} max={0.6} step={0.05}
-          display={pct(c.cashReserve)} onChange={(v) => update({ cashReserve: v })} />
-
-        <Field label={`Max positions · ${c.maxPositions}`}>
-          <input type="range" min={1} max={8} step={1} value={c.maxPositions}
-            onChange={(e) => update({ maxPositions: Number(e.target.value) })}
-            className="w-full accent-[color:var(--color-accent)]" />
-        </Field>
+        <SliderField label="Max position" value={c.maxPosition} min={0.05} max={0.5} step={0.05} display={pct(c.maxPosition)} onChange={(v) => update({ maxPosition: v })} />
+        <SliderField label="Cash reserve" value={c.cashReserve} min={0} max={0.6} step={0.05} display={pct(c.cashReserve)} onChange={(v) => update({ cashReserve: v })} />
+        <SliderField label="Max positions" value={c.maxPositions} min={1} max={8} step={1} display={String(c.maxPositions)} onChange={(v) => update({ maxPositions: v })} />
 
         <Field label="Risk tolerance">
           <div className="flex gap-1">
             {(["low", "medium", "high"] as const).map((t) => (
-              <button key={t} onClick={() => update({ riskTolerance: t })}
-                className="label flex-1 px-2 py-1.5 transition-colors"
-                style={{
-                  border: "1px solid var(--color-line)",
-                  color: c.riskTolerance === t ? "var(--color-ink)" : "var(--color-ink-faint)",
-                  background: c.riskTolerance === t ? "var(--color-panel-2)" : "transparent",
-                  borderColor: c.riskTolerance === t ? "var(--color-accent)" : "var(--color-line)",
-                }}>
+              <Button
+                key={t} type="button" size="sm"
+                variant={c.riskTolerance === t ? "secondary" : "outline"}
+                onClick={() => update({ riskTolerance: t })}
+                className="label flex-1 rounded-sm"
+              >
                 {t}
-              </button>
+              </Button>
             ))}
           </div>
         </Field>
 
-        <button onClick={() => { localStorage.removeItem(key); setC(defaults); }}
-          className="label mt-2 w-full py-1.5 transition-colors hover:text-[color:var(--color-ink)]"
-          style={{ border: "1px solid var(--color-line)" }}>
-          Reset to strategy defaults
-        </button>
+        <Button variant="outline" size="sm" onClick={() => { localStorage.removeItem(key); setC(defaults); }} className="label mt-1 w-full rounded-sm">
+          Reset to defaults
+        </Button>
 
-        <p className="label mt-3 normal-case leading-relaxed" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>
-          You choose the strategy and control the constraints. Allocations are deterministic, fit-weighted,
-          capped · never set by the model.
+        <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+          You pick the strategy and control the limits. Allocations are deterministic and fit-weighted, never set by the model.
         </p>
-      </aside>
+      </Panel>
 
-      {/* ---- Ranked recommendations + allocation (brief §27) ---- */}
-      <div className="panel overflow-hidden">
-        <div className="grid grid-cols-[32px_1fr_64px_1fr_120px] items-center gap-3 border-b hairline px-4 py-2">
-          <span className="label">#</span>
-          <span className="label">Company</span>
-          <span className="label text-right">Score</span>
-          <span className="label">Strategy fit</span>
-          <span className="label text-right">Allocation</span>
-        </div>
-
-        {recs.length === 0 && (
-          <div className="p-6 text-xs" style={{ color: "var(--color-ink-faint)" }}>
-            No recommendations resolved from the live universe right now.
-          </div>
+      {/* Ranked recommendations */}
+      <Panel title={`Ranked recommendations · ${recs.length}`} bodyClassName="p-0">
+        {recs.length === 0 ? (
+          <div className="p-6 text-xs text-muted-foreground">No recommendations resolved from the live universe right now.</div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border hover:bg-transparent">
+                <TableHead className="label h-8 w-8">#</TableHead>
+                <TableHead className="label h-8">Company</TableHead>
+                <TableHead className="label h-8 w-14 text-right">Score</TableHead>
+                <TableHead className="label h-8 w-[150px]">Strategy fit</TableHead>
+                <TableHead className="label h-8 w-[120px] text-right">Allocation</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {recs.map((r, i) => {
+                const a = allocMap.get(r.ticker);
+                const excluded = c.excluded.includes(r.ticker);
+                const gated = (r.risk ?? 0) > RISK_CAP[c.riskTolerance];
+                const dim = excluded || gated;
+                return (
+                  <TableRow key={r.ticker} className="border-border" style={{ opacity: dim ? 0.45 : 1 }}>
+                    <TableCell className="mono text-xs text-muted-foreground">{i + 1}</TableCell>
+                    <TableCell>
+                      <Link href={`/strategies/${strategy.key}/${r.ticker}`} className="block min-w-0 hover:opacity-100">
+                        <div className="flex items-center gap-2">
+                          <span className="mono text-sm" style={{ color: "var(--color-accent)" }}>{r.ticker}</span>
+                          <span className="truncate text-sm">{r.name}</span>
+                        </div>
+                        <div className="label normal-case tracking-normal text-muted-foreground">{r.daysPublic ?? "?"}d public · {r.sector ?? ""}</div>
+                      </Link>
+                    </TableCell>
+                    <TableCell className="mono text-right text-sm">{r.score ?? "·"}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Progress value={Math.round(r.fit * 100)} className="h-1.5 w-full flex-1 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--color-accent)]" />
+                        <span className="mono text-xs text-muted-foreground">{Math.round(r.fit * 100)}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {dim ? (
+                        <button onClick={() => toggleExclude(r.ticker)} className="label">
+                          {excluded ? "excluded ↺" : "risk-gated"}
+                        </button>
+                      ) : a ? (
+                        <div>
+                          <div className="mono text-sm">{pct(a)}</div>
+                          <div className="label normal-case tracking-normal text-muted-foreground">{usd(a)}</div>
+                        </div>
+                      ) : (
+                        <span className="label text-muted-foreground">·</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+              <TableRow className="border-0 bg-secondary/60 hover:bg-secondary/60">
+                <TableCell />
+                <TableCell className="label" colSpan={3}>Cash reserve · USDG (Phase 3)</TableCell>
+                <TableCell className="text-right">
+                  <div className="mono text-sm text-muted-foreground">{pct(alloc.cashPct)}</div>
+                  <div className="label normal-case tracking-normal text-muted-foreground">{usd(alloc.cashPct)}</div>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         )}
-
-        {recs.map((r, i) => {
-          const a = allocMap.get(r.ticker);
-          const excluded = c.excluded.includes(r.ticker);
-          const gated = (r.risk ?? 0) > RISK_CAP[c.riskTolerance];
-          const dim = excluded || gated;
-          return (
-            <div key={r.ticker} className="grid grid-cols-[32px_1fr_64px_1fr_120px] items-center gap-3 border-b hairline px-4 py-3 transition-opacity"
-              style={{ opacity: dim ? 0.4 : 1 }}>
-              <span className="mono text-sm" style={{ color: "var(--color-ink-faint)" }}>{i + 1}</span>
-              <Link href={`/strategies/${strategy.key}/${r.ticker}`} className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="mono text-sm" style={{ color: "var(--color-accent)" }}>{r.ticker}</span>
-                  <span className="truncate text-sm" style={{ color: "var(--color-ink)" }}>{r.name}</span>
-                </div>
-                <div className="label normal-case" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>
-                  {r.daysPublic ?? "?"}d public · {r.sector ?? ""}
-                </div>
-              </Link>
-              <span className="mono text-right text-sm" style={{ color: "var(--color-ink)" }}>{r.score ?? "·"}</span>
-              <div className="flex items-center gap-2">
-                <div className="h-1.5 flex-1 overflow-hidden rounded-full" style={{ background: "var(--color-panel-2)" }}>
-                  <div className="h-1.5 rounded-full" style={{ width: `${Math.round(r.fit * 100)}%`, background: "var(--color-accent)" }} />
-                </div>
-                <span className="mono text-xs" style={{ color: "var(--color-ink-dim)" }}>{Math.round(r.fit * 100)}</span>
-              </div>
-              <div className="text-right">
-                {dim ? (
-                  <button onClick={() => toggleExclude(r.ticker)} className="label" style={{ color: "var(--color-ink-faint)" }}>
-                    {excluded ? "excluded ↺" : gated ? "risk-gated" : ""}
-                  </button>
-                ) : a ? (
-                  <div>
-                    <div className="mono text-sm" style={{ color: "var(--color-ink)" }}>{pct(a)}</div>
-                    <div className="label" style={{ color: "var(--color-ink-faint)" }}>{usd(a)}</div>
-                  </div>
-                ) : (
-                  <button onClick={() => toggleExclude(r.ticker)} className="label" title="Below allocation cut-off">
-                    <span style={{ color: "var(--color-ink-faint)" }}>·</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-
-        {/* Cash row */}
-        <div className="grid grid-cols-[32px_1fr_64px_1fr_120px] items-center gap-3 px-4 py-3" style={{ background: "var(--color-panel-2)" }}>
-          <span />
-          <span className="label">Cash reserve · USDG (Phase 3)</span>
-          <span />
-          <span />
-          <div className="text-right">
-            <div className="mono text-sm" style={{ color: "var(--color-ink-dim)" }}>{pct(alloc.cashPct)}</div>
-            <div className="label" style={{ color: "var(--color-ink-faint)" }}>{usd(alloc.cashPct)}</div>
-          </div>
-        </div>
-      </div>
+      </Panel>
     </div>
   );
 }
@@ -201,20 +181,18 @@ export function StrategyWorkbench({ strategy, recs }: { strategy: StrategyConfig
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="mb-4">
-      <div className="label mb-1.5 normal-case" style={{ letterSpacing: 0 }}>{label}</div>
+      <div className="label mb-1.5 normal-case tracking-normal text-muted-foreground">{label}</div>
       {children}
     </div>
   );
 }
 
-function Slider({ label, value, min, max, step, display, onChange }: {
+function SliderField({ label, value, min, max, step, display, onChange }: {
   label: string; value: number; min: number; max: number; step: number; display: string; onChange: (v: number) => void;
 }) {
   return (
     <Field label={`${label} · ${display}`}>
-      <input type="range" min={min} max={max} step={step} value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-[color:var(--color-accent)]" />
+      <Slider value={[value]} min={min} max={max} step={step} onValueChange={(v) => onChange(Array.isArray(v) ? v[0] : (v as number))} className="py-1" />
     </Field>
   );
 }

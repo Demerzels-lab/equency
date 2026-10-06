@@ -8,6 +8,10 @@ import {
 import {
   DEPLOYMENTS, deploymentByHex, isDeployed, explorerAddr, shortAddr, CHAIN_HEX, type VaultDeployment,
 } from "@/lib/deployments";
+import { Button } from "@/components/ui/button";
+import { Input as UiInput } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 function buildChain(d: VaultDeployment): Chain {
   const rpc = d.chainId === 46630
@@ -199,15 +203,16 @@ export function VaultApp() {
       <div className="flex flex-wrap items-center justify-between gap-3 border-b hairline pb-3">
         <div className="label">Connected · <span className="mono normal-case" style={{ color: "var(--color-ink)" }}>{shortAddr(account)}</span></div>
         <div className="flex items-center gap-1">
-          {[46630, 4663].map((id) => {
-            const on = dep?.chainId === id;
-            return (
-              <button key={id} onClick={() => switchTo(id)} className="label px-2 py-1 transition-colors"
-                style={{ border: "1px solid", borderColor: on ? "var(--color-accent)" : "var(--color-line)", color: on ? "var(--color-ink)" : "var(--color-ink-faint)", background: on ? "var(--color-panel-2)" : "transparent" }}>
-                {id === 46630 ? "Testnet" : "Mainnet"}
-              </button>
-            );
-          })}
+          {[46630, 4663].map((id) => (
+            <Button
+              key={id} type="button" size="sm"
+              variant={dep?.chainId === id ? "secondary" : "outline"}
+              onClick={() => switchTo(id)}
+              className="label rounded-sm"
+            >
+              {id === 46630 ? "Testnet" : "Mainnet"}
+            </Button>
+          ))}
         </div>
       </div>
 
@@ -269,9 +274,12 @@ export function VaultApp() {
                   {hasAdapter ? (
                     <Step n="4" title="Allocate (policy enforced on-chain)">
                       <Row>
-                        <select value={allocSym} onChange={(e) => setAllocSym(e.target.value)} className="mono bg-transparent px-2 py-2 text-sm" style={{ border: "1px solid var(--color-line)", color: "var(--color-ink)" }}>
-                          {stocks.map((s) => <option key={s.sym} value={s.sym} style={{ background: "var(--color-panel)" }}>{s.sym}</option>)}
-                        </select>
+                        <Select value={allocSym} onValueChange={(v) => v && setAllocSym(v)}>
+                          <SelectTrigger size="sm" className="mono w-24 rounded-sm"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {stocks.map((s) => <SelectItem key={s.sym} value={s.sym} className="mono">{s.sym}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
                         <Input value={allocIn} onChange={setAllocIn} suffix="USDG" />
                         <Btn onClick={allocate} busy={busy?.startsWith("Allocate")}>Allocate</Btn>
                       </Row>
@@ -327,18 +335,21 @@ function Metric({ label, value }: { label: string; value: string }) {
 function Row({ children }: { children: React.ReactNode }) { return <div className="flex flex-wrap items-center gap-2">{children}</div>; }
 function Input({ value, onChange, suffix }: { value: string; onChange: (v: string) => void; suffix: string }) {
   return (
-    <div className="flex items-center gap-1 px-2 py-2" style={{ border: "1px solid var(--color-line)" }}>
-      <input value={value} onChange={(e) => onChange(e.target.value.replace(/[^0-9.]/g, ""))} inputMode="decimal" className="mono w-24 bg-transparent text-sm outline-none" style={{ color: "var(--color-ink)" }} />
-      <span className="label" style={{ letterSpacing: 0 }}>{suffix}</span>
+    <div className="flex items-center gap-1 rounded-sm border border-border px-2">
+      <UiInput
+        value={value} inputMode="decimal"
+        onChange={(e) => onChange(e.target.value.replace(/[^0-9.]/g, ""))}
+        className="mono h-9 w-20 border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0"
+      />
+      <span className="label">{suffix}</span>
     </div>
   );
 }
 function Btn({ onClick, busy, children, className = "", small }: { onClick: () => void; busy?: boolean; children: React.ReactNode; className?: string; small?: boolean }) {
   return (
-    <button onClick={onClick} disabled={busy} className={`label transition-colors disabled:opacity-50 ${small ? "px-2 py-1" : "px-4 py-2"} ${className}`}
-      style={{ border: "1px solid var(--color-line-strong)", color: busy ? "var(--color-ink-faint)" : "var(--color-ink)" }}>
+    <Button type="button" onClick={onClick} disabled={busy} variant="outline" size={small ? "sm" : "default"} className={cn("label rounded-sm", className)}>
       {busy ? "…" : children}
-    </button>
+    </Button>
   );
 }
 function Msg({ msg }: { msg: { kind: "ok" | "err"; text: string; hash?: string } | null }) {

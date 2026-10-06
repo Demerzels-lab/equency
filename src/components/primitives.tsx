@@ -1,22 +1,48 @@
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import type { DataMode } from "@/lib/providers/types";
 
-/** The honesty primitive: every panel of numbers states LIVE vs SIMULATED (brief §0, §57). */
+/** A dense terminal panel built on shadcn Card: hairline header with a label + badge slot. */
+export function Panel({
+  title,
+  badge,
+  children,
+  className,
+  bodyClassName,
+}: {
+  title?: string;
+  badge?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+  bodyClassName?: string;
+}) {
+  return (
+    <Card className={cn("gap-0 overflow-hidden rounded-sm border-border bg-card py-0 shadow-none", className)}>
+      {title && (
+        <div className="flex items-center justify-between border-b border-border px-3 py-2">
+          <span className="label">{title}</span>
+          {badge}
+        </div>
+      )}
+      <div className={cn("p-3", bodyClassName)}>{children}</div>
+    </Card>
+  );
+}
+
+/** The honesty primitive: LIVE vs SIMULATED, on shadcn Badge. */
 export function DataModeBadge({ mode }: { mode: DataMode }) {
   const live = mode === "LIVE";
+  const color = live ? "var(--color-pos)" : "var(--color-sim)";
   return (
-    <span
-      className="mono inline-flex items-center gap-1.5 px-1.5 py-0.5 text-[9px] tracking-[0.14em]"
-      style={{
-        color: live ? "var(--color-accent)" : "var(--color-sim)",
-        border: `1px solid ${live ? "var(--color-accent)" : "var(--color-sim)"}`,
-        borderRadius: 2,
-        opacity: 0.9,
-      }}
-      title={live ? "Read live from a real source" : "Placeholder · not wired to a live source yet"}
+    <Badge
+      variant="outline"
+      className="mono gap-1.5 rounded-sm border px-1.5 py-0 text-[9px] font-medium tracking-[0.14em]"
+      style={{ color, borderColor: color }}
     >
-      <Dot color={live ? "var(--color-accent)" : "var(--color-sim)"} pulse={live} />
+      <Dot color={color} pulse={live} />
       {mode}
-    </span>
+    </Badge>
   );
 }
 
@@ -29,30 +55,6 @@ export function Dot({ color, pulse = false }: { color: string; pulse?: boolean }
   );
 }
 
-export function Panel({
-  title,
-  badge,
-  children,
-  className = "",
-}: {
-  title?: string;
-  badge?: React.ReactNode;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <section className={`panel ${className}`}>
-      {title && (
-        <header className="flex items-center justify-between border-b hairline px-3 py-2">
-          <span className="label">{title}</span>
-          {badge}
-        </header>
-      )}
-      <div className="p-3">{children}</div>
-    </section>
-  );
-}
-
 export function tierColor(tier: number): string {
-  return tier === 1 ? "var(--color-accent)" : tier === 2 ? "var(--color-warn)" : "var(--color-ink-faint)";
+  return tier === 1 ? "var(--color-pos)" : tier === 2 ? "var(--color-warn)" : "var(--color-ink-faint)";
 }
