@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { SectionMark, Display } from "@/components/brand";
-import { CountUp } from "@/components/immersive/CountUp";
 import { Dot } from "@/components/primitives";
 import { ago, fmtDate } from "@/lib/util/dates";
 import type { IpoHit } from "@/lib/providers/sec";
 
-export function LiveFeed({ feed, counts }: { feed: IpoHit[]; counts: { today: number; week: number; d30: number; d90: number } }) {
+export function LiveFeed({ feed }: { feed: IpoHit[] }) {
   return (
     <section data-section="live" className="mx-auto max-w-350 px-6 py-24">
       <SectionMark n="01" title="Live intelligence, right now" className="mb-5" />
@@ -13,18 +12,15 @@ export function LiveFeed({ feed, counts }: { feed: IpoHit[]; counts: { today: nu
         <div>
           <Display as="h2" outline className="text-[clamp(2rem,4.5vw,3.6rem)]">NEW PUBLIC<br />MARKET, LIVE</Display>
           <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            The moment a company prices its IPO, EQUENCY detects the filing and spins up an
+            The moment a company prices its IPO, EQUENCY detects the 424B4 filing and spins up an
             Intelligence Core. These are real SEC detections, timestamps and all.
           </p>
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <CountStat label="Today" value={counts.today} />
-            <CountStat label="Week" value={counts.week} />
-            <CountStat label="30d" value={counts.d30} />
-            <CountStat label="90d" value={counts.d90} />
-          </div>
+          <Link href="/strategies" className="mt-7 inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--color-accent)] transition-opacity hover:opacity-80">
+            Rank them by strategy <span aria-hidden>→</span>
+          </Link>
         </div>
 
-        <div className="rounded-sm border border-border bg-card/70 backdrop-blur">
+        <div className="min-w-0 rounded-sm border border-border bg-card/70 backdrop-blur">
           <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
             <span className="label inline-flex items-center gap-2">
               <Dot color="var(--color-pos)" pulse /> Intelligence feed
@@ -45,14 +41,5 @@ export function LiveFeed({ feed, counts }: { feed: IpoHit[]; counts: { today: nu
         </div>
       </div>
     </section>
-  );
-}
-
-function CountStat({ label, value }: { label: string; value: number }) {
-  return (
-    <div>
-      <div className="mono text-2xl font-semibold leading-none tabular-nums"><CountUp value={value} /></div>
-      <div className="label mt-2">{label}</div>
-    </div>
   );
 }

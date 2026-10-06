@@ -6,7 +6,7 @@ import { FAQ } from "@/lib/home-content";
 
 export function Faq() {
   return (
-    <section data-section="faq" className="mx-auto max-w-[900px] px-6 py-24">
+    <section id="faq" data-section="faq" className="mx-auto max-w-[900px] px-6 py-24 scroll-mt-20">
       <SectionMark n="05" title="Questions" className="mb-5" />
       <Display as="h2" className="text-[clamp(1.8rem,4vw,3rem)]">Frequently asked.</Display>
       <Accordion multiple={false} className="mt-8 w-full">

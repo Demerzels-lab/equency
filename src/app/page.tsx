@@ -2,12 +2,11 @@ import { searchRecentIpos } from "@/lib/providers/sec";
 import { daysSince } from "@/lib/util/dates";
 import { ScrollStage } from "@/components/immersive/ScrollStage";
 import { Hero } from "@/components/home/Hero";
+import { Pillars } from "@/components/home/Pillars";
+import { Numbers } from "@/components/home/Numbers";
 import { LiveFeed } from "@/components/home/LiveFeed";
-import { LoopSection } from "@/components/home/LoopSection";
-import { Capabilities } from "@/components/home/Capabilities";
-import { Constellation } from "@/components/home/Constellation";
+import { BuiltOn } from "@/components/home/BuiltOn";
 import { Faq } from "@/components/home/Faq";
-import { CtaDiamond } from "@/components/home/CtaDiamond";
 
 export const revalidate = 1800;
 
@@ -33,13 +32,12 @@ export default async function Home() {
 
   return (
     <ScrollStage>
-      <Hero counts={counts} />
-      <LiveFeed feed={ranked.slice(0, 8)} counts={counts} />
-      <LoopSection />
-      <Capabilities />
-      <Constellation companies={ranked.slice(0, 16)} />
+      <Hero />
+      <Pillars />
+      <Numbers counts={{ week: counts.week, d90: counts.d90 }} />
+      <LiveFeed feed={ranked.slice(0, 8)} />
+      <BuiltOn />
       <Faq />
-      <CtaDiamond />
     </ScrollStage>
   );
 }

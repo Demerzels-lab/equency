@@ -17,6 +17,8 @@
 
   --color-accent: #2ee6c5;
   --color-accent-dim: #0f4a41;
+  --color-accent-2: #7c82f8;
+  --color-accent-2-dim: #23264d;
   --color-pos: #4ade80;
   --color-warn: #fbbf24;
   --color-danger: #f87171;
@@ -121,6 +123,27 @@
 
 .panel { background: var(--color-panel); border: 1px solid var(--color-line); border-radius: var(--radius-sm); }
 .hairline { border-color: var(--color-line); }
+
+/* Glowing product orb (pillar cards). Drive hue per-card with --orb (defaults to teal). */
+.orb-glow {
+  --orb: var(--color-accent);
+  position: relative;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 50% 42%, color-mix(in oklab, var(--orb) 85%, white) 0%, color-mix(in oklab, var(--orb) 55%, transparent) 14%, transparent 42%),
+    conic-gradient(from 210deg, color-mix(in oklab, var(--orb) 55%, transparent), transparent 40%, color-mix(in oklab, var(--orb) 35%, transparent) 70%, transparent),
+    radial-gradient(circle at 50% 55%, color-mix(in oklab, var(--orb) 22%, transparent), transparent 70%);
+  box-shadow: 0 0 60px -10px color-mix(in oklab, var(--orb) 55%, transparent), inset 0 0 40px -16px color-mix(in oklab, var(--orb) 70%, transparent);
+}
+.orb-glow::after {
+  content: ""; position: absolute; inset: 14%; border-radius: 9999px;
+  border: 1px solid color-mix(in oklab, var(--orb) 45%, transparent);
+  box-shadow: inset 0 0 24px -10px color-mix(in oklab, var(--orb) 80%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .orb-glow { animation: orbspin 24s linear infinite; }
+  @keyframes orbspin { to { transform: rotate(360deg); } }
+}
 
 .label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-ink-faint); font-family: var(--font-mono); }
 

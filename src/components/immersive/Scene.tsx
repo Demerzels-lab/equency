@@ -2,8 +2,7 @@
 
 import dynamic from "next/dynamic";
 import type { Tier } from "./useEnvironment";
-import { LightField } from "./LightField";
-import { Emblem } from "./Emblem";
+import { HeroGlobe } from "./HeroGlobe";
 import { AmbientField } from "./AmbientField";
 import { VaultForm } from "./VaultForm";
 import { StrategyForm } from "./StrategyForm";
@@ -17,8 +16,7 @@ export function Scene({ tier, variant = "home" }: { tier: Tier; variant?: SceneV
   if (variant === "home") {
     return (
       <>
-        <LightField tier={tier} />
-        <Emblem />
+        <HeroGlobe tier={tier} />
         {tier === "full" ? <Effects /> : null}
       </>
     );

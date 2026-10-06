@@ -43,10 +43,25 @@ const frag = /* glsl */ `
   }
 `;
 
+// Faint distant starfield (space atmosphere site-wide). Deterministic, static, group-rotated.
+function buildStars(tier: Tier): Float32Array {
+  const n = tier === "full" ? 500 : 240;
+  const a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const h = (k: number) => { const x = Math.sin(k * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+    const u = h(i) * Math.PI * 2, v = Math.acos(2 * h(i + 71) - 1), r = 6 + h(i + 131) * 6;
+    a[i * 3] = Math.sin(v) * Math.cos(u) * r;
+    a[i * 3 + 1] = Math.cos(v) * r;
+    a[i * 3 + 2] = Math.sin(v) * Math.sin(u) * r;
+  }
+  return a;
+}
+
 export function AmbientField({ tier }: { tier: Tier }) {
   const group = useRef<Group>(null);
   const mat = useRef<ShaderMaterial>(null);
   const { positions, seeds } = useMemo(() => build(tier), [tier]);
+  const starPos = useMemo(() => buildStars(tier), [tier]);
   const uniforms = useMemo(() => ({ uTime: { value: 0 }, uSize: { value: 1 }, uColor: { value: new Color("#2ee6c5") } }), []);
 
   useFrame((_, dt) => {
@@ -65,6 +80,13 @@ export function AmbientField({ tier }: { tier: Tier }) {
           <bufferAttribute attach="attributes-aSeed" args={[seeds, 1]} />
         </bufferGeometry>
         <shaderMaterial ref={mat} uniforms={uniforms} vertexShader={vert} fragmentShader={frag} transparent depthWrite={false} blending={AdditiveBlending} />
+      </points>
+      {/* distant starfield */}
+      <points frustumCulled={false}>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[starPos, 3]} />
+        </bufferGeometry>
+        <pointsMaterial color="#9aa6ff" size={0.025} sizeAttenuation transparent opacity={0.45} depthWrite={false} blending={AdditiveBlending} />
       </points>
     </group>
   );

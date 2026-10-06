@@ -34,7 +34,7 @@ export function Display({
 type ButtonProps = {
   children: React.ReactNode;
   href?: string;
-  variant?: "primary" | "outline" | "ghost";
+  variant?: "primary" | "outline" | "ghost" | "indigo";
   arrow?: boolean;
   plus?: boolean;
   disabled?: boolean;
@@ -46,6 +46,7 @@ const VARIANT: Record<NonNullable<ButtonProps["variant"]>, string> = {
   primary: "bg-[color:var(--color-ink)] text-[color:var(--color-bg)] hover:bg-white",
   outline: "border border-[color:var(--color-line-strong)] text-[color:var(--color-ink)] hover:border-[color:var(--color-accent)] hover:text-[color:var(--color-accent)]",
   ghost: "text-[color:var(--color-ink-dim)] hover:text-[color:var(--color-ink)]",
+  indigo: "border border-[color:var(--color-accent-2)] text-[color:var(--color-accent-2)] hover:bg-[color:var(--color-accent-2)] hover:text-[color:var(--color-bg)]",
 };
 
 export function Button({ children, href, variant = "primary", arrow, plus, disabled, className, external }: ButtonProps) {

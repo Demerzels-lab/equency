@@ -39,6 +39,11 @@ export function SiteFooter() {
   return (
     <footer className="relative mt-16 border-t border-border bg-[var(--color-panel)]">
       <div className="grid-bg pointer-events-none absolute inset-0 opacity-[0.08]" aria-hidden />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-64"
+        aria-hidden
+        style={{ background: "radial-gradient(60% 100% at 50% 0%, color-mix(in oklab, var(--color-accent-2) 12%, transparent), transparent 70%)" }}
+      />
       <div className="relative mx-auto max-w-[1400px] px-6 py-12">
         <div className="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
           {/* Brand */}
