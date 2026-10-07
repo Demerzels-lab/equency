@@ -24,22 +24,22 @@ export default async function Image({ params }: { params: Promise<{ ticker: stri
 
   return new ImageResponse(
     (
-      <div style={flex({ width: "100%", height: "100%", flexDirection: "column", justifyContent: "space-between", background: "#050506", color: "#f2f4f7", padding: 64, fontFamily: "sans-serif" })}>
+      <div style={flex({ width: "100%", height: "100%", flexDirection: "column", justifyContent: "space-between", background: "#f8f7f4", color: "#111317", padding: 64, fontFamily: "sans-serif" })}>
         <div style={flex({ alignItems: "center" })}>
-          <div style={flex({ width: 22, height: 22, background: "#e5b966", transform: "rotate(45deg)", marginRight: 16 })} />
+          <div style={flex({ width: 22, height: 22, background: "#eb5729", transform: "rotate(45deg)", marginRight: 16 })} />
           <div style={flex({ fontSize: 28, letterSpacing: 6, fontWeight: 800 })}>EQUENCY</div>
-          <div style={flex({ marginLeft: "auto", fontSize: 20, color: "#9aa4af" })}>Intelligence Core</div>
+          <div style={flex({ marginLeft: "auto", fontSize: 20, color: "#525866" })}>Intelligence Core</div>
         </div>
         <div style={flex({ flexDirection: "column" })}>
-          <div style={flex({ fontSize: 34, color: "#7c82f8", letterSpacing: 2, marginBottom: 10 })}>{ticker}</div>
+          <div style={flex({ fontSize: 34, color: "#2e4cd8", letterSpacing: 2, marginBottom: 10 })}>{ticker}</div>
           <div style={flex({ fontSize: 58, fontWeight: 800, lineHeight: 1.04 })}>{name || ticker}</div>
         </div>
         <div style={flex({ alignItems: "flex-end" })}>
           <div style={flex({ flexDirection: "column" })}>
-            <div style={flex({ fontSize: 128, fontWeight: 800, color: "#e5b966", lineHeight: 1 })}>{score == null ? "·" : String(score)}</div>
-            <div style={flex({ fontSize: 22, color: "#9aa4af", marginTop: 6 })}>Intelligence score / 100</div>
+            <div style={flex({ fontSize: 128, fontWeight: 800, color: "#eb5729", lineHeight: 1 })}>{score == null ? "·" : String(score)}</div>
+            <div style={flex({ fontSize: 22, color: "#525866", marginTop: 6 })}>Intelligence score / 100</div>
           </div>
-          <div style={flex({ marginLeft: "auto", fontSize: 22, color: "#9aa4af" })}>{`${days != null ? `${days} days public · ` : ""}Built on Robinhood Chain`}</div>
+          <div style={flex({ marginLeft: "auto", fontSize: 22, color: "#525866" })}>{`${days != null ? `${days} days public · ` : ""}Built on Robinhood Chain`}</div>
         </div>
       </div>
     ),
