@@ -1,4 +1,5 @@
 import { Display } from "@/components/brand";
+import { Reveal } from "@/components/immersive/Reveal";
 
 const EXPLORER = "https://explorer.testnet.chain.robinhood.com";
 
@@ -13,7 +14,7 @@ export function BuiltOn() {
         aria-hidden
         style={{ background: "radial-gradient(50% 60% at 50% 100%, color-mix(in oklab, var(--color-accent-2) 10%, transparent), transparent 70%)" }}
       />
-      <div className="relative mx-auto max-w-3xl px-6 text-center">
+      <Reveal className="relative mx-auto max-w-3xl px-6 text-center">
         <div className="label text-[color:var(--color-accent-2)]">Robinhood Chain native</div>
         <Display as="h2" className="mt-3 text-[clamp(1.9rem,4.5vw,3.4rem)]">Built on Robinhood Chain.</Display>
         <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
@@ -33,7 +34,7 @@ export function BuiltOn() {
         >
           View on the block explorer <span aria-hidden>↗</span>
         </a>
-      </div>
+      </Reveal>
     </section>
   );
 }

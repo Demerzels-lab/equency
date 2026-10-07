@@ -13,13 +13,17 @@ export function Reveal({ children, className, delay = 0, as: Tag = "div" }: { ch
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (prefersReducedMotion()) { setShown(true); return; }
+    if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") { setShown(true); return; }
+    const reveal = () => setTimeout(() => setShown(true), delay);
     const io = new IntersectionObserver(
-      (e) => { if (e[0].isIntersecting) { setTimeout(() => setShown(true), delay); io.disconnect(); } },
+      (e) => { if (e[0].isIntersecting) { reveal(); io.disconnect(); } },
       { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
     );
     io.observe(el);
-    return () => io.disconnect();
+    // Fail-safe: never leave content stuck hidden if the observer never fires
+    // (hidden tab, headless/SEO renderer, programmatic scroll). Scroll still reveals earlier.
+    const safety = setTimeout(() => { setShown(true); io.disconnect(); }, 2000);
+    return () => { io.disconnect(); clearTimeout(safety); };
   }, [delay]);
 
   return (

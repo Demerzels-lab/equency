@@ -1,12 +1,15 @@
 "use client";
 
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, SMAA } from "@react-three/postprocessing";
 
 // Code-split (its own dynamic import in Scene) so lite/static tiers never download postprocessing.
+// multisampling (MSAA) + SMAA keep thin rotating features (rings, grid, dots) from shimmering,
+// and the higher bloom threshold/smoothing stops near-threshold pixels flickering frame-to-frame.
 export function Effects() {
   return (
-    <EffectComposer>
-      <Bloom intensity={0.9} luminanceThreshold={0.08} luminanceSmoothing={0.35} radius={0.75} mipmapBlur />
+    <EffectComposer multisampling={8}>
+      <Bloom intensity={0.6} luminanceThreshold={0.22} luminanceSmoothing={0.7} radius={0.7} mipmapBlur />
+      <SMAA />
     </EffectComposer>
   );
 }

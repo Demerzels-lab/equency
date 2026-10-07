@@ -43,15 +43,15 @@ type ButtonProps = {
 };
 
 const VARIANT: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  primary: "bg-[color:var(--color-ink)] text-[color:var(--color-bg)] hover:bg-white",
+  primary: "bg-[color:var(--color-ink)] text-[color:var(--color-bg)] hover:bg-white hover:shadow-[0_0_34px_-6px_color-mix(in_oklab,var(--color-accent)_65%,transparent)]",
   outline: "border border-[color:var(--color-line-strong)] text-[color:var(--color-ink)] hover:border-[color:var(--color-accent)] hover:text-[color:var(--color-accent)]",
   ghost: "text-[color:var(--color-ink-dim)] hover:text-[color:var(--color-ink)]",
-  indigo: "border border-[color:var(--color-accent-2)] text-[color:var(--color-accent-2)] hover:bg-[color:var(--color-accent-2)] hover:text-[color:var(--color-bg)]",
+  indigo: "border border-[color:var(--color-accent-2)] text-[color:var(--color-accent-2)] hover:bg-[color:var(--color-accent-2)] hover:text-[color:var(--color-bg)] hover:shadow-[0_0_34px_-6px_color-mix(in_oklab,var(--color-accent-2)_70%,transparent)]",
 };
 
 export function Button({ children, href, variant = "primary", arrow, plus, disabled, className, external }: ButtonProps) {
   const base = cn(
-    "group inline-flex items-center justify-between gap-6 px-6 py-4 text-sm font-medium tracking-tight transition-colors",
+    "group inline-flex items-center justify-between gap-6 px-6 py-4 text-sm font-medium tracking-tight transition-[color,background-color,border-color,box-shadow] duration-200",
     VARIANT[variant],
     disabled && "cursor-not-allowed opacity-50 hover:bg-transparent hover:text-current",
     className,

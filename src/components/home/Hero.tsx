@@ -2,8 +2,13 @@ import { Kicker, Display, Button } from "@/components/brand";
 
 export function Hero() {
   return (
-    <section data-section="hero" className="relative flex min-h-[min(94vh,940px)] items-center justify-center">
-      <div className="mx-auto w-full max-w-3xl px-6 text-center">
+    <section data-section="hero" className="relative flex min-h-[min(94vh,940px)] items-center justify-center overflow-hidden">
+      {/* foreground orbital ring, passing in front of the headline for depth */}
+      <svg aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] z-20 h-[130vmin] w-[130vmin] -translate-x-1/2 -translate-y-1/2 opacity-[0.13]" viewBox="-200 -200 400 400" fill="none">
+        <ellipse cx="0" cy="0" rx="192" ry="50" stroke="var(--color-accent)" strokeWidth="0.5" transform="rotate(-16)" />
+        <ellipse cx="0" cy="0" rx="178" ry="42" stroke="var(--color-accent-2)" strokeWidth="0.5" transform="rotate(22)" />
+      </svg>
+      <div className="relative z-10 mx-auto w-full max-w-3xl px-6 text-center">
         <div className="flex justify-center">
           <Kicker>Intelligence · Strategy · Capital</Kicker>
         </div>
@@ -21,6 +26,9 @@ export function Hero() {
           <Button href="/vault" variant="indigo">Strategy Vault</Button>
         </div>
       </div>
+
+      {/* bottom scrim · smooth the hand-off into the next section */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-5 h-40 bg-linear-to-b from-transparent to-bg" />
     </section>
   );
 }

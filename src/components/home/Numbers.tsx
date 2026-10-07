@@ -4,6 +4,8 @@ import { CountUp } from "@/components/immersive/CountUp";
 import { STRATEGY_LIST } from "@/lib/strategy/strategies";
 import { TESTNET } from "@/lib/deployments";
 import { Display } from "@/components/brand";
+import { Reveal } from "@/components/immersive/Reveal";
+import { SpotlightCard } from "@/components/SpotlightCard";
 
 const CONTRACTS = Object.keys(TESTNET.contracts).length;
 const STRATEGIES = STRATEGY_LIST.length;
@@ -24,24 +26,26 @@ export function Numbers({ counts }: { counts: { week: number; d90: number } }) {
 
   return (
     <section className="mx-auto max-w-350 px-6 py-20">
-      <div className="mb-12 text-center">
+      <Reveal className="mb-12 text-center">
         <div className="label text-[color:var(--color-accent-2)]">EQUENCY in numbers</div>
         <Display as="h2" className="mt-3 text-[clamp(1.8rem,4vw,3rem)]">Real coverage, honestly counted.</Display>
         <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
           Every figure is read from a real source · SEC EDGAR, the strategy engine, and the on-chain
           deployment. Nothing here is fabricated.
         </p>
-      </div>
+      </Reveal>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((it) => (
-          <div key={it.label} className="min-w-0 rounded-lg border border-border bg-card/50 px-6 py-7">
-            <div className="mono text-4xl font-semibold leading-none tabular-nums" style={{ color: it.color ?? "var(--color-ink)" }}>
-              {it.kind === "num" ? <CountUp value={it.value} /> : it.value}
-            </div>
-            <div className="mt-3 text-sm font-medium">{it.label}</div>
-            <div className="label mt-1 normal-case tracking-normal text-muted-foreground">{it.sub}</div>
-          </div>
+        {items.map((it, i) => (
+          <Reveal key={it.label} delay={i * 70}>
+            <SpotlightCard glow={it.color ?? (i % 2 ? "var(--color-accent-2)" : "var(--color-accent)")} className="h-full min-w-0 rounded-lg border border-border bg-card/50 px-6 py-7">
+              <div className="mono text-4xl font-semibold leading-none tabular-nums" style={{ color: it.color ?? "var(--color-ink)" }}>
+                {it.kind === "num" ? <CountUp value={it.value} /> : it.value}
+              </div>
+              <div className="mt-3 text-sm font-medium">{it.label}</div>
+              <div className="label mt-1 normal-case tracking-normal text-muted-foreground">{it.sub}</div>
+            </SpotlightCard>
+          </Reveal>
         ))}
       </div>
     </section>

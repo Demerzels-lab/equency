@@ -15,7 +15,7 @@ export function LiveFeed({ feed }: { feed: IpoHit[] }) {
             The moment a company prices its IPO, EQUENCY detects the 424B4 filing and spins up an
             Intelligence Core. These are real SEC detections, timestamps and all.
           </p>
-          <Link href="/strategies" className="mt-7 inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--color-accent)] transition-opacity hover:opacity-80">
+          <Link href="/strategies" className="mt-7 inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-opacity hover:opacity-80">
             Rank them by strategy <span aria-hidden>→</span>
           </Link>
         </div>

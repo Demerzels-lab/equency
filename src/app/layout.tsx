@@ -3,6 +3,7 @@ import { Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { TopBar } from "@/components/TopBar";
 import { SiteFooter } from "@/components/SiteFooter";
+import { GrainOverlay } from "@/components/GrainOverlay";
 import { GlobalAmbient } from "@/components/immersive/GlobalAmbient";
 import { Intro } from "@/components/immersive/Intro";
 import { WalletProvider } from "@/components/wallet/WalletProvider";
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <SiteFooter />
         </WalletProvider>
+        <GrainOverlay />
         <Intro />
       </body>
     </html>

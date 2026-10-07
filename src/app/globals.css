@@ -108,6 +108,7 @@
 @layer base {
   * { @apply border-border outline-ring/50; }
   body { @apply bg-background text-foreground; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  p { text-wrap: pretty; }
   /* overflow-x: clip prevents any stray wide element from creating a horizontal scroll on
      small screens, without establishing a scroll container (so sticky headers keep working). */
   html { @apply font-sans; overflow-x: clip; }
@@ -180,6 +181,10 @@
 .eq-dots::after { content: ""; animation: eqdots 1.4s steps(4, end) infinite; }
 @keyframes eqdots { 0% { content: ""; } 25% { content: "·"; } 50% { content: "··"; } 75% { content: "···"; } 100% { content: ""; } }
 
+/* Static hero globe — orbital rings rotate smoothly (composited, no flicker) */
+.eq-globe-rings { animation: eqgloberings 48s linear infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes eqgloberings { to { transform: rotate(360deg); } }
+
 /* First-visit intro splash */
 .intro-word { animation: introword 1200ms 300ms var(--ease-out-quint) both; letter-spacing: 0.3em; }
 @keyframes introword { 0% { opacity: 0; letter-spacing: 0.55em; } 100% { opacity: 1; letter-spacing: 0.3em; } }
@@ -192,6 +197,7 @@
   .chart-line { stroke-dashoffset: 0; } .chart-area { opacity: 1; }
   .eq-loader-seg { width: 100%; opacity: 0.5; }
   .intro-word, .intro-tag, .intro-bar { animation: none; opacity: 1; letter-spacing: 0.22em; transform: none; }
+  .eq-globe-rings { animation: none; }
 }
 
 ::selection { background: color-mix(in oklab, var(--color-accent) 30%, transparent); }

@@ -14,12 +14,9 @@ const Effects = dynamic(() => import("./Effects").then((m) => m.Effects), { ssr:
 
 export function Scene({ tier, variant = "home" }: { tier: Tier; variant?: SceneVariant }) {
   if (variant === "home") {
-    return (
-      <>
-        <HeroGlobe tier={tier} />
-        {tier === "full" ? <Effects /> : null}
-      </>
-    );
+    // No postprocessing on the hero: the EffectComposer (render-to-texture + bloom) flickers
+    // on some GPUs. Rendering straight to the canvas uses native MSAA and stays rock-steady.
+    return <HeroGlobe tier={tier} />;
   }
   return (
     <>

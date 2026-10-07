@@ -73,7 +73,7 @@ export function Intro() {
     <div
       role="dialog"
       aria-label="EQUENCY intro"
-      className="fixed inset-0 z-[100] overflow-hidden bg-[var(--color-bg)] transition-opacity duration-[650ms] ease-out"
+      className="fixed inset-0 z-100 overflow-hidden bg-bg transition-opacity duration-700 ease-out"
       style={{ opacity: phase === "closing" ? 0 : 1 }}
     >
       <div className="grid-bg pointer-events-none absolute inset-0 opacity-[0.12]" aria-hidden />
@@ -91,7 +91,7 @@ export function Intro() {
       {/* Foreground wordmark + tagline, anchored in the lower third */}
       <div className="relative z-10 flex h-full flex-col items-center justify-end gap-4 pb-[16vh]">
         <div className="flex items-center gap-3">
-          <span className="block h-3 w-3 rotate-45 bg-[var(--color-accent)]" />
+          <span className="block h-3 w-3 rotate-45 bg-accent" />
           <span className="intro-word mono text-lg font-semibold text-foreground sm:text-xl">EQUENCY</span>
         </div>
         <p className="intro-tag max-w-xs px-6 text-center text-sm text-muted-foreground">
@@ -102,7 +102,7 @@ export function Intro() {
 
       <button
         onClick={close}
-        className="label absolute bottom-6 right-6 z-20 rounded-sm border border-border px-3 py-1.5 text-muted-foreground transition-colors hover:border-[color:var(--color-accent)] hover:text-foreground"
+        className="label absolute bottom-6 right-6 z-20 rounded-sm border border-border px-3 py-1.5 text-muted-foreground transition-colors hover:border-accent hover:text-foreground"
       >
         Skip →
       </button>
