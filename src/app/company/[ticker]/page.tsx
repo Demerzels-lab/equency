@@ -71,68 +71,87 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
 
   return (
     <main className="mx-auto max-w-[1400px] px-6 pt-28 sm:pt-32 pb-20">
+      {/* SECTION BREADCRUMB */}
+      <div className="flex items-center justify-between pb-3 mb-6 border-b border-[color:var(--color-line)]">
+        <div className="section-label mb-0">01 // INTELLIGENCE CORE · SEC GROUND TRUTH</div>
+        <div className="font-mono text-[10px] text-[color:var(--color-ink-faint)] tracking-wider uppercase">
+          SEC CIK {ci.identity.cik.padStart(10, "0")} · 424B4 AUDITED
+        </div>
+      </div>
+
       {/* HEADER */}
-      <Panel className="mb-3" bodyClassName="px-4 py-3">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex min-w-0 items-start gap-4">
+      <div className="mb-8 border border-[color:var(--color-line)] bg-[color:var(--color-panel)] p-6 sm:p-8">
+        <div className="flex flex-wrap items-start justify-between gap-6">
+          <div className="flex min-w-0 items-start gap-5">
             <CompanyEmblem ticker={symbol} accent="var(--color-accent)" />
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl font-semibold tracking-tight text-balance">{ci.identity.name}</h1>
-                <span className="label">{ci.identity.exchange}: {ci.identity.ticker}</span>
+                <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[color:var(--color-ink)] text-balance">
+                  {ci.identity.name}
+                </h1>
+                <span className="font-mono text-xs font-bold tracking-wider uppercase px-2.5 py-1 rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-panel-2)] text-[color:var(--color-accent)]">
+                  {ci.identity.exchange}: {ci.identity.ticker}
+                </span>
                 <WatchButton ticker={symbol} name={ci.identity.name} />
                 <CompareToggle ticker={symbol} />
               </div>
-              <div className="mono mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-muted-foreground">
-                <span style={{ color: "var(--color-pos)" }}>{ci.ipo.daysPublic ?? "?"} days public</span>
-                <Sep /><span>{ci.ipo.ageBucket}</span>
+              <div className="font-mono mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[color:var(--color-ink-dim)]">
+                <span className="font-semibold text-[color:var(--color-pos)]">{ci.ipo.daysPublic ?? "?"} days public</span>
+                <Sep /><span className="uppercase">{ci.ipo.ageBucket}</span>
                 <Sep /><span>IPO {fmtDate(ci.ipo.ipoDate)}</span>
-                <Sep /><span className="font-sans">{ci.identity.sicDescription}</span>
+                <Sep /><span className="font-sans text-[color:var(--color-ink)]">{ci.identity.sicDescription}</span>
               </div>
             </div>
           </div>
           <div className="flex items-end gap-6">
             <div className="text-right">
-              <div className="mono text-3xl font-semibold leading-none">{fmtUsd(m.value.price)}</div>
-              <div className="mono mt-1 text-xs" style={{ color: up ? "var(--color-pos)" : "var(--color-danger)" }}>
+              <div className="font-mono text-3xl sm:text-4xl font-extrabold leading-none text-[color:var(--color-ink)] tabular-nums">
+                {fmtUsd(m.value.price)}
+              </div>
+              <div className="font-mono mt-1.5 text-xs font-semibold" style={{ color: up ? "var(--color-pos)" : "var(--color-danger)" }}>
                 {m.value.change != null ? `${up ? "▲" : "▼"} ${Math.abs(m.value.change).toFixed(2)}` : ""}
                 {m.value.changePct != null ? ` (${up ? "+" : ""}${m.value.changePct.toFixed(2)}%)` : ""}
               </div>
             </div>
             <div className="text-right">
               <DataModeBadge mode={m.mode} />
-              <div className="label mt-1">updated {ago(m.asOf)}</div>
+              <div className="font-mono text-[10px] text-[color:var(--color-ink-faint)] uppercase mt-1.5">
+                updated {ago(m.asOf)}
+              </div>
             </div>
           </div>
         </div>
-      </Panel>
+      </div>
 
       {/* VERDICT · deterministic score renders now; the AI direction/confidence/summary stream in */}
-      <section className="mb-3 overflow-hidden rounded-sm border border-border bg-card">
-        <div className="grid grid-cols-1 gap-px bg-border lg:grid-cols-[300px_1fr]">
-          <div className="flex flex-col justify-between bg-card px-5 py-4" style={{ background: "linear-gradient(145deg, color-mix(in oklab, var(--color-accent) 7%, var(--color-card)), var(--color-card) 60%)" }}>
+      <section className="mb-8 border border-[color:var(--color-line)] bg-[color:var(--color-panel)] overflow-hidden">
+        <div className="grid grid-cols-1 divide-y lg:divide-y-0 lg:divide-x divide-[color:var(--color-line)] lg:grid-cols-[300px_1fr]">
+          <div className="flex flex-col justify-between p-6 bg-[color:var(--color-panel-2)]/60">
             <div className="flex items-center justify-between">
-              <Suspense fallback={<span className="label text-muted-foreground">analyzing…</span>}>
+              <Suspense fallback={<span className="font-mono text-[10px] text-[color:var(--color-ink-faint)] uppercase">ANALYZING…</span>}>
                 <DirectionLabel ci={ci} score={score} />
               </Suspense>
-              <span className="mono inline-flex items-center gap-1.5 text-[9px]" style={{ color: "var(--color-pos)" }}>
-                <Dot color="var(--color-pos)" pulse /> ACTIVE
+              <span className="font-mono inline-flex items-center gap-1.5 text-[9px] uppercase px-2 py-0.5 rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-bg)] text-[color:var(--color-pos)] font-semibold">
+                <Dot color="var(--color-pos)" pulse /> ACTIVE CORE
               </span>
             </div>
-            <div className="mt-2 flex justify-center">
+            <div className="my-6 flex justify-center">
               <ScoreGauge value={score.overall} color="var(--color-accent)" />
             </div>
-            <div className="mt-4">
+            <div className="pt-4 border-t border-[color:var(--color-line)]">
               <Suspense fallback={<ConfidenceSkel />}>
                 <Confidence ci={ci} score={score} />
               </Suspense>
             </div>
           </div>
-          <div className="flex flex-col justify-between gap-4 bg-card px-5 py-4">
-            <Suspense fallback={<SummarySkel />}>
-              <Summary ci={ci} score={score} />
-            </Suspense>
-            <div className="grid gap-x-5 gap-y-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="flex flex-col justify-between gap-6 p-6 sm:p-8 bg-[color:var(--color-panel)]">
+            <div>
+              <div className="font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-accent)] font-semibold mb-2">SYNTHETIC THESIS EXECUTIVE SUMMARY</div>
+              <Suspense fallback={<SummarySkel />}>
+                <Summary ci={ci} score={score} />
+              </Suspense>
+            </div>
+            <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-5 pt-6 border-t border-[color:var(--color-line)]">
               {score.dimensions.map((d) => <DimChip key={d.key} d={d} />)}
             </div>
           </div>
@@ -302,15 +321,17 @@ function DimChip({ d }: { d: Dimension }) {
   return (
     <div>
       <div className="flex items-baseline justify-between gap-2">
-        <span className="label truncate normal-case tracking-normal text-muted-foreground">{d.label}</span>
-        <span className="mono text-sm leading-none" style={{ color: d.value == null ? "var(--color-ink-faint)" : "var(--color-ink)" }}>{d.value ?? "n/a"}</span>
+        <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-ink-dim)] truncate">{d.label}</span>
+        <span className="font-mono text-sm font-bold tabular-nums" style={{ color: d.value == null ? "var(--color-ink-faint)" : "var(--color-ink)" }}>
+          {d.value ?? "n/a"}
+        </span>
       </div>
       <Progress
         value={d.value ?? 0}
-        className="mt-2 h-1 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--c)]"
+        className="mt-2 h-1 bg-[color:var(--color-panel-2)] [&_[data-slot=progress-indicator]]:bg-[var(--c)]"
         style={{ ["--c" as string]: color, opacity: d.value == null ? 0.3 : 1 }}
       />
-      <div className="mt-1.5 text-[10px] leading-snug text-muted-foreground">{d.basis}</div>
+      <div className="mt-1.5 font-mono text-[10px] leading-snug text-[color:var(--color-ink-faint)]">{d.basis}</div>
     </div>
   );
 }

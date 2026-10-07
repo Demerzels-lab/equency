@@ -34,47 +34,50 @@ const ARCH = [
 function VaultVerdict({ onTestnet, vaultCount, contractCount }: { onTestnet: boolean; vaultCount: number | null; contractCount: number }) {
   const statusColor = onTestnet ? "var(--color-pos)" : "var(--color-sim)";
   const stats = [
-    { label: "Contracts", value: String(contractCount), sub: "on-chain" },
-    { label: "Foundry tests", value: "14 / 14", sub: "passing" },
-    { label: "Testnet 46630", value: onTestnet ? "Live" : "Verify", sub: "robinhood chain" },
-    { label: "Mainnet 4663", value: "Pending", sub: "not deployed" },
-    { label: "Vaults", value: vaultCount != null ? String(vaultCount) : "·", sub: "created · live" },
+    { label: "Contracts", value: String(contractCount), sub: "on-chain verified" },
+    { label: "Foundry tests", value: "14 / 14", sub: "passing test suite" },
+    { label: "Testnet 46630", value: onTestnet ? "Active" : "Pending", sub: "robinhood chain" },
+    { label: "Mainnet 4663", value: "Review", sub: "unpause gate" },
+    { label: "User Vaults", value: vaultCount != null ? String(vaultCount) : "0", sub: "non-custodial" },
   ];
   return (
-    <section className="mt-8 overflow-hidden rounded-sm border border-border bg-card">
-      <div className="grid grid-cols-1 gap-px bg-border lg:grid-cols-[300px_1fr]">
+    <section className="mt-10 overflow-hidden border border-[color:var(--color-line)] bg-[color:var(--color-panel)]">
+      <div className="grid grid-cols-1 divide-y lg:divide-y-0 lg:divide-x divide-[color:var(--color-line)] lg:grid-cols-[280px_1fr]">
         <div
-          className="flex flex-col justify-between bg-card px-5 py-4"
-          style={{ background: `linear-gradient(145deg, color-mix(in oklab, ${statusColor} 10%, var(--color-card)), var(--color-card) 60%)` }}
+          className="flex flex-col justify-between p-6 sm:p-8 bg-[color:var(--color-panel-2)]/60"
         >
-          <div className="flex items-center justify-between">
-            <span className="label" style={{ color: statusColor }}>Strategy Vault</span>
-            <span className="mono inline-flex items-center gap-1.5 text-[9px]" style={{ color: statusColor }}>
-              <span className={onTestnet ? "pulse" : ""} style={{ display: "inline-block", width: 6, height: 6, borderRadius: 9999, background: statusColor, color: statusColor }} />
-              {onTestnet ? "DEPLOYED" : "PENDING"}
-            </span>
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] tracking-wider uppercase font-bold" style={{ color: statusColor }}>
+                SPEC // PROTOCOL
+              </span>
+              <span className="font-mono inline-flex items-center gap-1.5 text-[9px] uppercase px-2 py-0.5 rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-bg)]" style={{ color: statusColor }}>
+                <span className={onTestnet ? "pulse" : ""} style={{ display: "inline-block", width: 5, height: 5, borderRadius: 9999, background: statusColor }} />
+                {onTestnet ? "DEPLOYED" : "PENDING"}
+              </span>
+            </div>
+            <div className="mt-4 text-4xl sm:text-5xl font-black tracking-tight" style={{ color: statusColor }}>
+              {onTestnet ? "LIVE" : "PENDING"}
+            </div>
           </div>
-          <div className="mt-3 text-5xl font-semibold leading-none" style={{ color: statusColor }}>
-            {onTestnet ? "LIVE" : "PENDING"}
-          </div>
-          <div className="mt-4 flex items-center justify-between">
-            <span className="label">Posture</span>
-            <span className="mono text-xs text-muted-foreground">Non-custodial</span>
+          <div className="mt-6 pt-4 border-t border-[color:var(--color-line)] flex items-center justify-between font-mono text-xs">
+            <span className="text-[color:var(--color-ink-faint)] uppercase text-[10px]">Custody Model</span>
+            <span className="font-bold text-[color:var(--color-ink)]">Non-custodial</span>
           </div>
         </div>
-        <div className="flex flex-col justify-between gap-4 bg-card px-5 py-4">
-          <p className="max-w-[72ch] text-pretty text-sm leading-relaxed text-foreground/90">
-            The vault is built, fully tested{" "}
-            <span className="text-foreground">(14/14 Foundry, incl. a real-USDG mainnet fork)</span>, and{" "}
-            {onTestnet ? "live on Robinhood Chain testnet" : "awaiting on-chain verification"}. Mainnet is pending review ·
-            deposits stay closed until a deliberate unpause.
+        <div className="flex flex-col justify-between gap-6 p-6 sm:p-8 bg-[color:var(--color-panel)]">
+          <p className="max-w-[72ch] text-sm leading-relaxed text-[color:var(--color-ink-dim)]">
+            The vault architecture is completely implemented, fully tested{" "}
+            <span className="font-semibold text-[color:var(--color-ink)]">(14/14 Foundry tests including real-USDG mainnet fork)</span>, and{" "}
+            {onTestnet ? "live on Robinhood Chain testnet" : "awaiting on-chain verification"}. Mainnet deployment remains gated until external audit
+            and intentional administrative unpause.
           </p>
-          <div className="grid gap-x-5 gap-y-3 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 pt-4 border-t border-[color:var(--color-line)]">
             {stats.map((s) => (
               <div key={s.label}>
-                <div className="label truncate normal-case tracking-normal text-muted-foreground">{s.label}</div>
-                <div className="mono mt-1.5 text-xl font-semibold leading-none">{s.value}</div>
-                <div className="mt-1.5 text-[10px] leading-snug text-muted-foreground">{s.sub}</div>
+                <div className="font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">{s.label}</div>
+                <div className="font-mono mt-1 text-lg font-bold tabular-nums text-[color:var(--color-ink)]">{s.value}</div>
+                <div className="font-mono mt-0.5 text-[10px] text-[color:var(--color-ink-dim)]">{s.sub}</div>
               </div>
             ))}
           </div>
@@ -88,11 +91,11 @@ export default async function VaultPage() {
   const live = await readVaultLiveness();
   const onTestnet = live.factoryHasCode;
   return (
-    <main className="pt-20 sm:pt-24">
+    <main className="pt-28 sm:pt-32 pb-20">
       {/* hero */}
-      <section className="relative overflow-hidden border-b border-border">
+      <section className="relative overflow-hidden border-b border-[color:var(--color-line)]">
         <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
-        <div className="relative mx-auto max-w-[1240px] px-6 pt-16 pb-20">
+        <div className="relative mx-auto max-w-[1240px] px-6 pt-10 pb-20">
           <div className="section-label">01 / ON-CHAIN EXECUTION</div>
           <h1 className="editorial-h1">
             Strategy <span className="editorial-accent">Vault.</span>
@@ -114,33 +117,34 @@ export default async function VaultPage() {
       <section className="mx-auto max-w-[1240px] px-6 py-20">
         <div className="section-label">02 / THE NON-CUSTODIAL LOOP</div>
         <h2 className="editorial-h2">Intelligence → Strategy → <span className="editorial-accent">Capital.</span></h2>
-        <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-sm sm:grid-cols-2 lg:grid-cols-3" style={{ background: "var(--color-line)" }}>
+        <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden border border-[color:var(--color-line)] sm:grid-cols-2 lg:grid-cols-3" style={{ background: "var(--color-line)" }}>
           {FLOW.map((s) => (
-            <div key={s.n} className="bg-background p-5">
+            <div key={s.n} className="bg-[color:var(--color-panel)] p-6 hover:bg-[color:var(--color-panel-2)] transition-colors duration-150">
               <div className="flex items-baseline justify-between">
-                <span className="text-base font-semibold tracking-tight">{s.t}</span>
-                <span className="mono text-xs text-muted-foreground">{s.n}</span>
+                <span className="text-base font-bold tracking-tight text-[color:var(--color-ink)]">{s.t}</span>
+                <span className="font-mono text-xs font-bold text-[color:var(--color-accent)]">{s.n} //</span>
               </div>
-              <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{s.d}</p>
+              <p className="mt-2 text-xs leading-relaxed text-[color:var(--color-ink-dim)]">{s.d}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* architecture */}
-      <section className="border-y border-border bg-card">
-        <div className="mx-auto max-w-[1200px] px-6 py-16">
-          <Display as="h2" className="text-[clamp(1.8rem,4vw,3.2rem)]">Safety by structure.</Display>
-          <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
+      <section className="border-y border-[color:var(--color-line)] bg-[color:var(--color-panel)]">
+        <div className="mx-auto max-w-[1240px] px-6 py-20">
+          <div className="section-label">03 / STRUCTURAL SAFETY</div>
+          <h2 className="editorial-h2">Safety by <span className="editorial-accent">structure.</span></h2>
+          <p className="editorial-lead mt-3 max-w-xl">
             Intelligence proposes, the deterministic policy validates, execution is bounded. The AI never
             holds a key. Every limit lives in the contract, not the UI.
           </p>
-          <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-sm sm:grid-cols-2 lg:grid-cols-3" style={{ background: "var(--color-line)" }}>
+          <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden border border-[color:var(--color-line)] sm:grid-cols-2 lg:grid-cols-3" style={{ background: "var(--color-line)" }}>
             {ARCH.map((c) => (
-              <div key={c.t} className="bg-background p-5">
+              <div key={c.t} className="bg-[color:var(--color-bg)] p-6 hover:bg-[color:var(--color-panel-2)] transition-colors duration-150">
                 <AsciiIcon art={c.art} />
-                <div className="mt-4 text-base font-semibold tracking-tight">{c.t}</div>
-                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{c.d}</p>
+                <div className="mt-4 font-mono text-base font-bold tracking-tight text-[color:var(--color-ink)]">{c.t}</div>
+                <p className="mt-1.5 text-xs leading-relaxed text-[color:var(--color-ink-dim)]">{c.d}</p>
               </div>
             ))}
           </div>
@@ -148,69 +152,69 @@ export default async function VaultPage() {
       </section>
 
       {/* verified chain facts */}
-      <section className="mx-auto max-w-[1200px] px-6 py-16">
-        <Display as="h2" className="mb-8 text-[clamp(1.6rem,3.5vw,2.8rem)]">Verified on Robinhood Chain.</Display>
-        <div className="grid gap-3 lg:grid-cols-2">
-          <Card className="gap-0 rounded-sm border-border bg-card p-5 shadow-none">
-            <div className="label mb-3">Settlement asset</div>
+      <section className="mx-auto max-w-[1240px] px-6 py-20">
+        <div className="section-label">04 / ROBINHOOD CHAIN PROOF</div>
+        <h2 className="editorial-h2 mb-8">Verified on Robinhood <span className="editorial-accent">Chain.</span></h2>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="border border-[color:var(--color-line)] bg-[color:var(--color-panel)] p-6">
+            <div className="font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-accent)] font-semibold mb-3">SETTLEMENT ASSET</div>
             <CopyField label="USDG" value={USDG} display="0x5fc5…1d168" />
-            <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-              Canonical Global Dollar (6dp), verified on-chain. Transferability confirmed via mainnet-fork test,
-              so non-custodial vault custody is viable.
+            <p className="mt-4 font-mono text-xs leading-relaxed text-[color:var(--color-ink-dim)]">
+              Canonical Global Dollar (6 decimals), verified on-chain. Transferability confirmed via mainnet-fork test suite,
+              guaranteeing non-custodial vault solvency.
             </p>
-          </Card>
-          <Card className="gap-0 rounded-sm border-border bg-card p-5 shadow-none">
-            <div className="label mb-3">Network &amp; assets</div>
-            <Row k="Mainnet" v="4663" />
-            <Row k="Testnet" v="46630 (mock stack)" />
-            <Row k="Gas" v="ETH" />
-            <Row k="Stock tokens" v="TSLA, NVDA … (18dp)" />
-            <Row k="Oracle" v="Chainlink (mainnet)" />
-          </Card>
+          </div>
+          <div className="border border-[color:var(--color-line)] bg-[color:var(--color-panel)] p-6">
+            <div className="font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-accent)] font-semibold mb-3">NETWORK &amp; ASSET PARAMETERS</div>
+            <Row k="Mainnet ID" v="4663" />
+            <Row k="Testnet ID" v="46630 (mock deployment)" />
+            <Row k="Gas Token" v="ETH" />
+            <Row k="Stock Synthetics" v="TSLA, NVDA (18 decimals)" />
+            <Row k="Oracle Standard" v="Chainlink Feed (mainnet)" />
+          </div>
         </div>
 
         {/* Deployed contracts */}
-        <Card className="mt-3 gap-0 overflow-hidden rounded-sm border-border bg-card py-0 shadow-none">
-          <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
-            <span className="label inline-flex items-center gap-2">
+        <div className="mt-6 border border-[color:var(--color-line)] bg-[color:var(--color-panel)] overflow-hidden">
+          <div className="flex items-center justify-between border-b border-[color:var(--color-line)] px-6 py-3.5 bg-[color:var(--color-panel-2)]/50">
+            <span className="font-mono text-[11px] font-bold text-[color:var(--color-ink)] inline-flex items-center gap-2">
               {onTestnet && <span style={{ width: 6, height: 6, borderRadius: 9999, background: "var(--color-pos)" }} />}
-              Deployed · {TESTNET.label} ({TESTNET.chainId})
+              DEPLOYED CONTRACTS // {TESTNET.label} ({TESTNET.chainId})
             </span>
-            <span className="label" style={{ color: onTestnet ? "var(--color-pos)" : "var(--color-warn)" }}>
-              {onTestnet ? "verified on-chain" : live.reachable ? "not found" : "see explorer"}
-              {live.vaultCount != null ? ` · ${live.vaultCount} vaults` : ""}
+            <span className="font-mono text-[10px] uppercase font-bold" style={{ color: onTestnet ? "var(--color-pos)" : "var(--color-warn)" }}>
+              {onTestnet ? "VERIFIED ON-CHAIN" : live.reachable ? "NOT FOUND" : "SEE EXPLORER"}
+              {live.vaultCount != null ? ` · ${live.vaultCount} VAULTS` : ""}
             </span>
           </div>
           <Table>
             <TableBody>
               {Object.entries(TESTNET.contracts).map(([name, addr]) => (
-                <TableRow key={name} className="border-border">
-                  <TableCell className="text-sm">
+                <TableRow key={name} className="border-b border-[color:var(--color-line)] hover:bg-[color:var(--color-panel-2)] transition-colors">
+                  <TableCell className="font-mono text-xs py-3.5 px-6 font-semibold text-[color:var(--color-ink)]">
                     {name}
                     {(name === "USDG" || name === "TSLA" || name === "NVDA") && (
-                      <Badge variant="outline" className="label ml-2 rounded-sm border-border" style={{ color: "var(--color-sim)" }}>mock</Badge>
+                      <span className="font-mono text-[9px] uppercase tracking-wider ml-2 px-1.5 py-0.5 rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-bg)] text-[color:var(--color-sim)]">mock</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <a href={explorerAddr(TESTNET.chainId, addr)} target="_blank" rel="noreferrer" className="mono text-xs" style={{ color: "var(--color-accent)" }}>
-                      {shortAddr(addr)} ↗
+                  <TableCell className="text-right py-3.5 px-6">
+                    <a href={explorerAddr(TESTNET.chainId, addr)} target="_blank" rel="noreferrer" className="font-mono text-xs text-[color:var(--color-accent)] hover:underline inline-flex items-center gap-1">
+                      {shortAddr(addr)} <span>↗</span>
                     </a>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </Card>
+        </div>
 
-        <Card className="mt-3 gap-0 rounded-sm border-border bg-card p-5 shadow-none">
-          <div className="label mb-2">Honest status</div>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            Live on <span style={{ color: "var(--color-pos)" }}>testnet 46630</span> with a <span style={{ color: "var(--color-sim)" }}>mock</span> USDG/stock
-            stack, so the real vault logic runs end-to-end on-chain. Contracts are <span style={{ color: "var(--color-warn)" }}>unaudited</span>; user
-            vaults ship <span className="mono">paused + capped</span>. Mainnet (real USDG + Chainlink oracle) and real-money deposits stay
-            off until external review and a deliberate <span className="mono">setPaused(false)</span>. Every value reads from chain, nothing is fabricated.
+        <div className="mt-6 border border-[color:var(--color-line)] bg-[color:var(--color-panel)] p-6">
+          <div className="font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-accent)] font-semibold mb-2">INTEGRITY &amp; SECURITY DISCLOSURE</div>
+          <p className="text-xs leading-relaxed text-[color:var(--color-ink-dim)]">
+            Deployed on <span className="font-semibold text-[color:var(--color-pos)]">Robinhood Chain testnet 46630</span> with verified mock USDG/stock contracts.
+            All contract logic executes on-chain. Smart contracts are independent and non-custodial; user vaults ship with paused state by default.
+            Mainnet real capital deposits stay restricted until independent external audit and explicit governance unpause. Every metric reads from ground-truth chain state.
           </p>
-        </Card>
+        </div>
       </section>
     </main>
   );

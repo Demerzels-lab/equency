@@ -51,47 +51,119 @@ export function ExploreGrid({ rows }: { rows: Row[] }) {
   );
 
   return (
-    <div>
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search ticker or name…" className="mono h-9 min-w-0 flex-1 rounded-sm border border-border bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus:border-[color:var(--color-accent)] sm:max-w-xs" />
-        <select value={bucket} onChange={(e) => setBucket(e.target.value)} className="mono h-9 rounded-sm border border-border bg-[color:var(--color-panel)] px-2 text-xs">
-          {BUCKETS.map((b) => <option key={b} value={b}>{b}</option>)}
-        </select>
-        <select value={sector} onChange={(e) => setSector(e.target.value)} className="mono h-9 max-w-[200px] truncate rounded-sm border border-border bg-[color:var(--color-panel)] px-2 text-xs">
-          {sectors.map((s) => <option key={s} value={s}>{s === "ALL" ? "All sectors" : s}</option>)}
-        </select>
-        <span className="label ml-auto">{view.length} companies</span>
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-2">
+        <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-[280px]">
+          <div className="relative flex-1 sm:max-w-xs">
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search ticker, name..."
+              className="font-mono h-10 w-full rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-panel)] pl-4 pr-10 text-xs text-[color:var(--color-ink)] outline-none placeholder:text-[color:var(--color-ink-faint)] focus:border-[color:var(--color-accent)] transition-colors"
+            />
+            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 font-mono text-[10px] text-[color:var(--color-ink-faint)]">/</span>
+          </div>
+
+          <select
+            value={bucket}
+            onChange={(e) => setBucket(e.target.value)}
+            className="font-mono h-10 rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-panel)] px-3 text-xs text-[color:var(--color-ink)] outline-none cursor-pointer hover:border-[color:var(--color-line-strong)] transition-colors"
+          >
+            {BUCKETS.map((b) => <option key={b} value={b}>{b}</option>)}
+          </select>
+
+          <select
+            value={sector}
+            onChange={(e) => setSector(e.target.value)}
+            className="font-mono h-10 max-w-[220px] truncate rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-panel)] px-3 text-xs text-[color:var(--color-ink)] outline-none cursor-pointer hover:border-[color:var(--color-line-strong)] transition-colors"
+          >
+            {sectors.map((s) => <option key={s} value={s}>{s === "ALL" ? "All sectors" : s}</option>)}
+          </select>
+        </div>
+
+        <div className="font-mono text-[11px] text-[color:var(--color-ink-faint)] tracking-wider uppercase">
+          <span className="font-bold text-[color:var(--color-ink)]">{view.length}</span> COMPANIES RECORDED
+        </div>
       </div>
 
-      <div className="overflow-x-auto rounded-sm border border-border">
-        <table className="w-full min-w-[640px] text-sm">
+      <div className="overflow-x-auto border border-[color:var(--color-line)] bg-[color:var(--color-panel)]">
+        <table className="w-full min-w-[720px] text-left border-collapse">
           <thead>
-            <tr className="border-b border-border bg-[color:var(--color-panel)]">
-              <th className="px-3 py-2 text-left">{th("ticker", "Ticker")}</th>
-              <th className="px-3 py-2 text-left">{th("name", "Company")}</th>
-              <th className="px-3 py-2 text-right">{th("days", "Days public")}</th>
-              <th className="label px-3 py-2 text-left">Age</th>
-              <th className="label px-3 py-2 text-left">Sector</th>
-              <th className="label px-3 py-2 text-right">Actions</th>
+            <tr className="border-b border-[color:var(--color-line)] bg-[color:var(--color-panel-2)]/50">
+              <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">{th("ticker", "TICKER")}</th>
+              <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">{th("name", "COMPANY")}</th>
+              <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)] text-right">{th("days", "DAYS PUBLIC")}</th>
+              <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">STATUS</th>
+              <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">SECTOR</th>
+              <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)] text-right">ACTION</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-[color:var(--color-line)]">
             {view.map((r) => (
-              <tr key={r.ticker} className="border-b border-border last:border-0 hover:bg-[color:var(--color-panel-2)]">
-                <td className="px-3 py-2"><Link href={`/company/${r.ticker}`} className="mono" style={{ color: "var(--color-accent)" }}>{r.ticker}</Link></td>
-                <td className="max-w-0 truncate px-3 py-2"><Link href={`/company/${r.ticker}`} className="hover:text-foreground">{r.name}</Link></td>
-                <td className="mono px-3 py-2 text-right tabular-nums">{r.daysPublic ?? "-"}</td>
-                <td className="label px-3 py-2 normal-case tracking-normal" style={{ color: r.bucket === "NEW" ? "var(--color-accent)" : undefined }}>{r.bucket}</td>
-                <td className="max-w-[220px] truncate px-3 py-2 text-xs text-muted-foreground">{r.sector}</td>
-                <td className="px-3 py-2 text-right">
-                  <span className="inline-flex items-center gap-1.5">
-                    <button title="Watch" onClick={() => toggleWatch(r.ticker, r.name)} className="rounded-sm border border-border px-1.5 py-0.5 text-xs transition-colors hover:border-[color:var(--color-accent)]" style={{ color: isWatched(r.ticker) ? "var(--color-accent)" : "var(--color-ink-faint)" }}>★</button>
-                    <button title="Compare" onClick={() => toggleCompare(r.ticker)} className="rounded-sm border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-wider transition-colors hover:border-[color:var(--color-accent-2)]" style={{ color: inCompare(r.ticker) ? "var(--color-accent-2)" : "var(--color-ink-faint)" }}>vs</button>
+              <tr key={r.ticker} className="hover:bg-[color:var(--color-panel-2)] transition-colors duration-150 group relative">
+                <td className="py-4 px-5">
+                  <Link href={`/company/${r.ticker}`} className="font-mono font-bold text-sm text-[color:var(--color-accent)] group-hover:underline inline-flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[color:var(--color-accent)] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {r.ticker}
+                  </Link>
+                </td>
+                <td className="py-4 px-5 max-w-[260px] truncate">
+                  <Link href={`/company/${r.ticker}`} className="font-sans text-sm font-semibold text-[color:var(--color-ink)] hover:text-[color:var(--color-accent)] transition-colors">
+                    {r.name}
+                  </Link>
+                </td>
+                <td className="py-4 px-5 font-mono text-sm font-semibold tabular-nums text-right text-[color:var(--color-ink)]">
+                  {r.daysPublic != null ? `${r.daysPublic}d` : "-"}
+                </td>
+                <td className="py-4 px-5">
+                  <span
+                    className={`font-mono text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                      r.bucket === "NEW"
+                        ? "border-[color:var(--color-accent)]/40 bg-[color:var(--color-accent-dim)] text-[color:var(--color-accent)] font-bold"
+                        : "border-[color:var(--color-line)] bg-[color:var(--color-bg)] text-[color:var(--color-ink-dim)]"
+                    }`}
+                  >
+                    {r.bucket}
+                  </span>
+                </td>
+                <td className="py-4 px-5 max-w-[220px] truncate font-mono text-xs text-[color:var(--color-ink-dim)]">
+                  {r.sector}
+                </td>
+                <td className="py-4 px-5 text-right">
+                  <span className="inline-flex items-center gap-2">
+                    <button
+                      title="Watchlist"
+                      onClick={() => toggleWatch(r.ticker, r.name)}
+                      className="rounded-full border border-[color:var(--color-line)] px-2.5 py-1 text-xs transition-all hover:border-[color:var(--color-accent)]"
+                      style={{
+                        color: isWatched(r.ticker) ? "var(--color-accent)" : "var(--color-ink-faint)",
+                        background: isWatched(r.ticker) ? "var(--color-accent-dim)" : "transparent"
+                      }}
+                    >
+                      ★
+                    </button>
+                    <button
+                      title="Compare"
+                      onClick={() => toggleCompare(r.ticker)}
+                      className="font-mono rounded-full border border-[color:var(--color-line)] px-2.5 py-1 text-[10px] uppercase tracking-wider transition-all hover:border-[color:var(--color-accent-2)]"
+                      style={{
+                        color: inCompare(r.ticker) ? "var(--color-accent-2)" : "var(--color-ink-faint)",
+                        background: inCompare(r.ticker) ? "var(--color-accent-2-dim)" : "transparent"
+                      }}
+                    >
+                      VS
+                    </button>
                   </span>
                 </td>
               </tr>
             ))}
-            {view.length === 0 && <tr><td colSpan={6} className="px-3 py-8 text-center text-xs text-muted-foreground">No companies match.</td></tr>}
+            {view.length === 0 && (
+              <tr>
+                <td colSpan={6} className="py-12 px-5 text-center font-mono text-xs text-[color:var(--color-ink-faint)]">
+                  No newly public companies match the current filter query.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

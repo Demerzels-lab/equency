@@ -81,44 +81,45 @@ function StrategyVerdict({ strategy, recs }: { strategy: string; recs: Recommend
   ];
 
   return (
-    <section className="mb-3 overflow-hidden rounded-sm border border-border bg-card">
-      <div className="grid grid-cols-1 gap-px bg-border lg:grid-cols-[300px_1fr]">
+    <section className="mb-6 overflow-hidden border border-[color:var(--color-line)] bg-[color:var(--color-panel)]">
+      <div className="grid grid-cols-1 divide-y lg:divide-y-0 lg:divide-x divide-[color:var(--color-line)] lg:grid-cols-[300px_1fr]">
         <div
-          className="flex flex-col justify-between bg-card px-5 py-4"
-          style={{ background: `linear-gradient(145deg, color-mix(in oklab, ${accent} 9%, var(--color-card)), var(--color-card) 60%)` }}
+          className="flex flex-col justify-between p-6 sm:p-8 bg-[color:var(--color-panel-2)]/60"
         >
-          <div className="flex items-center justify-between">
-            <span className="label" style={{ color: accent }}>Top pick</span>
-            <span className="mono inline-flex items-center gap-1.5 text-[9px]" style={{ color: "var(--color-pos)" }}>
-              <Dot color="var(--color-pos)" pulse /> RANKED
-            </span>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2.5">
-            <span className="mono text-3xl font-semibold leading-none" style={{ color: accent }}>{top.ticker}</span>
-            <span className="truncate text-sm text-muted-foreground">{top.name}</span>
-          </div>
-          <div className="mt-4">
+          <div>
             <div className="flex items-center justify-between">
-              <span className="label">Strategy fit</span>
-              <span className="mono text-xs">{topFit}%</span>
+              <span className="font-mono text-[10px] tracking-wider uppercase font-bold text-[color:var(--color-accent)]">TOP SELECTION</span>
+              <span className="font-mono inline-flex items-center gap-1.5 text-[9px] uppercase px-2 py-0.5 rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-bg)] text-[color:var(--color-pos)] font-semibold">
+                <Dot color="var(--color-pos)" pulse /> RANKED
+              </span>
+            </div>
+            <div className="mt-4 flex items-baseline gap-2.5">
+              <span className="font-mono text-3xl font-extrabold leading-none text-[color:var(--color-accent)]">{top.ticker}</span>
+              <span className="truncate text-sm font-semibold text-[color:var(--color-ink-dim)]">{top.name}</span>
+            </div>
+          </div>
+          <div className="mt-6 pt-4 border-t border-[color:var(--color-line)]">
+            <div className="flex items-center justify-between font-mono text-xs">
+              <span className="text-[10px] uppercase text-[color:var(--color-ink-faint)]">Model Fit Score</span>
+              <span className="font-bold text-[color:var(--color-ink)] tabular-nums">{topFit}%</span>
             </div>
             <Progress
               value={topFit}
-              className="mt-1.5 h-1.5 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--color-accent)]"
+              className="mt-2 h-1.5 bg-[color:var(--color-panel-2)] [&_[data-slot=progress-indicator]]:bg-[var(--color-accent)]"
             />
           </div>
         </div>
-        <div className="flex flex-col justify-between gap-4 bg-card px-5 py-4">
-          <p className="max-w-[72ch] text-pretty text-sm leading-relaxed text-foreground/90">
-            {strategy} ranked {recs.length} newly-public {recs.length === 1 ? "company" : "companies"} by deterministic fit.{" "}
-            {top.ticker} leads at {topFit}% fit{strong > 0 ? `, with ${strong} ${strong === 1 ? "name" : "names"} clearing a strong-match threshold.` : "."}
+        <div className="flex flex-col justify-between gap-6 p-6 sm:p-8 bg-[color:var(--color-panel)]">
+          <p className="max-w-[72ch] text-sm leading-relaxed text-[color:var(--color-ink-dim)]">
+            <span className="font-semibold text-[color:var(--color-ink)]">{strategy}</span> ranked {recs.length} newly public {recs.length === 1 ? "company" : "companies"} by deterministic fit.{" "}
+            <span className="font-semibold text-[color:var(--color-accent)]">{top.ticker}</span> leads at {topFit}% fit{strong > 0 ? `, with ${strong} ${strong === 1 ? "name" : "names"} clearing the high-conviction threshold.` : "."}
           </p>
-          <div className="grid gap-x-5 gap-y-3 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 pt-4 border-t border-[color:var(--color-line)]">
             {stats.map((s) => (
               <div key={s.label}>
-                <div className="label truncate normal-case tracking-normal text-muted-foreground">{s.label}</div>
-                <div className="mono mt-1.5 text-xl font-semibold leading-none">{s.value}</div>
-                <div className="mt-1.5 text-[10px] leading-snug text-muted-foreground">{s.sub}</div>
+                <div className="font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">{s.label}</div>
+                <div className="font-mono mt-1 text-lg font-bold tabular-nums text-[color:var(--color-ink)]">{s.value}</div>
+                <div className="font-mono mt-0.5 text-[10px] text-[color:var(--color-ink-dim)]">{s.sub}</div>
               </div>
             ))}
           </div>

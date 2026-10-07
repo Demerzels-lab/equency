@@ -35,21 +35,23 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
       <p className="editorial-lead mt-2 max-w-[62ch]">Deterministic signals only · open a Core for its full thesis. {cols.length}/4 selected.</p>
 
       {cols.length === 0 ? (
-        <div className="mt-8 rounded-sm border border-border p-8 text-center text-sm text-muted-foreground">
-          No companies selected. Add some from <Link href="/explore" className="text-[color:var(--color-accent)]">Explore</Link> (the “vs” button).
+        <div className="mt-8 border border-[color:var(--color-line)] bg-[color:var(--color-panel)] p-12 text-center text-sm text-[color:var(--color-ink-dim)]">
+          No companies selected for comparison. Add companies from <Link href="/explore" className="font-semibold text-[color:var(--color-accent)] hover:underline">Explore Universe</Link> using the “VS” toggle.
         </div>
       ) : (
-        <div className="mt-6 overflow-x-auto">
+        <div className="mt-8 overflow-x-auto border border-[color:var(--color-line)] bg-[color:var(--color-panel)] p-6">
           <div className="grid gap-3" style={{ gridTemplateColumns: `160px repeat(${cols.length}, minmax(190px, 1fr))` }}>
             {/* header row */}
-            <div />
+            <div className="flex items-end pb-4 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">
+              DIMENSION MATRIX
+            </div>
             {cols.map((c) => (
-              <div key={c.ticker} className="rounded-sm border border-border bg-card/50 p-4 text-center">
-                <div className="flex justify-center"><CompanyEmblem ticker={c.ticker} size={40} /></div>
-                <Link href={`/company/${c.ticker}`} className="mono mt-2 block text-sm" style={{ color: "var(--color-accent)" }}>{c.ticker}</Link>
-                <div className="mt-0.5 truncate text-xs text-muted-foreground" title={c.ci.identity.name}>{c.ci.identity.name}</div>
-                <div className="mt-3 flex justify-center"><ScoreGauge value={c.score.overall} size={104} color="var(--color-accent)" /></div>
-                <div className="mono mt-2 text-xs text-muted-foreground">{fmtUsd(c.ci.market.value.price)} · {c.ci.ipo.daysPublic ?? "?"}d</div>
+              <div key={c.ticker} className="border border-[color:var(--color-line)] bg-[color:var(--color-panel-2)]/40 p-5 text-center">
+                <div className="flex justify-center"><CompanyEmblem ticker={c.ticker} size={42} /></div>
+                <Link href={`/company/${c.ticker}`} className="font-mono mt-2.5 block text-sm font-bold text-[color:var(--color-accent)] hover:underline">{c.ticker}</Link>
+                <div className="mt-0.5 truncate text-xs text-[color:var(--color-ink-dim)]" title={c.ci.identity.name}>{c.ci.identity.name}</div>
+                <div className="mt-3 flex justify-center"><ScoreGauge value={c.score.overall} size={90} color="var(--color-accent)" /></div>
+                <div className="font-mono mt-2 text-xs text-[color:var(--color-ink-dim)] tabular-nums">{fmtUsd(c.ci.market.value.price)} · {c.ci.ipo.daysPublic ?? "?"}d</div>
               </div>
             ))}
 
@@ -67,12 +69,12 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
 function DimRow({ label, cols, risk }: { label: string; cols: (number | null)[]; risk?: boolean }) {
   return (
     <>
-      <div className="flex items-center border-t border-border py-3 text-xs text-muted-foreground">{label}</div>
+      <div className="flex items-center border-t border-[color:var(--color-line)] py-3 font-mono text-xs text-[color:var(--color-ink-dim)]">{label}</div>
       {cols.map((v, i) => (
-        <div key={i} className="flex flex-col justify-center border-t border-border px-3 py-3">
+        <div key={i} className="flex flex-col justify-center border-t border-[color:var(--color-line)] px-3 py-3">
           <div className="flex items-center justify-between">
-            <Progress value={v ?? 0} className="h-1.5 w-full flex-1 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--c)]" style={{ ["--c" as string]: risk ? "var(--color-danger)" : "var(--color-pos)", opacity: v == null ? 0.3 : 1 }} />
-            <span className="mono ml-2 w-8 text-right text-xs" style={{ color: v == null ? "var(--color-ink-faint)" : "var(--color-ink)" }}>{v ?? "n/a"}</span>
+            <Progress value={v ?? 0} className="h-1.5 w-full flex-1 bg-[color:var(--color-panel-2)] [&_[data-slot=progress-indicator]]:bg-[var(--c)]" style={{ ["--c" as string]: risk ? "var(--color-danger)" : "var(--color-pos)", opacity: v == null ? 0.3 : 1 }} />
+            <span className="font-mono ml-2.5 w-8 text-right text-xs tabular-nums font-semibold" style={{ color: v == null ? "var(--color-ink-faint)" : "var(--color-ink)" }}>{v ?? "n/a"}</span>
           </div>
         </div>
       ))}
