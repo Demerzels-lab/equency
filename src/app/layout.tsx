@@ -7,7 +7,6 @@ import { GrainOverlay } from "@/components/GrainOverlay";
 import { CommandPalette } from "@/components/CommandPalette";
 import { TopProgress } from "@/components/TopProgress";
 import { CompareBar } from "@/components/CompareBar";
-import { GlobalAmbient } from "@/components/immersive/GlobalAmbient";
 import { Intro } from "@/components/immersive/Intro";
 import { WalletProvider } from "@/components/wallet/WalletProvider";
 import { cn } from "@/lib/utils";
@@ -35,7 +34,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={cn("dark", archivo.variable, mono.variable)}>
       <body className="font-sans">
-        <GlobalAmbient />
         <WalletProvider>
           <TopBar />
           {children}

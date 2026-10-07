@@ -6,29 +6,17 @@ import { cn } from "@/lib/cn";
  * Editorial-grotesk (Zupiter) × terminal-mono (AGENCY) hybrid.
  * ------------------------------------------------------------------ */
 
-/** Mono micro-kicker: ■ A DIFFERENT WAY THROUGH */
-export function Kicker({ children, className }: { children: React.ReactNode; className?: string }) {
-  return (
-    <span className={cn("label inline-flex items-center gap-2", className)}>
-      <span style={{ width: 6, height: 6, background: "var(--color-accent)", display: "inline-block" }} />
-      {children}
-    </span>
-  );
-}
-
-/** Editorial display heading. `outline` renders the AGENCY stroked variant. */
+/** Editorial display heading — one restrained treatment, single color. */
 export function Display({
   children,
-  outline,
   className,
   as: Tag = "h1",
 }: {
   children: React.ReactNode;
-  outline?: boolean;
   className?: string;
   as?: "h1" | "h2" | "h3" | "div";
 }) {
-  return <Tag className={cn("display", outline && "outline-text", className)}>{children}</Tag>;
+  return <Tag className={cn("display", className)}>{children}</Tag>;
 }
 
 type ButtonProps = {
@@ -97,12 +85,3 @@ export function Stat({ label, value, sub }: { label: string; value: React.ReactN
   );
 }
 
-/** Numbered section marker · ONLY for genuine sequences (brief product/agent loop). */
-export function SectionMark({ n, title, className }: { n: string; title: string; className?: string }) {
-  return (
-    <div className={cn("flex items-baseline gap-3", className)}>
-      <span className="mono text-xs" style={{ color: "var(--color-accent)" }}>{n}</span>
-      <span className="label" style={{ color: "var(--color-ink-dim)" }}>{title}</span>
-    </div>
-  );
-}

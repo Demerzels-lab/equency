@@ -1,13 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { hasWebGL, prefersReducedMotion } from "./useEnvironment";
-
-const IntroCanvas = dynamic(() => import("./IntroCanvas").then((m) => m.IntroCanvas), { ssr: false });
+import { prefersReducedMotion } from "./useEnvironment";
 
 const SEEN_KEY = "equency.intro.v1";
-type Tier = "full" | "lite" | "static";
 type Phase = "init" | "playing" | "closing" | "done";
 
 /** First-visit cinematic splash. Plays ONCE (localStorage), full-screen above everything.
@@ -15,7 +11,6 @@ type Phase = "init" | "playing" | "closing" | "done";
  *  Always dismissable (Skip / Esc) and self-dismissing (safety timeout) — never traps the user. */
 export function Intro() {
   const [phase, setPhase] = useState<Phase>("init");
-  const [tier, setTier] = useState<Tier>("static");
   const timers = useRef<number[]>([]);
 
   const close = useCallback(() => {
@@ -44,16 +39,10 @@ export function Intro() {
       return;
     }
 
-    const webgl = hasWebGL();
-    const reduced = prefersReducedMotion();
-    const t: Tier = !webgl || reduced
-      ? "static"
-      : (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 820) ? "lite" : "full";
-    setTier(t);
     setPhase("playing");
     document.documentElement.style.overflow = "hidden";
 
-    const visibleMs = t === "static" ? 1500 : 3200;
+    const visibleMs = prefersReducedMotion() ? 900 : 1600;
     timers.current.push(window.setTimeout(close, visibleMs));
     timers.current.push(window.setTimeout(close, 7000)); // hard safety net
 
@@ -67,7 +56,6 @@ export function Intro() {
   }, [close]);
 
   if (phase === "init" || phase === "done") return null;
-  const show3d = tier !== "static";
 
   return (
     <div
@@ -83,9 +71,8 @@ export function Intro() {
         style={{ background: "radial-gradient(48% 40% at 50% 44%, color-mix(in oklab, var(--color-accent) 12%, transparent), transparent 70%)" }}
       />
 
-      {/* 3D crystallization (or static mark) */}
       <div className="absolute inset-0" aria-hidden>
-        {show3d ? <IntroCanvas full={tier === "full"} /> : <StaticMark />}
+        <StaticMark />
       </div>
 
       {/* Foreground wordmark + tagline, anchored in the lower third */}

@@ -1,4 +1,4 @@
-import { Kicker, Display, AsciiIcon, SectionMark } from "@/components/brand";
+import { Display, AsciiIcon } from "@/components/brand";
 import { CopyField } from "@/components/CopyField";
 import { VaultApp } from "@/components/VaultApp";
 import { readVaultLiveness } from "@/lib/chain";
@@ -93,8 +93,7 @@ export default async function VaultPage() {
       <section className="relative overflow-hidden border-b border-border">
         <div className="pointer-events-none absolute inset-0 grid-bg opacity-40" />
         <div className="relative mx-auto max-w-[1200px] px-6 py-16">
-          <Kicker>Phase 3 · capital layer</Kicker>
-          <Display className="mt-6 text-[clamp(2.5rem,6vw,5rem)]">Strategy<br />Vault.</Display>
+          <Display className="text-[clamp(2.5rem,6vw,5rem)]">Strategy<br />Vault.</Display>
           <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground">
             Where intelligence becomes capital. A non-custodial vault on Robinhood Chain that holds USDG,
             buys verified assets within limits enforced on-chain, and never lets the AI sign a transaction.
@@ -110,7 +109,6 @@ export default async function VaultPage() {
 
       {/* flow */}
       <section className="mx-auto max-w-[1200px] px-6 py-16">
-        <SectionMark n="01" title="The vault flow" className="mb-5" />
         <Display as="h2" className="max-w-2xl text-[clamp(1.6rem,3.5vw,2.8rem)]">Intelligence → Strategy → Capital.</Display>
         <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-sm sm:grid-cols-2 lg:grid-cols-3" style={{ background: "var(--color-line)" }}>
           {FLOW.map((s) => (
@@ -128,8 +126,7 @@ export default async function VaultPage() {
       {/* architecture */}
       <section className="border-y border-border bg-card">
         <div className="mx-auto max-w-[1200px] px-6 py-16">
-          <SectionMark n="02" title="Contracts" className="mb-5" />
-          <Display as="h2" outline className="text-[clamp(1.8rem,4vw,3.2rem)]">SAFETY BY STRUCTURE</Display>
+          <Display as="h2" className="text-[clamp(1.8rem,4vw,3.2rem)]">Safety by structure.</Display>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Intelligence proposes, the deterministic policy validates, execution is bounded. The AI never
             holds a key. Every limit lives in the contract, not the UI.
@@ -148,7 +145,7 @@ export default async function VaultPage() {
 
       {/* verified chain facts */}
       <section className="mx-auto max-w-[1200px] px-6 py-16">
-        <SectionMark n="03" title="Verified on Robinhood Chain" className="mb-5" />
+        <Display as="h2" className="mb-8 text-[clamp(1.6rem,3.5vw,2.8rem)]">Verified on Robinhood Chain.</Display>
         <div className="grid gap-3 lg:grid-cols-2">
           <Card className="gap-0 rounded-sm border-border bg-card p-5 shadow-none">
             <div className="label mb-3">Settlement asset</div>

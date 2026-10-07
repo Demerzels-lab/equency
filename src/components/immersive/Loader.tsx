@@ -1,18 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect } from "react";
-import { useEnvironment } from "./useEnvironment";
 
-// The WebGL loader canvas is its own client-only chunk; never SSR'd, never in the main bundle.
-const LoaderCanvas = dynamic(() => import("./LoaderCanvas").then((m) => m.LoaderCanvas), { ssr: false });
-
-/** Full-bleed loading screen with the EQUENCY gem in 3D (bloom on the full tier), a CSS/SVG
- *  fallback for reduced-motion / no-WebGL, the wordmark and an indeterminate progress bar. */
+/** Full-bleed loading screen: a crisp SVG gem + wordmark + indeterminate bar. No WebGL. */
 export function Loader({ label = "Assembling intelligence" }: { label?: string }) {
-  const { tier, mounted } = useEnvironment();
-  const show3d = mounted && tier !== "static";
-
   // Flag the document while a route is loading so chrome (e.g. the footer) can hide itself.
   useEffect(() => {
     document.documentElement.classList.add("route-loading");
@@ -29,7 +20,7 @@ export function Loader({ label = "Assembling intelligence" }: { label?: string }
       />
       <div role="status" aria-label={label} className="relative flex flex-col items-center gap-7">
         <div className="relative h-[clamp(200px,34vmin,300px)] w-[clamp(200px,34vmin,300px)]">
-          {show3d ? <LoaderCanvas full={tier === "full"} /> : <GemFallback />}
+          <GemFallback />
         </div>
         <div className="flex flex-col items-center gap-3.5">
           <div className="flex items-center gap-2.5">
