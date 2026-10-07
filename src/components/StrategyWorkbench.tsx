@@ -9,11 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Sparkline } from "@/components/Sparkline";
 import type { Recommendation, StrategyConfig, UserConstraints } from "@/lib/strategy/types";
 
 const RISK_CAP: Record<UserConstraints["riskTolerance"], number> = { low: 60, medium: 78, high: 101 };
 
-export function StrategyWorkbench({ strategy, recs }: { strategy: StrategyConfig; recs: Recommendation[] }) {
+export function StrategyWorkbench({ strategy, recs, sparks = {} }: { strategy: StrategyConfig; recs: Recommendation[]; sparks?: Record<string, number[] | null> }) {
   const key = `equency.constraints.${strategy.key}`;
   const defaults: UserConstraints = useMemo(
     () => ({
@@ -116,6 +117,7 @@ export function StrategyWorkbench({ strategy, recs }: { strategy: StrategyConfig
                 <TableHead className="label h-8 w-8">#</TableHead>
                 <TableHead className="label h-8">Company</TableHead>
                 <TableHead className="label h-8 w-14 text-right">Score</TableHead>
+                <TableHead className="label h-8 w-[76px]">Trend</TableHead>
                 <TableHead className="label h-8 w-[150px]">Strategy fit</TableHead>
                 <TableHead className="label h-8 w-[120px] text-right">Allocation</TableHead>
               </TableRow>
@@ -139,6 +141,7 @@ export function StrategyWorkbench({ strategy, recs }: { strategy: StrategyConfig
                       </Link>
                     </TableCell>
                     <TableCell className="mono text-right text-sm">{r.score ?? "·"}</TableCell>
+                    <TableCell><Sparkline data={sparks[r.ticker]} w={60} h={18} /></TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Progress value={Math.round(r.fit * 100)} className="h-1.5 w-full flex-1 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--color-accent)]" />
@@ -164,7 +167,7 @@ export function StrategyWorkbench({ strategy, recs }: { strategy: StrategyConfig
               })}
               <TableRow className="border-0 bg-secondary/60 hover:bg-secondary/60">
                 <TableCell />
-                <TableCell className="label" colSpan={3}>Cash reserve · USDG (Phase 3)</TableCell>
+                <TableCell className="label" colSpan={4}>Cash reserve · USDG (Phase 3)</TableCell>
                 <TableCell className="text-right">
                   <div className="mono text-sm text-muted-foreground">{pct(alloc.cashPct)}</div>
                   <div className="label normal-case tracking-normal text-muted-foreground">{usd(alloc.cashPct)}</div>

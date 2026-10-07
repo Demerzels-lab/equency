@@ -5,6 +5,7 @@ import { TopBar } from "@/components/TopBar";
 import { SiteFooter } from "@/components/SiteFooter";
 import { GrainOverlay } from "@/components/GrainOverlay";
 import { CommandPalette } from "@/components/CommandPalette";
+import { TopProgress } from "@/components/TopProgress";
 import { GlobalAmbient } from "@/components/immersive/GlobalAmbient";
 import { Intro } from "@/components/immersive/Intro";
 import { WalletProvider } from "@/components/wallet/WalletProvider";
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <SiteFooter />
         </WalletProvider>
+        <TopProgress />
         <GrainOverlay />
         <CommandPalette />
         <Intro />

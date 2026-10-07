@@ -181,6 +181,12 @@
 .eq-dots::after { content: ""; animation: eqdots 1.4s steps(4, end) infinite; }
 @keyframes eqdots { 0% { content: ""; } 25% { content: "·"; } 50% { content: "··"; } 75% { content: "···"; } 100% { content: ""; } }
 
+/* App-like route transition (content enters; nav/footer stay put). Opacity-only on purpose:
+   any transform/filter here would make the hero's fixed WebGL canvas size to the (tall) page
+   instead of the viewport, blowing the globe up. A clean fade keeps the globe correct. */
+.route-enter { animation: routeenter 300ms var(--ease-out-quint) both; }
+@keyframes routeenter { from { opacity: 0; } to { opacity: 1; } }
+
 /* Blinking console cursor */
 .eq-cursor { animation: eqblink 1.1s step-end infinite; }
 @keyframes eqblink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
@@ -208,6 +214,7 @@
   .eq-globe-rings { animation: none; }
   .eq-float { animation: none; }
   .eq-cursor { animation: none; }
+  .route-enter { animation: none; }
 }
 
 ::selection { background: color-mix(in oklab, var(--color-accent) 30%, transparent); }

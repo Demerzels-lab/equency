@@ -63,6 +63,7 @@ export function CommandPalette() {
     const target = e ?? results[active];
     if (!target) return;
     setOpen(false);
+    if (target.href !== window.location.pathname) window.dispatchEvent(new CustomEvent("equency:nav-start"));
     router.push(target.href);
   }, [results, active, router]);
 

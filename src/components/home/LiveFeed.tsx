@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SectionMark, Display } from "@/components/brand";
 import { Dot } from "@/components/primitives";
+import { Sparkline } from "@/components/Sparkline";
 import { ago, fmtDate } from "@/lib/util/dates";
 import { prefersReducedMotion } from "@/components/immersive/useEnvironment";
 import type { IpoHit } from "@/lib/providers/sec";
@@ -19,7 +20,7 @@ const LOOP = [
   { k: "MONITOR", d: "re-run on the next filing" },
 ];
 
-export function LiveFeed({ feed }: { feed: IpoHit[] }) {
+export function LiveFeed({ feed, sparks = {} }: { feed: IpoHit[]; sparks?: Record<string, number[] | null> }) {
   const [active, setActive] = useState(0);
   useEffect(() => {
     if (prefersReducedMotion()) return;
@@ -66,8 +67,9 @@ export function LiveFeed({ feed }: { feed: IpoHit[] }) {
               <Link key={i.cik} href={`/company/${i.ticker}`} className="rowlink flex items-center gap-3 px-4 py-3">
                 <span className="mono min-w-13.5 text-xs text-muted-foreground">{ago(`${i.filedAt}T13:30:00Z`)}</span>
                 <span className="mono min-w-14 text-sm" style={{ color: "var(--color-accent)" }}>{i.ticker}</span>
-                <span className="flex-1 truncate text-sm">Intelligence Core initialized · {i.name}</span>
-                <span className="label hidden sm:inline">{fmtDate(i.filedAt)}</span>
+                <span className="min-w-0 flex-1 truncate text-sm">Intelligence Core initialized · {i.name}</span>
+                <Sparkline data={sparks[i.ticker ?? ""]} />
+                <span className="label hidden w-20 text-right sm:inline">{fmtDate(i.filedAt)}</span>
               </Link>
             ))}
           </div>

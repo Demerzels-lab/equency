@@ -68,3 +68,15 @@ export async function getPriceSeries(
     return null;
   }
 }
+
+/** Compact close-price series for a mini sparkline. Real data or null — never invented. */
+export async function getSparkline(symbol: string, daysPublic?: number, n = 24): Promise<number[] | null> {
+  const s = await getPriceSeries(symbol, "SINCE IPO", daysPublic);
+  const closes = s?.points.map((p) => p.close).filter((c) => Number.isFinite(c)) ?? [];
+  if (closes.length < 2) return null;
+  if (closes.length <= n) return closes;
+  const out: number[] = [];
+  const step = (closes.length - 1) / (n - 1);
+  for (let i = 0; i < n; i++) out.push(closes[Math.round(i * step)]);
+  return out;
+}

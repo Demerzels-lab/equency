@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getStrategy } from "@/lib/strategy/strategies";
 import { rankUniverse } from "@/lib/strategy/rank";
+import { getSparkline } from "@/lib/providers/yahoo";
 import { StrategyWorkbench } from "@/components/StrategyWorkbench";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -16,6 +17,9 @@ export default async function StrategyDetail({ params }: { params: Promise<{ key
   if (!strategy) notFound();
 
   const recs = await rankUniverse(strategy, 10).catch(() => []);
+  const sparks: Record<string, number[] | null> = Object.fromEntries(
+    await Promise.all(recs.map(async (r) => [r.ticker, await getSparkline(r.ticker, r.daysPublic ?? undefined)] as const)),
+  );
 
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-6">
@@ -41,7 +45,7 @@ export default async function StrategyDetail({ params }: { params: Promise<{ key
         No capital moves here · allocations are suggestions. Vault execution lives in the Vault tab.
       </p>
 
-      <StrategyWorkbench strategy={strategy} recs={recs} />
+      <StrategyWorkbench strategy={strategy} recs={recs} sparks={sparks} />
     </main>
   );
 }
