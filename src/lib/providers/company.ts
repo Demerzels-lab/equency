@@ -68,7 +68,6 @@ export async function buildCompanyIntelligence(
       filings: "LIVE",
       ownership: "LIVE", // 13D/13G/Form 4 come from SEC filings
       market: marketMode,
-      options: "SIMULATED", // not wired in Phase-1 slice (needs Alpaca/Polygon)
       reasoning: has.gemini() ? "LIVE" : "SIMULATED",
     },
     assembledAt: new Date().toISOString(),

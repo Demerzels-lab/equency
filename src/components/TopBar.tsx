@@ -53,6 +53,15 @@ export function TopBar() {
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("equency:open-cmdk"))}
+            aria-label="Search (Command-K)"
+            className="mono hidden items-center gap-1.5 rounded-sm border border-border px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:border-[color:var(--color-line-strong)] hover:text-foreground sm:inline-flex"
+          >
+            <span>⌕</span>
+            <kbd className="rounded-[3px] border border-border px-1 text-[10px]">⌘K</kbd>
+          </button>
           <Link
             href="/watchlist"
             aria-label="Watchlist"

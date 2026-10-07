@@ -63,10 +63,6 @@ export function ResearchConsole({ items }: { items: FeedItem[] }) {
         ))}
       </div>
 
-      <div className="mt-3 rounded-sm border border-dashed border-border p-4 text-center">
-        <div className="label">Browser research · view only</div>
-        <div className="mt-1 text-[11px] text-muted-foreground">Official-site capture lands with the Playwright adapter.</div>
-      </div>
     </div>
   );
 }

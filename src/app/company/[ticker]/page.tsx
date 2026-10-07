@@ -7,6 +7,8 @@ import { getPriceSeries } from "@/lib/providers/yahoo";
 import { computeScore, type Dimension } from "@/lib/intelligence/score";
 import { reason, type ThesisDirection } from "@/lib/intelligence/reasoning";
 import { DataModeBadge, Dot, Panel, tierColor } from "@/components/primitives";
+import { CompanyEmblem } from "@/components/CompanyEmblem";
+import { ScoreGauge } from "@/components/ScoreGauge";
 import { PriceChart } from "@/components/PriceChart";
 import { WatchButton } from "@/components/WatchButton";
 import { ResearchConsole, type FeedItem } from "@/components/ResearchConsole";
@@ -71,7 +73,9 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
       {/* HEADER */}
       <Panel className="mb-3" bodyClassName="px-4 py-3">
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="min-w-0">
+          <div className="flex min-w-0 items-start gap-4">
+            <CompanyEmblem ticker={symbol} accent={dirColor} />
+            <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-2xl font-semibold tracking-tight text-balance">{ci.identity.name}</h1>
               <span className="label">{ci.identity.exchange}: {ci.identity.ticker}</span>
@@ -82,6 +86,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
               <Sep /><span>{ci.ipo.ageBucket}</span>
               <Sep /><span>IPO {fmtDate(ci.ipo.ipoDate)}</span>
               <Sep /><span className="font-sans">{ci.identity.sicDescription}</span>
+            </div>
             </div>
           </div>
           <div className="flex items-end gap-6">
@@ -113,9 +118,8 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
                 <Dot color="var(--color-pos)" pulse /> ACTIVE
               </span>
             </div>
-            <div className="mt-3 flex items-baseline gap-2">
-              <span className="mono text-6xl font-semibold leading-none" style={{ color: dirColor }}>{score.overall ?? "·"}</span>
-              <span className="label">/ 100</span>
+            <div className="mt-2 flex justify-center">
+              <ScoreGauge value={score.overall} color={dirColor} />
             </div>
             <div className="mt-4">
               <div className="flex items-center justify-between">
@@ -183,10 +187,6 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
             <Row label="13D / 13G on file" value={String(n13)} />
             <Row label="Insider forms" value={String(nInsider)} />
             <div className="label mt-2 normal-case tracking-normal text-muted-foreground">SEC ownership filings · verified</div>
-          </Panel>
-
-          <Panel title="Options" badge={<DataModeBadge mode="SIMULATED" />}>
-            <div className="text-xs text-muted-foreground">Options feed pending (Alpaca / Polygon). Shown to mark coverage, never faked.</div>
           </Panel>
 
           <Panel title="Event Radar">

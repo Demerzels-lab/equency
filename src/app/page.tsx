@@ -1,6 +1,7 @@
 import { searchRecentIpos } from "@/lib/providers/sec";
 import { daysSince } from "@/lib/util/dates";
 import { ScrollStage } from "@/components/immersive/ScrollStage";
+import { ScrollSignal } from "@/components/home/ScrollSignal";
 import { Hero } from "@/components/home/Hero";
 import { Pillars } from "@/components/home/Pillars";
 import { Numbers } from "@/components/home/Numbers";
@@ -32,7 +33,8 @@ export default async function Home() {
 
   return (
     <ScrollStage>
-      <Hero />
+      <ScrollSignal />
+      <Hero universe={ranked.slice(0, 6).map((i) => ({ ticker: i.ticker ?? "", name: i.name }))} />
       <Pillars />
       <Numbers counts={{ week: counts.week, d90: counts.d90 }} />
       <LiveFeed feed={ranked.slice(0, 8)} />

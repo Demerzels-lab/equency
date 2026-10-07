@@ -8,6 +8,7 @@ import { computeStrategyFit } from "@/lib/strategy/fit";
 import { reasonRecommendation } from "@/lib/intelligence/reasoning";
 import { getStrategy } from "@/lib/strategy/strategies";
 import { DataModeBadge, Panel } from "@/components/primitives";
+import { ScoreGauge } from "@/components/ScoreGauge";
 import { WatchButton } from "@/components/WatchButton";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -101,9 +102,8 @@ export default async function RecommendationDetail({ params }: { params: Promise
                 <span className="pulse" style={{ display: "inline-block", width: 6, height: 6, borderRadius: 9999, background: "var(--color-pos)", color: "var(--color-pos)" }} /> RANKED
               </span>
             </div>
-            <div className="mt-3 flex items-baseline gap-2">
-              <span className="mono text-6xl font-semibold leading-none" style={{ color: accent }}>{fitPct}</span>
-              <span className="label">/ 100 fit</span>
+            <div className="mt-2 flex justify-center">
+              <ScoreGauge value={fitPct} color={accent} unit="/ 100 fit" />
             </div>
             <div className="mt-4">
               <div className="flex items-center justify-between">

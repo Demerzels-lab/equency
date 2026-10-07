@@ -1,8 +1,10 @@
 import { Kicker, Display, Button } from "@/components/brand";
+import { GlobeUniverse, type UniNode } from "@/components/home/GlobeUniverse";
 
-export function Hero() {
+export function Hero({ universe = [] }: { universe?: UniNode[] }) {
   return (
     <section data-section="hero" className="relative flex min-h-[min(94vh,940px)] items-center justify-center overflow-hidden">
+      <GlobeUniverse nodes={universe} />
       {/* foreground orbital ring, passing in front of the headline for depth */}
       <svg aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] z-20 h-[130vmin] w-[130vmin] -translate-x-1/2 -translate-y-1/2 opacity-[0.13]" viewBox="-200 -200 400 400" fill="none">
         <ellipse cx="0" cy="0" rx="192" ry="50" stroke="var(--color-accent)" strokeWidth="0.5" transform="rotate(-16)" />
