@@ -1,10 +1,11 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { resolveTickerToCik } from "@/lib/providers/sec";
 import { buildCompanyIntelligence } from "@/lib/providers/company";
 import { getFundamentals } from "@/lib/providers/xbrl";
 import { getCompanyNews } from "@/lib/providers/finnhub";
 import { getPriceSeries } from "@/lib/providers/yahoo";
-import { computeScore, type Dimension } from "@/lib/intelligence/score";
+import { computeScore, type Dimension, type ScoreResult } from "@/lib/intelligence/score";
 import { reason, type ThesisDirection } from "@/lib/intelligence/reasoning";
 import { DataModeBadge, Dot, Panel, tierColor } from "@/components/primitives";
 import { CompanyEmblem } from "@/components/CompanyEmblem";
@@ -48,15 +49,13 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
   const symbol = ci.identity.ticker || ticker.toUpperCase();
   const today = new Date().toISOString().slice(0, 10);
 
+  // Deterministic data — the page shell renders as soon as these resolve (no waiting on the LLM).
   const [fundamentals, news, priceSeries] = await Promise.all([
     getFundamentals(cik),
     getCompanyNews(symbol, ci.ipo.ipoDate?.slice(0, 10) ?? isoDaysAgo(30), today),
     getPriceSeries(symbol, "SINCE IPO", ci.ipo.daysPublic),
   ]);
-
   const score = computeScore(ci, fundamentals);
-  const { thesis, mode: reasoningMode, engine } = await reason(ci, score);
-  const dirColor = DIRECTION_COLOR[thesis.direction];
 
   const m = ci.market;
   const up = (m.value.changePct ?? 0) >= 0;
@@ -76,20 +75,20 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
       <Panel className="mb-3" bodyClassName="px-4 py-3">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex min-w-0 items-start gap-4">
-            <CompanyEmblem ticker={symbol} accent={dirColor} />
+            <CompanyEmblem ticker={symbol} accent="var(--color-accent)" />
             <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-2xl font-semibold tracking-tight text-balance">{ci.identity.name}</h1>
-              <span className="label">{ci.identity.exchange}: {ci.identity.ticker}</span>
-              <WatchButton ticker={symbol} name={ci.identity.name} />
-              <CompareToggle ticker={symbol} />
-            </div>
-            <div className="mono mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-muted-foreground">
-              <span style={{ color: "var(--color-pos)" }}>{ci.ipo.daysPublic ?? "?"} days public</span>
-              <Sep /><span>{ci.ipo.ageBucket}</span>
-              <Sep /><span>IPO {fmtDate(ci.ipo.ipoDate)}</span>
-              <Sep /><span className="font-sans">{ci.identity.sicDescription}</span>
-            </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl font-semibold tracking-tight text-balance">{ci.identity.name}</h1>
+                <span className="label">{ci.identity.exchange}: {ci.identity.ticker}</span>
+                <WatchButton ticker={symbol} name={ci.identity.name} />
+                <CompareToggle ticker={symbol} />
+              </div>
+              <div className="mono mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-muted-foreground">
+                <span style={{ color: "var(--color-pos)" }}>{ci.ipo.daysPublic ?? "?"} days public</span>
+                <Sep /><span>{ci.ipo.ageBucket}</span>
+                <Sep /><span>IPO {fmtDate(ci.ipo.ipoDate)}</span>
+                <Sep /><span className="font-sans">{ci.identity.sicDescription}</span>
+              </div>
             </div>
           </div>
           <div className="flex items-end gap-6">
@@ -108,36 +107,31 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         </div>
       </Panel>
 
-      {/* VERDICT · the quick read: score, direction, confidence, one-line thesis + dimension strip */}
+      {/* VERDICT · deterministic score renders now; the AI direction/confidence/summary stream in */}
       <section className="mb-3 overflow-hidden rounded-sm border border-border bg-card">
         <div className="grid grid-cols-1 gap-px bg-border lg:grid-cols-[300px_1fr]">
-          <div
-            className="flex flex-col justify-between bg-card px-5 py-4"
-            style={{ background: `linear-gradient(145deg, color-mix(in oklab, ${dirColor} 9%, var(--color-card)), var(--color-card) 60%)` }}
-          >
+          <div className="flex flex-col justify-between bg-card px-5 py-4" style={{ background: "linear-gradient(145deg, color-mix(in oklab, var(--color-accent) 7%, var(--color-card)), var(--color-card) 60%)" }}>
             <div className="flex items-center justify-between">
-              <span className="label" style={{ color: dirColor }}>{thesis.direction}</span>
+              <Suspense fallback={<span className="label text-muted-foreground">analyzing…</span>}>
+                <DirectionLabel ci={ci} score={score} />
+              </Suspense>
               <span className="mono inline-flex items-center gap-1.5 text-[9px]" style={{ color: "var(--color-pos)" }}>
                 <Dot color="var(--color-pos)" pulse /> ACTIVE
               </span>
             </div>
             <div className="mt-2 flex justify-center">
-              <ScoreGauge value={score.overall} color={dirColor} />
+              <ScoreGauge value={score.overall} color="var(--color-accent)" />
             </div>
             <div className="mt-4">
-              <div className="flex items-center justify-between">
-                <span className="label">Confidence</span>
-                <span className="mono text-xs">{Math.round(thesis.confidence * 100)}%</span>
-              </div>
-              <Progress
-                value={Math.round(thesis.confidence * 100)}
-                className="mt-1.5 h-1.5 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--dir)]"
-                style={{ ["--dir" as string]: dirColor }}
-              />
+              <Suspense fallback={<ConfidenceSkel />}>
+                <Confidence ci={ci} score={score} />
+              </Suspense>
             </div>
           </div>
           <div className="flex flex-col justify-between gap-4 bg-card px-5 py-4">
-            <p className="max-w-[72ch] text-pretty text-sm leading-relaxed text-foreground/90">{thesis.summary}</p>
+            <Suspense fallback={<SummarySkel />}>
+              <Summary ci={ci} score={score} />
+            </Suspense>
             <div className="grid gap-x-5 gap-y-3 sm:grid-cols-2 lg:grid-cols-5">
               {score.dimensions.map((d) => <DimChip key={d.key} d={d} />)}
             </div>
@@ -150,14 +144,10 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         <PriceChart symbol={symbol} daysPublic={ci.ipo.daysPublic} initial={priceSeries} />
       </Panel>
 
-      {/* INTELLIGENCE THESIS · the reasoning, up front */}
-      <Panel title="Intelligence Thesis" badge={<DataModeBadge mode={reasoningMode} />} className="mb-3" bodyClassName="p-4">
-        <div className="grid gap-x-8 gap-y-6 md:grid-cols-3">
-          <ThesisList title="Why" items={thesis.keyDrivers} sign="+" color="var(--color-pos)" />
-          <ThesisList title="Risks" items={thesis.risks} sign="−" color="var(--color-danger)" />
-          <ThesisList title="Catalysts" items={thesis.catalysts} sign="→" color="var(--color-warn)" />
-        </div>
-      </Panel>
+      {/* INTELLIGENCE THESIS · streams in */}
+      <Suspense fallback={<ThesisSkel />}>
+        <ThesisDetail ci={ci} score={score} />
+      </Suspense>
 
       {/* READING LAYOUT · research on the left, market data rail on the right */}
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_340px]">
@@ -169,8 +159,8 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         </div>
 
         <div className="flex min-w-0 flex-col gap-3">
-          <Panel title="Reasoning Engine" badge={<DataModeBadge mode={reasoningMode} />}>
-            <div className="label normal-case tracking-normal text-muted-foreground">{engine}</div>
+          <Panel title="Reasoning Engine">
+            <div className="label normal-case tracking-normal text-muted-foreground">EQUENCY Reasoning Engine</div>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               Dimensions are scored deterministically from filings and market data. The engine narrates the thesis · it never sets the score.
             </p>
@@ -204,7 +194,9 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
             </div>
           </Panel>
 
-          <ThesisTimeline ticker={symbol} direction={thesis.direction} score={score.overall} summary={thesis.summary} ipoDate={ci.ipo.ipoDate} />
+          <Suspense fallback={<Panel title="Thesis history"><div className="text-xs text-muted-foreground">Loading…</div></Panel>}>
+            <TimelineWrap ci={ci} score={score} ticker={symbol} ipoDate={ci.ipo.ipoDate} />
+          </Suspense>
         </div>
       </div>
 
@@ -238,6 +230,66 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         Assembled {ago(ci.assembledAt)} · every panel labelled live or simulated · no fabricated metrics
       </p>
     </main>
+  );
+}
+
+/* ── streamed (AI) pieces · all share ONE cached reason() call ── */
+type TP = { ci: CompanyIntelligence; score: ScoreResult };
+
+async function DirectionLabel({ ci, score }: TP) {
+  const { thesis } = await reason(ci, score);
+  return <span className="label" style={{ color: DIRECTION_COLOR[thesis.direction] }}>{thesis.direction}</span>;
+}
+
+async function Confidence({ ci, score }: TP) {
+  const { thesis } = await reason(ci, score);
+  const dirColor = DIRECTION_COLOR[thesis.direction];
+  const pct = Math.round(thesis.confidence * 100);
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <span className="label">Confidence</span>
+        <span className="mono text-xs">{pct}%</span>
+      </div>
+      <Progress value={pct} className="mt-1.5 h-1.5 bg-secondary [&_[data-slot=progress-indicator]]:bg-[var(--dir)]" style={{ ["--dir" as string]: dirColor }} />
+    </>
+  );
+}
+
+async function Summary({ ci, score }: TP) {
+  const { thesis } = await reason(ci, score);
+  return <p className="max-w-[72ch] text-pretty text-sm leading-relaxed text-foreground/90">{thesis.summary}</p>;
+}
+
+async function ThesisDetail({ ci, score }: TP) {
+  const { thesis, mode } = await reason(ci, score);
+  return (
+    <Panel title="Intelligence Thesis" badge={<DataModeBadge mode={mode} />} className="mb-3" bodyClassName="p-4">
+      <div className="grid gap-x-8 gap-y-6 md:grid-cols-3">
+        <ThesisList title="Why" items={thesis.keyDrivers} sign="+" color="var(--color-pos)" />
+        <ThesisList title="Risks" items={thesis.risks} sign="−" color="var(--color-danger)" />
+        <ThesisList title="Catalysts" items={thesis.catalysts} sign="→" color="var(--color-warn)" />
+      </div>
+    </Panel>
+  );
+}
+
+async function TimelineWrap({ ci, score, ticker, ipoDate }: TP & { ticker: string; ipoDate?: string }) {
+  const { thesis } = await reason(ci, score);
+  return <ThesisTimeline ticker={ticker} direction={thesis.direction} score={score.overall} summary={thesis.summary} ipoDate={ipoDate} />;
+}
+
+/* ── skeletons ── */
+function Bar({ w = "100%" }: { w?: string }) { return <div className="h-3 animate-pulse rounded bg-secondary" style={{ width: w }} />; }
+function ConfidenceSkel() { return <div className="flex flex-col gap-2"><Bar w="40%" /><div className="h-1.5 rounded bg-secondary" /></div>; }
+function SummarySkel() { return <div className="flex flex-col gap-2"><Bar /><Bar w="94%" /><Bar w="62%" /></div>; }
+function ThesisSkel() {
+  return (
+    <Panel title="Intelligence Thesis" className="mb-3" bodyClassName="p-4">
+      <div className="grid gap-8 md:grid-cols-3">
+        {[0, 1, 2].map((i) => <div key={i} className="flex flex-col gap-2"><Bar w="40%" /><Bar /><Bar w="80%" /></div>)}
+      </div>
+    </Panel>
   );
 }
 

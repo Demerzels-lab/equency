@@ -41,7 +41,7 @@ export function SpotlightCard({
         className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover/sc:opacity-100"
         style={{ boxShadow: "inset 0 0 0 1px color-mix(in oklab, var(--spot) 38%, transparent)" }}
       />
-      <div className="relative z-[1]">{children}</div>
+      <div className="relative z-1">{children}</div>
     </div>
   );
 }

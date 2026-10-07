@@ -187,6 +187,9 @@
 .route-enter { animation: routeenter 300ms var(--ease-out-quint) both; }
 @keyframes routeenter { from { opacity: 0; } to { opacity: 1; } }
 
+/* Hide the footer while a route is loading (the full-screen Loader owns the view) */
+html.route-loading footer { display: none; }
+
 /* Blinking console cursor */
 .eq-cursor { animation: eqblink 1.1s step-end infinite; }
 @keyframes eqblink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }

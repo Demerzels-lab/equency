@@ -3,6 +3,7 @@
 // thesis from evidence we pass in; it does not fetch, decide capital, or emit the
 // numeric score (that is deterministic, see score.ts). Output is strictly structured.
 import "server-only";
+import { cache } from "react";
 import { GEMINI_API_KEY, GEMINI_MODEL, has } from "@/lib/config";
 import type { CompanyIntelligence } from "@/lib/providers/types";
 import type { ScoreResult } from "@/lib/intelligence/score";
@@ -66,10 +67,12 @@ const RESPONSE_SCHEMA = {
   required: ["direction", "confidence", "summary", "keyDrivers", "risks", "catalysts"],
 } as const;
 
-export async function reason(
+// Cached per request → multiple Suspense boundaries that each await reason(ci, score) share a
+// single Gemini call instead of firing it several times.
+export const reason = cache(async (
   ci: CompanyIntelligence,
   score: ScoreResult,
-): Promise<ReasonResult> {
+): Promise<ReasonResult> => {
   const packet = evidencePacket(ci, score);
 
   if (!has.gemini()) {
@@ -80,7 +83,7 @@ export async function reason(
   if (parsed) return { thesis: parsed, mode: "LIVE", engine: "EQUENCY Reasoning Engine" };
   // Honest degradation: never fail the page, fall back clearly labelled.
   return { thesis: fallbackThesis(ci, score), mode: "SIMULATED", engine: "EQUENCY Reasoning Engine" };
-}
+});
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

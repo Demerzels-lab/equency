@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useEffect } from "react";
 import { useEnvironment } from "./useEnvironment";
 
 // The WebGL loader canvas is its own client-only chunk; never SSR'd, never in the main bundle.
@@ -11,6 +12,12 @@ const LoaderCanvas = dynamic(() => import("./LoaderCanvas").then((m) => m.Loader
 export function Loader({ label = "Assembling intelligence" }: { label?: string }) {
   const { tier, mounted } = useEnvironment();
   const show3d = mounted && tier !== "static";
+
+  // Flag the document while a route is loading so chrome (e.g. the footer) can hide itself.
+  useEffect(() => {
+    document.documentElement.classList.add("route-loading");
+    return () => document.documentElement.classList.remove("route-loading");
+  }, []);
 
   return (
     <div className="fixed inset-0 z-20 grid place-items-center overflow-hidden bg-[var(--color-bg)]">
