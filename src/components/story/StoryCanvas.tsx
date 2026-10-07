@@ -66,9 +66,9 @@ export function StoryCanvas({
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
-    const cyanLight = new THREE.PointLight(0x2ee6c5, 3.5, 14);
-    cyanLight.position.set(4, 3, 5);
-    scene.add(cyanLight);
+    const goldLight = new THREE.PointLight(0xe5b966, 3.5, 14);
+    goldLight.position.set(4, 3, 5);
+    scene.add(goldLight);
 
     const indigoLight = new THREE.PointLight(0x7c82f8, 3.0, 14);
     indigoLight.position.set(-4, -3, -2);
@@ -137,15 +137,15 @@ export function StoryCanvas({
       textCtx.roundRect(40, 40, 944, 280, 24);
       textCtx.fill();
 
-      // Border with Accent Cyan
+      // Border with Accent Gold
       textCtx.lineWidth = 4;
-      textCtx.strokeStyle = "rgba(46, 230, 197, 0.65)";
+      textCtx.strokeStyle = "rgba(229, 185, 102, 0.65)";
       textCtx.roundRect(40, 40, 944, 280, 24);
       textCtx.stroke();
 
       // Ticker Header
       textCtx.font = "bold 24px monospace";
-      textCtx.fillStyle = "#2ee6c5";
+      textCtx.fillStyle = "#e5b966";
       textCtx.fillText("INTELLIGENCE CORE // ACTIVE", 80, 95);
 
       // Large Main Ticker
@@ -176,8 +176,8 @@ export function StoryCanvas({
     // Faceted Diamond Octahedron
     const octGeom = new THREE.OctahedronGeometry(1.25, 0);
     const octMat = new THREE.MeshStandardMaterial({
-      color: 0x091412,
-      emissive: 0x0f4a41,
+      color: 0x16130e,
+      emissive: 0x382c14,
       roughness: 0.15,
       metalness: 0.85,
       flatShading: true,
@@ -190,7 +190,7 @@ export function StoryCanvas({
     // Wireframe Halo
     const wireGeom = new THREE.OctahedronGeometry(1.28, 0);
     const wireMat = new THREE.MeshBasicMaterial({
-      color: 0x2ee6c5,
+      color: 0xe5b966,
       wireframe: true,
       transparent: true,
       opacity: 0.55,
@@ -200,7 +200,7 @@ export function StoryCanvas({
 
     // Orbital Coordinates Rings
     const ring1Geom = new THREE.TorusGeometry(1.9, 0.015, 16, 96);
-    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x2ee6c5, transparent: true, opacity: 0.45 });
+    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0xe5b966, transparent: true, opacity: 0.45 });
     const ring1 = new THREE.Mesh(ring1Geom, ring1Mat);
     ring1.rotation.x = Math.PI * 0.35;
     ch0Group.add(ring1);
@@ -231,7 +231,7 @@ export function StoryCanvas({
     // Inner Glowing Core
     const innerSphere = new THREE.Mesh(
       new THREE.IcosahedronGeometry(0.75, 1),
-      new THREE.MeshBasicMaterial({ color: 0x2ee6c5, wireframe: true, transparent: true, opacity: 0.8 })
+      new THREE.MeshBasicMaterial({ color: 0xe5b966, wireframe: true, transparent: true, opacity: 0.8 })
     );
     ch1Group.add(innerSphere);
 
@@ -252,7 +252,7 @@ export function StoryCanvas({
     streamGeom.setAttribute("position", new THREE.BufferAttribute(streamPos, 3));
     const streamPoints = new THREE.Points(
       streamGeom,
-      new THREE.PointsMaterial({ color: 0x2ee6c5, size: 0.045, transparent: true, opacity: 0.7 })
+      new THREE.PointsMaterial({ color: 0xe5b966, size: 0.045, transparent: true, opacity: 0.7 })
     );
     ch1Group.add(streamPoints);
 
@@ -261,7 +261,7 @@ export function StoryCanvas({
     root.add(ch2Group);
 
     const stratSpheres: THREE.Mesh[] = [];
-    const stratColors = [0x2ee6c5, 0x7c82f8, 0x4ade80];
+    const stratColors = [0xe5b966, 0x7c82f8, 0x4ade80];
     for (let i = 0; i < 3; i++) {
       const angle = (i / 3) * Math.PI * 2;
       const sMesh = new THREE.Mesh(
@@ -287,7 +287,7 @@ export function StoryCanvas({
     ]);
     const stratLines = new THREE.Line(
       lineGeom,
-      new THREE.LineBasicMaterial({ color: 0x2ee6c5, transparent: true, opacity: 0.4 })
+      new THREE.LineBasicMaterial({ color: 0xe5b966, transparent: true, opacity: 0.4 })
     );
     ch2Group.add(stratLines);
 
@@ -312,7 +312,7 @@ export function StoryCanvas({
     for (let i = 0; i < 4; i++) {
       const vRing = new THREE.Mesh(
         new THREE.TorusGeometry(1.32, 0.02, 16, 64),
-        new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0x2ee6c5 : 0x7c82f8, transparent: true, opacity: 0.85 })
+        new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0xe5b966 : 0x7c82f8, transparent: true, opacity: 0.85 })
       );
       vRing.rotation.x = Math.PI / 2;
       vRing.position.y = (i - 1.5) * 0.5;
@@ -328,8 +328,8 @@ export function StoryCanvas({
     const shieldMesh = new THREE.Mesh(
       shieldGeom,
       new THREE.MeshStandardMaterial({
-        color: 0x15221b,
-        emissive: 0x0f4a41,
+        color: 0x1a1610,
+        emissive: 0x382c14,
         roughness: 0.1,
         metalness: 0.9,
         flatShading: true,
@@ -341,7 +341,7 @@ export function StoryCanvas({
 
     const shieldWire = new THREE.Mesh(
       new THREE.TetrahedronGeometry(1.54, 0),
-      new THREE.MeshBasicMaterial({ color: 0x2ee6c5, wireframe: true, transparent: true, opacity: 0.75 })
+      new THREE.MeshBasicMaterial({ color: 0xe5b966, wireframe: true, transparent: true, opacity: 0.75 })
     );
     ch4Group.add(shieldWire);
 
@@ -353,7 +353,7 @@ export function StoryCanvas({
     const boxGeom = new THREE.BoxGeometry(0.24, 1.4, 0.24);
     const boxMat = new THREE.MeshStandardMaterial({
       color: 0x121418,
-      emissive: 0x0a221c,
+      emissive: 0x261d0d,
       roughness: 0.4,
       metalness: 0.6,
       transparent: true,

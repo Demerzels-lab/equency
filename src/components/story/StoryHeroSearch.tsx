@@ -254,18 +254,39 @@ export function StoryHeroSearch({
             </div>
           </div>
 
-          <div className="mt-4 pt-3.5 border-t border-[color:var(--color-line)] flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="scale-75 origin-left">
-                <ScoreGauge
-                  value={core.overall}
-                  size={56}
-                  color="var(--color-accent)"
-                />
+          <div className="mt-4 pt-3.5 border-t border-[color:var(--color-line)] flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              {/* Mini Precision Radial Ring */}
+              <div className="relative w-9 h-9 flex-shrink-0 grid place-items-center">
+                <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 36 36">
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="var(--color-line)"
+                    strokeWidth="3"
+                  />
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="var(--color-accent)"
+                    strokeWidth="3"
+                    strokeDasharray={`${Math.max(0, Math.min(100, core.overall ?? 0))}, 100`}
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span className="font-mono text-[10px] font-bold text-[color:var(--color-accent)]">
+                  {core.overall ?? "—"}
+                </span>
               </div>
+
               <div>
-                <div className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-accent)]">
-                  Intelligence Score
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-accent)] font-semibold">
+                    Intelligence Score
+                  </span>
+                  <span className="font-mono text-xs font-semibold text-[color:var(--color-ink)]">
+                    {core.overall != null ? `${core.overall}/100` : "—/100"}
+                  </span>
                 </div>
                 <div className="text-xs text-muted-foreground">
                   {core.daysPublic != null ? `${core.daysPublic}d Public` : "Newly Public"}
@@ -275,7 +296,7 @@ export function StoryHeroSearch({
 
             <Link
               href={`/company/${encodeURIComponent(core.ticker)}`}
-              className="btn btn-sm"
+              className="btn btn-sm shrink-0"
             >
               Open Full Thesis →
             </Link>

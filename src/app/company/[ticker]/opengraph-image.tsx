@@ -26,7 +26,7 @@ export default async function Image({ params }: { params: Promise<{ ticker: stri
     (
       <div style={flex({ width: "100%", height: "100%", flexDirection: "column", justifyContent: "space-between", background: "#050506", color: "#f2f4f7", padding: 64, fontFamily: "sans-serif" })}>
         <div style={flex({ alignItems: "center" })}>
-          <div style={flex({ width: 22, height: 22, background: "#2ee6c5", transform: "rotate(45deg)", marginRight: 16 })} />
+          <div style={flex({ width: 22, height: 22, background: "#e5b966", transform: "rotate(45deg)", marginRight: 16 })} />
           <div style={flex({ fontSize: 28, letterSpacing: 6, fontWeight: 800 })}>EQUENCY</div>
           <div style={flex({ marginLeft: "auto", fontSize: 20, color: "#9aa4af" })}>Intelligence Core</div>
         </div>
@@ -36,7 +36,7 @@ export default async function Image({ params }: { params: Promise<{ ticker: stri
         </div>
         <div style={flex({ alignItems: "flex-end" })}>
           <div style={flex({ flexDirection: "column" })}>
-            <div style={flex({ fontSize: 128, fontWeight: 800, color: "#2ee6c5", lineHeight: 1 })}>{score == null ? "·" : String(score)}</div>
+            <div style={flex({ fontSize: 128, fontWeight: 800, color: "#e5b966", lineHeight: 1 })}>{score == null ? "·" : String(score)}</div>
             <div style={flex({ fontSize: 22, color: "#9aa4af", marginTop: 6 })}>Intelligence score / 100</div>
           </div>
           <div style={flex({ marginLeft: "auto", fontSize: 22, color: "#9aa4af" })}>{`${days != null ? `${days} days public · ` : ""}Built on Robinhood Chain`}</div>

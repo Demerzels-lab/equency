@@ -21,6 +21,9 @@ export function ScoreGauge({
   const pct = value == null ? 0 : Math.max(0, Math.min(1, value / max));
   const off = dash * (1 - pct);
 
+  const isSmall = size < 70;
+  const isMedium = size >= 70 && size < 110;
+
   return (
     <div className="relative grid place-items-center" style={{ width: size, height: size }}>
       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 120 120">
@@ -30,8 +33,21 @@ export function ScoreGauge({
         </g>
       </svg>
       <div className="text-center leading-none">
-        <div className="mono text-4xl font-semibold" style={{ color }}>{value ?? "·"}</div>
-        <div className="label mt-1">{unit}</div>
+        {isSmall ? (
+          <div className="font-mono text-xs font-bold" style={{ color }}>
+            {value ?? "·"}<span className="text-[10px] font-normal text-muted-foreground">{unit.replace(/\s+/g, "")}</span>
+          </div>
+        ) : isMedium ? (
+          <>
+            <div className="mono text-2xl font-semibold" style={{ color }}>{value ?? "·"}</div>
+            <div className="label text-[10px] mt-0.5">{unit}</div>
+          </>
+        ) : (
+          <>
+            <div className="mono text-4xl font-semibold" style={{ color }}>{value ?? "·"}</div>
+            <div className="label mt-1">{unit}</div>
+          </>
+        )}
       </div>
     </div>
   );
