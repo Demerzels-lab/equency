@@ -13,7 +13,12 @@ function isoDaysAgo(d: number): string {
 async function mapLimit<T, R>(items: T[], limit: number, fn: (t: T) => Promise<R>): Promise<R[]> {
   const out: R[] = new Array(items.length);
   let i = 0;
-  const run = async () => { while (i < items.length) { const idx = i++; out[idx] = await fn(items[idx]); } };
+  const run = async () => {
+    while (i < items.length) {
+      const idx = i++;
+      out[idx] = await fn(items[idx]);
+    }
+  };
   await Promise.all(Array.from({ length: Math.min(limit, items.length) }, run));
   return out;
 }
@@ -21,27 +26,49 @@ async function mapLimit<T, R>(items: T[], limit: number, fn: (t: T) => Promise<R
 export default async function ExplorePage() {
   const today = new Date().toISOString().slice(0, 10);
   let ipos: Awaited<ReturnType<typeof searchRecentIpos>> = [];
-  try { ipos = await searchRecentIpos(isoDaysAgo(180), today, "424B4"); } catch { ipos = []; }
+  try {
+    ipos = await searchRecentIpos(isoDaysAgo(180), today, "424B4");
+  } catch {
+    ipos = [];
+  }
   const universe = ipos.filter((i) => i.ticker && !/acquisition/i.test(i.name)).slice(0, 40);
 
   const rows: Row[] = await mapLimit(universe, 6, async (i) => {
     const d = daysSince(i.filedAt) ?? null;
     let sector = "—";
-    try { sector = (await getSubmissions(i.cik)).identity.sicDescription || "—"; } catch { /* keep — */ }
-    return { ticker: i.ticker ?? "", name: i.name, daysPublic: d, bucket: String(ageBucket(d ?? undefined) ?? "—"), sector, filedAt: i.filedAt };
+    try {
+      sector = (await getSubmissions(i.cik)).identity.sicDescription || "—";
+    } catch {
+      /* keep — */
+    }
+    return {
+      ticker: i.ticker ?? "",
+      name: i.name,
+      daysPublic: d,
+      bucket: String(ageBucket(d ?? undefined) ?? "—"),
+      sector,
+      filedAt: i.filedAt,
+    };
   });
 
   return (
-    <main className="mx-auto max-w-[1200px] px-4 py-6">
-      <div className="mb-2 label text-[color:var(--color-accent-2)]">Discovery</div>
-      <h1 className="text-3xl font-semibold tracking-tight">The newly-public universe</h1>
-      <p className="mt-2 max-w-[60ch] text-sm text-muted-foreground">
-        Every company detected from SEC 424B4 filings in the last 180 days. Filter, sort, watch, or
-        line them up to compare. Real SEC data · nothing fabricated.
+    <main className="mx-auto max-w-[1240px] px-6 pt-24 pb-20">
+      <div className="section-label">01 / DISCOVERY & UNIVERSE</div>
+      <h1 className="editorial-h2">
+        The newly-public <span className="editorial-accent">universe.</span>
+      </h1>
+      <p className="editorial-lead mt-3 max-w-[62ch]">
+        Every company detected from audited SEC 424B4 filings in the last 180 days. Filter, sort, watch,
+        or compare. Ground truth from EDGAR — zero fabricated state.
       </p>
 
-      <div className="mt-6"><UniverseHeatmap rows={rows} /></div>
-      <div className="mt-6"><ExploreGrid rows={rows} /></div>
+      <div className="mt-10 border-t border-[color:var(--color-line)] pt-8">
+        <UniverseHeatmap rows={rows} />
+      </div>
+
+      <div className="mt-10 border-t border-[color:var(--color-line)] pt-8">
+        <ExploreGrid rows={rows} />
+      </div>
     </main>
   );
 }

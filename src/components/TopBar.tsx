@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { getWatchlist } from "@/lib/watchlist";
 import { NavConnect } from "@/components/NavConnect";
 
-// TODO: replace with EQUENCY's X (Twitter) profile URL when available.
 const X_URL = "https://x.com";
 
 const NAV = [
@@ -20,98 +19,70 @@ const NAV = [
 export function TopBar() {
   const pathname = usePathname();
   const [count, setCount] = useState<number | null>(null);
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const sync = () => setCount(getWatchlist().length);
     sync();
     window.addEventListener("equency:watchlist", sync);
-    const onScroll = () => setScrolled(window.scrollY > 4);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("equency:watchlist", sync);
-      window.removeEventListener("scroll", onScroll);
     };
   }, []);
 
   return (
-    <header
-      className="sticky top-0 z-30 border-b backdrop-blur transition-colors"
-      style={{
-        borderColor: scrolled ? "var(--color-line-strong)" : "var(--color-line)",
-        background: `color-mix(in oklab, var(--color-bg) ${scrolled ? 88 : 72}%, transparent)`,
-      }}
-    >
-      <div className="flex items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4">
-        <div className="flex min-w-0 items-center gap-4 sm:gap-6">
-          <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="EQUENCY home">
-            <span style={{ width: 9, height: 9, background: "var(--color-accent)", display: "inline-block", transform: "rotate(45deg)" }} />
-            <span className="text-sm font-extrabold tracking-[0.18em] sm:tracking-[0.22em]">EQUENCY</span>
-          </Link>
-          <nav className="hidden items-center gap-1 sm:flex">
-            {NAV.map((n) => <NavItem key={n.href} href={n.href} label={n.label} active={n.match(pathname)} />)}
-          </nav>
-        </div>
+    <header className="story-nav" role="banner">
+      {/* Brandmark */}
+      <Link href="/" className="brandmark" aria-label="EQUENCY Home">
+        <span
+          className="inline-block h-3 w-3 rotate-45 bg-[color:var(--color-accent)] transition-transform duration-300 hover:rotate-90"
+          style={{ boxShadow: "0 0 10px var(--color-accent)" }}
+        />
+        <span>EQUENCY</span>
+      </Link>
 
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent("equency:open-cmdk"))}
-            aria-label="Search (Command-K)"
-            className="mono hidden items-center gap-1.5 rounded-sm border border-border px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:border-[color:var(--color-line-strong)] hover:text-foreground sm:inline-flex"
-          >
-            <span>⌕</span>
-            <kbd className="rounded-[3px] border border-border px-1 text-[10px]">⌘K</kbd>
-          </button>
+      {/* Primary Navigation */}
+      <nav aria-label="Primary">
+        {NAV.map((n) => (
           <Link
-            href="/watchlist"
-            aria-label="Watchlist"
-            className="group inline-flex items-center gap-1.5 rounded-sm border border-border px-2.5 py-1.5 text-xs transition-colors hover:border-[color:var(--color-line-strong)]"
+            key={n.href}
+            href={n.href}
+            className={n.match(pathname) ? "is-active" : undefined}
           >
-            <span className="transition-transform group-hover:scale-110" style={{ fontSize: 12, color: "var(--color-accent)" }}>★</span>
-            {count != null && count > 0 && <span className="mono text-xs tabular-nums">{count}</span>}
+            {n.label}
           </Link>
+        ))}
 
-          <a
-            href={X_URL}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="EQUENCY on X"
-            className="inline-flex items-center justify-center rounded-sm border border-border p-2 text-foreground transition-colors hover:border-[color:var(--color-accent)] hover:text-[color:var(--color-accent)]"
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-              <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-            </svg>
-          </a>
+        {/* Watchlist Counter */}
+        <Link
+          href="/watchlist"
+          aria-label="Watchlist"
+          className="inline-flex items-center gap-1.5"
+          title="Watchlist"
+        >
+          <span style={{ color: "var(--color-accent)", fontSize: 13 }}>★</span>
+          {count != null && count > 0 && (
+            <span className="font-mono text-xs tabular-nums text-foreground">
+              {count}
+            </span>
+          )}
+        </Link>
 
-          <span aria-hidden className="mx-1 hidden h-5 w-px bg-border sm:block" />
+        {/* X (Twitter) Link */}
+        <a
+          href={X_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="EQUENCY on X"
+          className="inline-flex items-center justify-center text-muted-foreground hover:text-foreground"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+          </svg>
+        </a>
 
-          <NavConnect />
-        </div>
-      </div>
-
-      {/* Mobile nav row */}
-      <nav className="flex items-center gap-1 border-t border-border px-3 py-1.5 sm:hidden">
-        {NAV.map((n) => <NavItem key={n.href} href={n.href} label={n.label} active={n.match(pathname)} />)}
+        {/* Injected Wallet Connect / Open App */}
+        <NavConnect />
       </nav>
     </header>
-  );
-}
-
-function NavItem({ href, label, active }: { href: string; label: string; active?: boolean }) {
-  return (
-    <Link
-      href={href}
-      data-active={active}
-      className="group relative px-2.5 py-1.5 text-xs text-[color:var(--color-ink-dim)] transition-colors hover:text-[color:var(--color-ink)] data-[active=true]:text-[color:var(--color-ink)]"
-    >
-      {label}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-2.5 bottom-0 h-px origin-left scale-x-0 transition-transform duration-200 ease-out group-hover:scale-x-100 group-data-[active=true]:scale-x-100"
-        style={{ background: "var(--color-accent)" }}
-      />
-    </Link>
   );
 }

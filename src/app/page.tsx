@@ -1,8 +1,5 @@
 import { searchRecentIpos } from "@/lib/providers/sec";
-import { FindCore } from "@/components/home/FindCore";
-import { Loop, StrategiesBlock, VaultBlock, HonestyBlock } from "@/components/home/Narrative";
-import { ForBuilders } from "@/components/home/ForBuilders";
-import { Faq } from "@/components/home/Faq";
+import { StoryLanding } from "@/components/story/StoryLanding";
 
 export const revalidate = 1800;
 
@@ -23,15 +20,5 @@ export default async function Home() {
     .slice(0, 12)
     .map((i) => ({ ticker: i.ticker ?? "", name: i.name }));
 
-  return (
-    <>
-      <FindCore seed={seed} />
-      <Loop />
-      <StrategiesBlock />
-      <VaultBlock />
-      <HonestyBlock />
-      <ForBuilders />
-      <Faq />
-    </>
-  );
+  return <StoryLanding seed={seed} />;
 }

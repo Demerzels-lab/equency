@@ -88,28 +88,32 @@ export default async function VaultPage() {
   const live = await readVaultLiveness();
   const onTestnet = live.factoryHasCode;
   return (
-    <main>
+    <main className="pt-14">
       {/* hero */}
       <section className="relative overflow-hidden border-b border-border">
-        <div className="pointer-events-none absolute inset-0 grid-bg opacity-40" />
-        <div className="relative mx-auto max-w-[1200px] px-6 py-16">
-          <Display className="text-[clamp(2.5rem,6vw,5rem)]">Strategy<br />Vault.</Display>
-          <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground">
-            Where intelligence becomes capital. A non-custodial vault on Robinhood Chain that holds USDG,
+        <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
+        <div className="relative mx-auto max-w-[1240px] px-6 pt-16 pb-20">
+          <div className="section-label">01 / ON-CHAIN EXECUTION</div>
+          <h1 className="editorial-h1">
+            Strategy <span className="editorial-accent">Vault.</span>
+          </h1>
+          <p className="editorial-lead mt-4 max-w-xl">
+            Where intelligence becomes capital. A non-custodial ERC-4626 vault on Robinhood Chain that holds USDG,
             buys verified assets within limits enforced on-chain, and never lets the AI sign a transaction.
           </p>
 
           <VaultVerdict onTestnet={onTestnet} vaultCount={live.vaultCount} contractCount={Object.keys(TESTNET.contracts).length} />
 
-          <div className="mt-8 max-w-xl">
+          <div className="mt-12 max-w-xl">
             <VaultApp />
           </div>
         </div>
       </section>
 
       {/* flow */}
-      <section className="mx-auto max-w-[1200px] px-6 py-16">
-        <Display as="h2" className="max-w-2xl text-[clamp(1.6rem,3.5vw,2.8rem)]">Intelligence → Strategy → Capital.</Display>
+      <section className="mx-auto max-w-[1240px] px-6 py-20">
+        <div className="section-label">02 / THE NON-CUSTODIAL LOOP</div>
+        <h2 className="editorial-h2">Intelligence → Strategy → <span className="editorial-accent">Capital.</span></h2>
         <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-sm sm:grid-cols-2 lg:grid-cols-3" style={{ background: "var(--color-line)" }}>
           {FLOW.map((s) => (
             <div key={s.n} className="bg-background p-5">

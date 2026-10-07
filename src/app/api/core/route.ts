@@ -4,6 +4,7 @@ import { buildCompanyIntelligence } from "@/lib/providers/company";
 import { getFundamentals } from "@/lib/providers/xbrl";
 import { computeScore } from "@/lib/intelligence/score";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 30;
 
 /** Deterministic Intelligence Core preview for the hero search (score, dimensions, market).

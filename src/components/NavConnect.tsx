@@ -18,7 +18,7 @@ export function NavConnect() {
 
   if (account) {
     return (
-      <span className="mono inline-flex shrink-0 items-center gap-1.5 rounded-sm border border-border px-2 py-1.5 text-xs sm:px-2.5" title={account}>
+      <span className="btn btn-sm btn-ghost font-mono text-xs gap-2" title={account}>
         <span style={{ width: 6, height: 6, borderRadius: 9999, background: "var(--color-pos)" }} />
         {short(account)}
       </span>
@@ -28,7 +28,7 @@ export function NavConnect() {
     <button
       onClick={onClick}
       disabled={busy}
-      className="label shrink-0 whitespace-nowrap rounded-sm bg-[color:var(--color-ink)] px-2.5 py-1.5 tracking-[0.1em] text-[color:var(--color-bg)] transition-colors hover:bg-white disabled:opacity-60 sm:px-3 sm:tracking-[0.12em]"
+      className="btn btn-sm btn-ember"
     >
       {busy ? "connecting…" : (
         <>

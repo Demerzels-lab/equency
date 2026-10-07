@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, JetBrains_Mono } from "next/font/google";
+import { Archivo, JetBrains_Mono, Fraunces } from "next/font/google";
 import "./globals.css";
 import { TopBar } from "@/components/TopBar";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -23,6 +23,12 @@ const mono = JetBrains_Mono({
   variable: "--font-jbmono",
   display: "swap",
 });
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "EQUENCY · Intelligence for the newly public",
@@ -32,7 +38,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn("dark", archivo.variable, mono.variable)}>
+    <html lang="en" className={cn("dark", archivo.variable, mono.variable, fraunces.variable)}>
       <body className="font-sans">
         <WalletProvider>
           <TopBar />

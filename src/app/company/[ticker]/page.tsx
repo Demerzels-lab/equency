@@ -70,7 +70,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
   ].sort((a, b) => (a.at < b.at ? 1 : -1));
 
   return (
-    <main className="mx-auto max-w-350 px-4 py-5">
+    <main className="mx-auto max-w-[1400px] px-6 pt-24 pb-20">
       {/* HEADER */}
       <Panel className="mb-3" bodyClassName="px-4 py-3">
         <div className="flex flex-wrap items-start justify-between gap-4">

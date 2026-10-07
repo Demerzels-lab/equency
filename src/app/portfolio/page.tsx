@@ -57,15 +57,19 @@ export default function PortfolioPage() {
   const totalPct = totalCost ? totalPnl / totalCost : 0;
 
   return (
-    <main className="mx-auto max-w-[1000px] px-4 py-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="label text-[color:var(--color-accent-2)]">Paper portfolio</div>
-        <span className="label rounded-sm border px-1.5 py-0.5" style={{ color: "var(--color-sim)", borderColor: "var(--color-sim)" }}>PAPER</span>
+    <main className="mx-auto max-w-[1240px] px-6 pt-24 pb-20">
+      <div className="flex items-center gap-3">
+        <div className="section-label mb-0">01 / SIMULATED EXECUTION</div>
+        <span className="font-mono text-[10px] tracking-widest uppercase border border-[color:var(--color-sim)] text-[color:var(--color-sim)] px-2 py-0.5 rounded-sm">
+          DEVICE-LOCAL
+        </span>
       </div>
-      <h1 className="mt-1 text-3xl font-semibold tracking-tight">Test a thesis with no capital</h1>
-      <p className="mt-2 max-w-[62ch] text-sm text-muted-foreground">
-        Hypothetical only · not real money and not the on-chain Vault. Entry is the live price when you
-        add a name; P&amp;L tracks live prices from there. Device-local.
+      <h1 className="editorial-h2 mt-4">
+        Test a thesis <span className="editorial-accent">with zero capital.</span>
+      </h1>
+      <p className="editorial-lead mt-2 max-w-[62ch]">
+        Hypothetical simulation only. Entry is recorded from live quotes upon addition; P&amp;L continuously
+        tracks subsequent market prints.
       </p>
 
       {/* totals */}
