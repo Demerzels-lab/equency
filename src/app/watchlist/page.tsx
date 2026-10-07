@@ -17,11 +17,11 @@ export default function WatchlistPage() {
   }, []);
 
   return (
-    <main className="mx-auto max-w-[860px] px-6 py-10">
-      <div className="label">Watchlist</div>
-      <h1 className="mt-2 text-2xl font-semibold tracking-tight">Companies you follow</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Device-local for now. Open any to see its live Intelligence Core.
+    <main className="mx-auto max-w-[960px] px-6 pt-28 sm:pt-32 pb-20">
+      <div className="section-label mb-2">01 / LOCAL WATCHLIST</div>
+      <h1 className="editorial-h2">Companies you <span className="editorial-accent">follow.</span></h1>
+      <p className="editorial-lead mt-2 max-w-[60ch]">
+        Device-local watchlist. Real-time updates from EDGAR and live market feeds.
       </p>
 
       <div className="mt-8">

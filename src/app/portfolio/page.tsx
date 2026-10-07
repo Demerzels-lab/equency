@@ -57,7 +57,7 @@ export default function PortfolioPage() {
   const totalPct = totalCost ? totalPnl / totalCost : 0;
 
   return (
-    <main className="mx-auto max-w-[1240px] px-6 pt-24 pb-20">
+    <main className="mx-auto max-w-[1240px] px-6 pt-28 sm:pt-32 pb-20">
       <div className="flex items-center gap-3">
         <div className="section-label mb-0">01 / SIMULATED EXECUTION</div>
         <span className="font-mono text-[10px] tracking-widest uppercase border border-[color:var(--color-sim)] text-[color:var(--color-sim)] px-2 py-0.5 rounded-sm">

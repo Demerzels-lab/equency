@@ -29,10 +29,10 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
   const dims = cols[0]?.score.dimensions ?? [];
 
   return (
-    <main className="mx-auto max-w-[1200px] px-4 py-6">
-      <div className="label text-[color:var(--color-accent-2)]">Compare</div>
-      <h1 className="mt-1 text-3xl font-semibold tracking-tight">Intelligence Cores, side by side</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Deterministic signals only · open a Core for its full thesis. {cols.length}/4 selected.</p>
+    <main className="mx-auto max-w-[1240px] px-6 pt-28 sm:pt-32 pb-20">
+      <div className="section-label mb-2">01 / COMPARATIVE EVALUATION</div>
+      <h1 className="editorial-h2">Intelligence Cores, <span className="editorial-accent">side by side.</span></h1>
+      <p className="editorial-lead mt-2 max-w-[62ch]">Deterministic signals only · open a Core for its full thesis. {cols.length}/4 selected.</p>
 
       {cols.length === 0 ? (
         <div className="mt-8 rounded-sm border border-border p-8 text-center text-sm text-muted-foreground">

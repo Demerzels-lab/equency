@@ -22,15 +22,21 @@ export default async function StrategyDetail({ params }: { params: Promise<{ key
   );
 
   return (
-    <main className="mx-auto max-w-[1200px] px-4 py-6">
-      <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+    <main className="mx-auto max-w-[1240px] px-6 pt-28 sm:pt-32 pb-20">
+      <div className="mb-4">
+        <Link href="/strategies" className="font-mono text-xs text-muted-foreground hover:text-[color:var(--color-accent)] inline-flex items-center gap-1.5 transition-colors">
+          ← Back to Strategies
+        </Link>
+      </div>
+
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-[color:var(--color-line)] pb-6">
         <div>
-          <Link href="/strategies" className="label hover:text-foreground">← Strategies</Link>
-          <div className="mt-2 flex items-center gap-3">
-            <h1 className="text-2xl font-semibold tracking-tight">{strategy.name}</h1>
+          <div className="section-label mb-2">02 / QUANTITATIVE MODEL</div>
+          <div className="flex items-center gap-3">
+            <h1 className="editorial-h2">{strategy.name}</h1>
             <Badge variant="outline" className="label rounded-sm border-border">{strategy.risk}</Badge>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">{strategy.tagline}</p>
+          <p className="editorial-lead mt-2 max-w-[60ch]">{strategy.tagline}</p>
         </div>
         <div className="flex gap-6">
           <Meta label="Holding" value={strategy.holdingPeriod} />

@@ -64,8 +64,12 @@ export default async function RecommendationDetail({ params }: { params: Promise
   ];
 
   return (
-    <main className="mx-auto max-w-[1100px] px-4 py-6">
-      <Link href={`/strategies/${strategy.key}`} className="label hover:text-foreground">← {strategy.name} ranking</Link>
+    <main className="mx-auto max-w-[1240px] px-6 pt-28 sm:pt-32 pb-20">
+      <div className="mb-4">
+        <Link href={`/strategies/${strategy.key}`} className="font-mono text-xs text-muted-foreground hover:text-[color:var(--color-accent)] inline-flex items-center gap-1.5 transition-colors">
+          ← Back to {strategy.name} Ranking
+        </Link>
+      </div>
 
       <Panel className="mt-3" bodyClassName="px-4 py-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
