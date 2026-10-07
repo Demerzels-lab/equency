@@ -11,8 +11,10 @@ const X_URL = "https://x.com";
 
 const NAV = [
   { href: "/", label: "Intelligence", match: (p: string) => p === "/" || p.startsWith("/company") },
+  { href: "/explore", label: "Explore", match: (p: string) => p.startsWith("/explore") || p.startsWith("/compare") },
   { href: "/strategies", label: "Strategies", match: (p: string) => p.startsWith("/strategies") },
   { href: "/vault", label: "Vault", match: (p: string) => p.startsWith("/vault") },
+  { href: "/portfolio", label: "Portfolio", match: (p: string) => p.startsWith("/portfolio") },
 ];
 
 export function TopBar() {

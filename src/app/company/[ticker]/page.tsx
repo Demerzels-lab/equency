@@ -12,7 +12,9 @@ import { ScoreGauge } from "@/components/ScoreGauge";
 import { PriceChart } from "@/components/PriceChart";
 import { WatchButton } from "@/components/WatchButton";
 import { ResearchConsole, type FeedItem } from "@/components/ResearchConsole";
-import { FundamentalsPanel, NewsPanel, ThesisHistory } from "@/components/sections";
+import { FundamentalsPanel, NewsPanel } from "@/components/sections";
+import { ThesisTimeline } from "@/components/ThesisTimeline";
+import { CompareToggle } from "@/components/CompareToggle";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ago, fmtDate } from "@/lib/util/dates";
@@ -80,6 +82,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
               <h1 className="text-2xl font-semibold tracking-tight text-balance">{ci.identity.name}</h1>
               <span className="label">{ci.identity.exchange}: {ci.identity.ticker}</span>
               <WatchButton ticker={symbol} name={ci.identity.name} />
+              <CompareToggle ticker={symbol} />
             </div>
             <div className="mono mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-muted-foreground">
               <span style={{ color: "var(--color-pos)" }}>{ci.ipo.daysPublic ?? "?"} days public</span>
@@ -201,7 +204,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
             </div>
           </Panel>
 
-          <ThesisHistory direction={thesis.direction} since={ci.ipo.ipoDate} />
+          <ThesisTimeline ticker={symbol} direction={thesis.direction} score={score.overall} summary={thesis.summary} ipoDate={ci.ipo.ipoDate} />
         </div>
       </div>
 

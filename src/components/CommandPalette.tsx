@@ -7,8 +7,10 @@ type Entry = { label: string; sub: string; href: string; kind: "nav" | "strategy
 
 const STATIC: Entry[] = [
   { label: "Intelligence", sub: "newly-public universe", href: "/", kind: "nav" },
+  { label: "Explore", sub: "browse · filter · heatmap", href: "/explore", kind: "nav" },
   { label: "Strategies", sub: "rank by deterministic fit", href: "/strategies", kind: "nav" },
   { label: "Strategy Vault", sub: "capital on Robinhood Chain", href: "/vault", kind: "nav" },
+  { label: "Paper portfolio", sub: "test a thesis · no capital", href: "/portfolio", kind: "nav" },
   { label: "Watchlist", sub: "companies you follow", href: "/watchlist", kind: "nav" },
   { label: "Growth", sub: "strategy · medium / high", href: "/strategies/growth", kind: "strategy" },
   { label: "Momentum", sub: "strategy · high", href: "/strategies/momentum", kind: "strategy" },

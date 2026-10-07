@@ -15,7 +15,7 @@ export async function GET() {
     const universe = ipos
       .filter((i) => i.ticker && !/acquisition/i.test(i.name))
       .slice(0, 48)
-      .map((i) => ({ ticker: i.ticker, name: i.name }));
+      .map((i) => ({ ticker: i.ticker, name: i.name, filedAt: i.filedAt, cik: i.cik }));
     return NextResponse.json({ universe });
   } catch {
     return NextResponse.json({ universe: [] });
