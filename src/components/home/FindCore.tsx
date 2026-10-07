@@ -99,7 +99,7 @@ export function FindCore({ seed }: { seed?: Uni[] }) {
         )}
       </div>
 
-      {/* suggestion chips — real recent detections */}
+      {/* suggestion chips: real recent detections */}
       {universe.length > 0 && (
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
           <span className="text-xs text-muted-foreground">Just public:</span>
@@ -152,7 +152,7 @@ function CorePreview({ core, loading }: { core: Core | null; loading: boolean })
               <div className="flex items-baseline justify-between">
                 <span className="label">Last price</span>
                 <span className="mono text-sm" style={{ color: core.price == null ? "var(--color-ink-faint)" : up ? "var(--color-pos)" : "var(--color-danger)" }}>
-                  {core.price != null ? fmtUsd(core.price) : "—"}
+                  {core.price != null ? fmtUsd(core.price) : "-"}
                   {core.changePct != null ? ` (${up ? "+" : ""}${core.changePct.toFixed(2)}%)` : ""}
                 </span>
               </div>

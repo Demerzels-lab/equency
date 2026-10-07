@@ -12,7 +12,7 @@ export function UniverseHeatmap({ rows }: { rows: Row[] }) {
   const total = rows.length || 1;
   const byBucket = BUCKETS.map(([k, label]) => ({ k, label, n: rows.filter((r) => r.bucket === k).length }));
   const sectorCounts = new Map<string, number>();
-  for (const r of rows) if (r.sector && r.sector !== "—") sectorCounts.set(r.sector, (sectorCounts.get(r.sector) ?? 0) + 1);
+  for (const r of rows) if (r.sector && r.sector !== "-" && r.sector !== "—") sectorCounts.set(r.sector, (sectorCounts.get(r.sector) ?? 0) + 1);
   const sectors = [...sectorCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
   const sMax = sectors[0]?.[1] ?? 1;
 

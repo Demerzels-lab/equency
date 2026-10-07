@@ -122,7 +122,7 @@
 .panel { background: var(--color-panel); border: 1px solid var(--color-line); border-radius: var(--radius-sm); }
 .hairline { border-color: var(--color-line); }
 
-/* Labels are sans now — mono is reserved for genuinely tabular/code content (the .mono class). */
+/* Labels are sans now: mono is reserved for genuinely tabular/code content (the .mono class). */
 .label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-faint); font-family: var(--font-sans); }
 
 .grid-bg {

@@ -102,9 +102,9 @@ export default function PortfolioPage() {
               <tr key={r.ticker} className="border-b border-border last:border-0">
                 <td className="px-3 py-2"><Link href={`/company/${r.ticker}`} className="mono" style={{ color: "var(--color-accent)" }}>{r.ticker}</Link></td>
                 <td className="mono px-3 py-2 text-right tabular-nums">{fmtUsd(r.entry)}</td>
-                <td className="mono px-3 py-2 text-right tabular-nums">{r.cur != null ? fmtUsd(r.cur) : "—"}</td>
-                <td className="mono px-3 py-2 text-right tabular-nums" style={{ color: r.pnlPct == null ? undefined : r.pnlPct >= 0 ? "var(--color-pos)" : "var(--color-danger)" }}>{r.pnlPct != null ? `${r.pnlPct >= 0 ? "+" : ""}${(r.pnlPct * 100).toFixed(2)}%` : "—"}</td>
-                <td className="mono px-3 py-2 text-right tabular-nums" style={{ color: r.pnlUsd == null ? undefined : r.pnlUsd >= 0 ? "var(--color-pos)" : "var(--color-danger)" }}>{r.pnlUsd != null ? `${r.pnlUsd >= 0 ? "+" : ""}${fmtUsd(r.pnlUsd)}` : "—"}</td>
+                <td className="mono px-3 py-2 text-right tabular-nums">{r.cur != null ? fmtUsd(r.cur) : "-"}</td>
+                <td className="mono px-3 py-2 text-right tabular-nums" style={{ color: r.pnlPct == null ? undefined : r.pnlPct >= 0 ? "var(--color-pos)" : "var(--color-danger)" }}>{r.pnlPct != null ? `${r.pnlPct >= 0 ? "+" : ""}${(r.pnlPct * 100).toFixed(2)}%` : "-"}</td>
+                <td className="mono px-3 py-2 text-right tabular-nums" style={{ color: r.pnlUsd == null ? undefined : r.pnlUsd >= 0 ? "var(--color-pos)" : "var(--color-danger)" }}>{r.pnlUsd != null ? `${r.pnlUsd >= 0 ? "+" : ""}${fmtUsd(r.pnlUsd)}` : "-"}</td>
                 <td className="px-3 py-2 text-right"><button onClick={() => removePaper(r.ticker)} className="label text-muted-foreground hover:text-[color:var(--color-danger)]">remove</button></td>
               </tr>
             ))}

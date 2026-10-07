@@ -1,5 +1,5 @@
 // Radial gauge for a 0..max score (Intelligence score, strategy fit). A 270° arc, value-filled,
-// with the number centered. Static SVG — real data in, no animation dependency.
+// with the number centered. Static SVG: real data in, no animation dependency.
 
 export function ScoreGauge({
   value,

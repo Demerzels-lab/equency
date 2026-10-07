@@ -24,7 +24,7 @@ export function ExploreGrid({ rows }: { rows: Row[] }) {
     return () => { window.removeEventListener("equency:watchlist", h); window.removeEventListener("equency:compare", h); };
   }, []);
 
-  const sectors = useMemo(() => ["ALL", ...Array.from(new Set(rows.map((r) => r.sector).filter((s) => s && s !== "—"))).sort()], [rows]);
+  const sectors = useMemo(() => ["ALL", ...Array.from(new Set(rows.map((r) => r.sector).filter((s) => s && s !== "-" && s !== "—"))).sort()], [rows]);
   const [sector, setSector] = useState("ALL");
 
   const view = useMemo(() => {
@@ -80,7 +80,7 @@ export function ExploreGrid({ rows }: { rows: Row[] }) {
               <tr key={r.ticker} className="border-b border-border last:border-0 hover:bg-[color:var(--color-panel-2)]">
                 <td className="px-3 py-2"><Link href={`/company/${r.ticker}`} className="mono" style={{ color: "var(--color-accent)" }}>{r.ticker}</Link></td>
                 <td className="max-w-0 truncate px-3 py-2"><Link href={`/company/${r.ticker}`} className="hover:text-foreground">{r.name}</Link></td>
-                <td className="mono px-3 py-2 text-right tabular-nums">{r.daysPublic ?? "—"}</td>
+                <td className="mono px-3 py-2 text-right tabular-nums">{r.daysPublic ?? "-"}</td>
                 <td className="label px-3 py-2 normal-case tracking-normal" style={{ color: r.bucket === "NEW" ? "var(--color-accent)" : undefined }}>{r.bucket}</td>
                 <td className="max-w-[220px] truncate px-3 py-2 text-xs text-muted-foreground">{r.sector}</td>
                 <td className="px-3 py-2 text-right">

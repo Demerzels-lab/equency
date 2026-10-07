@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Display } from "@/components/brand";
 
-const SNIPPET = `// Every recommendation is structured and evidence-first — never free-form prose.
+const SNIPPET = `// Every recommendation is structured and evidence-first, never free-form prose.
 type Thesis = {
   direction: "STRENGTHENING" | "NEUTRAL" | "CAUTIOUS" | "WEAKENING"
   confidence: number            // 0..1

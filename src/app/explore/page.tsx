@@ -35,17 +35,17 @@ export default async function ExplorePage() {
 
   const rows: Row[] = await mapLimit(universe, 6, async (i) => {
     const d = daysSince(i.filedAt) ?? null;
-    let sector = "—";
+    let sector = "-";
     try {
-      sector = (await getSubmissions(i.cik)).identity.sicDescription || "—";
+      sector = (await getSubmissions(i.cik)).identity.sicDescription || "-";
     } catch {
-      /* keep — */
+      /* keep - */
     }
     return {
       ticker: i.ticker ?? "",
       name: i.name,
       daysPublic: d,
-      bucket: String(ageBucket(d ?? undefined) ?? "—"),
+      bucket: String(ageBucket(d ?? undefined) ?? "-"),
       sector,
       filedAt: i.filedAt,
     };
@@ -59,7 +59,7 @@ export default async function ExplorePage() {
       </h1>
       <p className="editorial-lead mt-3 max-w-[62ch]">
         Every company detected from audited SEC 424B4 filings in the last 180 days. Filter, sort, watch,
-        or compare. Ground truth from EDGAR — zero fabricated state.
+        or compare. Ground truth directly from EDGAR, with zero fabricated state.
       </p>
 
       <div className="mt-10 border-t border-[color:var(--color-line)] pt-8">

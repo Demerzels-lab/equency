@@ -23,7 +23,7 @@ export function ThesisTimeline({
       {list.length <= 1 ? (
         <div className="text-xs leading-relaxed text-muted-foreground">
           Snapshot recorded. Revisit over time and only <span className="text-foreground">real thesis changes</span> appear
-          here — a living record of how the Core&apos;s view evolved. Device-local for now.
+          here as a living record of how the Core&apos;s view evolved. Device-local for now.
         </div>
       ) : (
         <ol className="flex flex-col gap-2.5">

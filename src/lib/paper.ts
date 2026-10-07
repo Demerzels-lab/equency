@@ -1,6 +1,6 @@
 "use client";
 
-// Device-local PAPER portfolio — hypothetical positions, never real capital. Entry price is
+// Device-local PAPER portfolio: hypothetical positions, never real capital. Entry price is
 // captured (live) when added; P&L is computed against live prices. Honest & labelled PAPER.
 const KEY = "equency.paper.v1";
 

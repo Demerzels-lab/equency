@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
  * Editorial-grotesk (Zupiter) × terminal-mono (AGENCY) hybrid.
  * ------------------------------------------------------------------ */
 
-/** Editorial display heading — one restrained treatment, single color. */
+/** Editorial display heading: one restrained treatment, single color. */
 export function Display({
   children,
   className,

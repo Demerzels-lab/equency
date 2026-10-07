@@ -179,7 +179,7 @@ export function StoryLanding({ seed }: { seed?: Uni[] }) {
                 <b>03</b>
                 <div>
                   <h3>Narrate</h3>
-                  <p>The reasoning engine explains the score in plain language — with every single claim linked to a source.</p>
+                  <p>The reasoning engine explains the score in plain language, with every claim linked directly to its filing source.</p>
                 </div>
               </li>
             </ol>
@@ -200,7 +200,7 @@ export function StoryLanding({ seed }: { seed?: Uni[] }) {
               Rank the universe by <span className="accent">deterministic fit.</span>
             </h2>
             <p className="lead">
-              Three quantitative strategies — Growth, Momentum, Defensive — rank every newly public company
+              Three quantitative strategies (Growth, Momentum, Defensive) rank every newly public company
               over its Intelligence Core. You choose the constraints; the engine proves the score.
             </p>
 
@@ -234,7 +234,7 @@ export function StoryLanding({ seed }: { seed?: Uni[] }) {
             </h2>
             <p className="lead">
               A non-custodial Strategy Vault that holds USDG on Robinhood Chain and executes within limits
-              the smart contract enforces — the AI never signs a transaction.
+              the smart contract enforces. The AI never signs a transaction.
             </p>
 
             <ul className="ticks">

@@ -49,7 +49,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
   const symbol = ci.identity.ticker || ticker.toUpperCase();
   const today = new Date().toISOString().slice(0, 10);
 
-  // Deterministic data — the page shell renders as soon as these resolve (no waiting on the LLM).
+  // Deterministic data: the page shell renders as soon as these resolve (no waiting on the LLM).
   const [fundamentals, news, priceSeries] = await Promise.all([
     getFundamentals(cik),
     getCompanyNews(symbol, ci.ipo.ipoDate?.slice(0, 10) ?? isoDaysAgo(30), today),

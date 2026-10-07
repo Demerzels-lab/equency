@@ -8,7 +8,7 @@ type Phase = "init" | "playing" | "closing" | "done";
 
 /** First-visit cinematic splash. Plays ONCE (localStorage), full-screen above everything.
  *  Tiers: full/lite = particle crystallization in WebGL; static = instant CSS brand mark.
- *  Always dismissable (Skip / Esc) and self-dismissing (safety timeout) — never traps the user. */
+ *  Always dismissable (Skip / Esc) and self-dismissing (safety timeout), never traps the user. */
 export function Intro() {
   const [phase, setPhase] = useState<Phase>("init");
   const timers = useRef<number[]>([]);
@@ -31,7 +31,7 @@ export function Intro() {
     if (seen) { setPhase("done"); return; }
 
     // Only greet first-time visitors on the home route. A first visit that lands on a
-    // deep link (shared /company or /strategies URL) shouldn't get the splash — mark it
+    // deep link (shared /company or /strategies URL) shouldn't get the splash: mark it
     // seen silently so it never ambushes them mid-session later.
     if (window.location.pathname !== "/") {
       try { localStorage.setItem(SEEN_KEY, "1"); } catch { /* ignore */ }

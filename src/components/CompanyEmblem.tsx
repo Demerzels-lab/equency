@@ -1,4 +1,4 @@
-// A deterministic "intelligence signature" per company — orbit rings with nodes placed from a
+// A deterministic "intelligence signature" per company: orbit rings with nodes placed from a
 // hash of the ticker, so every Intelligence Core has its own unique, repeatable mark.
 
 function seedFrom(s: string): number {

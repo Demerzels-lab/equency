@@ -237,7 +237,7 @@ export function StoryHeroSearch({
 
             <div className="text-right font-mono">
               <div className="text-sm font-bold text-foreground">
-                {core.price != null ? fmtUsd(core.price) : "—"}
+                {core.price != null ? fmtUsd(core.price) : "-"}
               </div>
               {core.changePct != null && (
                 <div
@@ -275,7 +275,7 @@ export function StoryHeroSearch({
                   />
                 </svg>
                 <span className="font-mono text-[10px] font-bold text-[color:var(--color-accent)]">
-                  {core.overall ?? "—"}
+                  {core.overall ?? "-"}
                 </span>
               </div>
 
@@ -285,7 +285,7 @@ export function StoryHeroSearch({
                     Intelligence Score
                   </span>
                   <span className="font-mono text-xs font-semibold text-[color:var(--color-ink)]">
-                    {core.overall != null ? `${core.overall}/100` : "—/100"}
+                    {core.overall != null ? `${core.overall}/100` : "-/100"}
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground">

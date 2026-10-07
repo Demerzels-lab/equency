@@ -1,6 +1,6 @@
 "use client";
 
-// Device-local thesis timeline. When you view a company, the current thesis is recorded — but only
+// Device-local thesis timeline. When you view a company, the current thesis is recorded, but only
 // if it CHANGED from the last snapshot. Over time this accrues the real "why it changed" history
 // (brief §13, §22). Honest: per-browser, and only genuine changes are kept.
 export interface ThesisSnap { at: number; direction: string; score: number | null; summary: string }

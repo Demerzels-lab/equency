@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 30;
 
 /** Deterministic Intelligence Core preview for the hero search (score, dimensions, market).
- *  Skips the Gemini thesis on purpose — only real/SIMULATED-labelled data, sub-2s. */
+ *  Skips the Gemini thesis on purpose: only real/SIMULATED-labelled data, sub-2s. */
 export async function GET(req: Request) {
   const ticker = new URL(req.url).searchParams.get("ticker")?.trim().toUpperCase();
   if (!ticker) return NextResponse.json({ error: "ticker required" }, { status: 400 });
