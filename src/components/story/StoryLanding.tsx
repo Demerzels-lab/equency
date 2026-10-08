@@ -6,7 +6,6 @@ import { StoryCanvas, type StoryCanvasHandle } from "./StoryCanvas";
 import { StoryDots } from "./StoryDots";
 import { StoryHeroSearch } from "./StoryHeroSearch";
 import { Faq } from "@/components/home/Faq";
-import { AbstractRibbon, GeometricRadarBadge, AbstractMetricCard } from "./AbstractElements";
 
 interface Uni {
   ticker: string;
@@ -131,11 +130,9 @@ export function StoryLanding({ seed }: { seed?: Uni[] }) {
 
       <main>
         {/* CHAPTER 01 · Start (is-left) */}
-        <section id="top" className="chapter is-left relative overflow-hidden">
-          <div className="chapter-body relative z-10">
-            <div className="flex items-center justify-between mb-1">
-              <GeometricRadarBadge label="Robinhood Chain" />
-            </div>
+        <section id="top" className="chapter is-left">
+          <div className="chapter-body">
+            <span className="eyebrow">01 · Names for Robinhood Chain</span>
             <h1 className="hero-title">
               A core that <span className="accent">points home.</span>
             </h1>
@@ -148,17 +145,13 @@ export function StoryLanding({ seed }: { seed?: Uni[] }) {
               seed={seed}
               onTickerChange={handleTickerChange}
             />
-            
-            <AbstractRibbon className="absolute -bottom-10 -right-20 w-80" />
           </div>
         </section>
 
         {/* CHAPTER 02 · Observe (is-right) */}
-        <section id="observe" className="chapter is-right relative">
-          <div className="chapter-body relative z-10">
-            <div className="flex items-center gap-2">
-              <span className="eyebrow">02 · The Continuous Loop</span>
-            </div>
+        <section id="observe" className="chapter is-right">
+          <div className="chapter-body">
+            <span className="eyebrow">02 · The Continuous Loop</span>
             <h2>
               Observe. Score. <span className="accent">Narrate.</span>
             </h2>
@@ -167,25 +160,41 @@ export function StoryLanding({ seed }: { seed?: Uni[] }) {
               and price movements land on EDGAR and market feeds.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-2">
-              <AbstractMetricCard title="Ingest" value="0.2s" sub="EDGAR real-time hook" badge="SEC" />
-              <AbstractMetricCard title="Compute" value="100%" sub="Deterministic math" badge="ZERO HALLU" />
-              <AbstractMetricCard title="Audit" value="46630" sub="Robinhood Chain ID" badge="ONCHAIN" />
-            </div>
+            <ol className="steps">
+              <li>
+                <b>01</b>
+                <div>
+                  <h3>Observe</h3>
+                  <p>New SEC filings (424B4, 10-Q, 8-K), volume, price and insider ownership captured the moment they land on EDGAR.</p>
+                </div>
+              </li>
+              <li>
+                <b>02</b>
+                <div>
+                  <h3>Score</h3>
+                  <p>Deterministic mathematical dimensions computed from that evidence. Reproducible. The model never touches the number.</p>
+                </div>
+              </li>
+              <li>
+                <b>03</b>
+                <div>
+                  <h3>Narrate</h3>
+                  <p>The reasoning engine explains the score in plain language, with every claim linked directly to its filing source.</p>
+                </div>
+              </li>
+            </ol>
 
             <div className="pt-2">
-              <Link href="/explore" className="btn btn-ember inline-flex items-center gap-2">
-                <span>Explore All Filings</span>
-                <span>→</span>
+              <Link href="/explore" className="btn btn-ember">
+                Explore All Filings →
               </Link>
             </div>
-            <AbstractRibbon className="absolute -top-12 -left-16 w-72 rotate-180" />
           </div>
         </section>
 
         {/* CHAPTER 03 · Strategies (is-left) */}
-        <section id="strategies" className="chapter is-left relative">
-          <div className="chapter-body relative z-10">
+        <section id="strategies" className="chapter is-left">
+          <div className="chapter-body">
             <span className="eyebrow">03 · Quantitative Strategies</span>
             <h2>
               Rank the universe by <span className="accent">deterministic fit.</span>
@@ -217,8 +226,8 @@ export function StoryLanding({ seed }: { seed?: Uni[] }) {
         </section>
 
         {/* CHAPTER 04 · Vault (is-right) */}
-        <section id="vault" className="chapter is-right relative">
-          <div className="chapter-body relative z-10">
+        <section id="vault" className="chapter is-right">
+          <div className="chapter-body">
             <span className="eyebrow">04 · On-Chain Execution</span>
             <h2>
               Where intelligence <span className="accent">becomes capital.</span>
@@ -228,25 +237,19 @@ export function StoryLanding({ seed }: { seed?: Uni[] }) {
               the smart contract enforces. The AI never signs a transaction.
             </p>
 
-            <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/80 mb-2">
-              <div className="flex items-center justify-between text-xs font-mono text-slate-500 mb-2">
-                <span>VAULT SAFETY SPECS</span>
-                <span className="text-emerald-600 font-semibold">14/14 PASS</span>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-xs font-mono text-slate-700">
-                <div>• Non-custodial ERC-4626</div>
-                <div>• Native USDG Asset</div>
-                <div>• Chainlink Oracle Sync</div>
-                <div>• Timelock Governance</div>
-              </div>
-            </div>
+            <ul className="ticks">
+              <li>Non-custodial on Robinhood Chain</li>
+              <li>Limits enforced on-chain · never by the frontend</li>
+              <li>ERC-4626 vault · 14/14 Foundry tests, incl. real-USDG fork</li>
+              <li>Ships paused & capped until external review</li>
+              <li>Testnet 46630 · live on-chain</li>
+            </ul>
 
             <div className="pt-2">
               <Link href="/vault" className="btn btn-ghost">
                 Open Strategy Vault →
               </Link>
             </div>
-            <AbstractRibbon className="absolute -bottom-8 -right-12 w-64" />
           </div>
         </section>
 
