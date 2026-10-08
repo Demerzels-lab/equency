@@ -88,7 +88,7 @@ export function CoreSearch({ seed }: { seed: Uni[] }) {
       <form
         ref={boxRef}
         onSubmit={(e) => { e.preventDefault(); pick(matches[0]?.ticker ?? q); }}
-        className="relative flex items-center gap-2 rounded-lg bg-card/85 p-1.5 shadow-[0_20px_50px_-25px_rgba(12,18,34,0.35)] ring-1 ring-line backdrop-blur-md transition focus-within:ring-2 focus-within:ring-core"
+        className="relative flex items-center gap-2 rounded-lg bg-card/85 p-1.5 shadow-[0_20px_50px_-25px_rgba(0,0,0,0.8)] ring-1 ring-line backdrop-blur-md transition focus-within:ring-2 focus-within:ring-core"
       >
         <Search size={18} className="ml-2.5 shrink-0 text-ink-3" />
         <input
@@ -203,7 +203,7 @@ export function CoreSearch({ seed }: { seed: Uni[] }) {
                 </div>
                 <Link
                   href={`/company/${encodeURIComponent(core.ticker)}`}
-                  className="flex shrink-0 items-center gap-1 rounded px-3 py-1.5 text-xs ring-1 ring-inset ring-line-2 transition-colors hover:bg-ink hover:text-white hover:ring-ink"
+                  className="flex shrink-0 items-center gap-1 rounded px-3 py-1.5 text-xs ring-1 ring-inset ring-line-2 transition-colors hover:bg-ink hover:text-paper hover:ring-ink"
                 >
                   Full thesis <ArrowUpRight size={13} />
                 </Link>

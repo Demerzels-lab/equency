@@ -6,15 +6,16 @@ import * as THREE from "three";
 import { DepthPoints, PointerTilt, Ring, Satellite, fibonacciSphere } from "./primitives";
 import { seeded } from "@/lib/rand";
 
-const INK = "#0c1222";
-const CORE = "#2b4dff";
-const STRATEGY = "#ff5b24";
+// Dark-sky palette: "INK" is now a cool starlight tone so wireframe/orbits read on the night bg.
+const INK = "#b9c6ff";
+const CORE = "#6680ff";
+const STRATEGY = "#ff6a33";
 
 /** Latitude/longitude wireframe globe with back-face fading. */
 function WireGlobe({ radius = 2.2 }: { radius?: number }) {
   const lines = useMemo(() => {
     const group = new THREE.Group();
-    const mat = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.24, depthWrite: false });
+    const mat = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.2, depthWrite: false, blending: THREE.AdditiveBlending });
     for (let lat = -75; lat <= 75; lat += 15) {
       const r = Math.cos((lat * Math.PI) / 180) * radius;
       const y = Math.sin((lat * Math.PI) / 180) * radius;
@@ -93,7 +94,7 @@ function Dust({ count = 700 }: { count?: number }) {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial color={INK} size={0.018} transparent opacity={0.35} sizeAttenuation depthWrite={false} />
+      <pointsMaterial color={INK} size={0.02} transparent opacity={0.55} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} />
     </points>
   );
 }
@@ -117,7 +118,7 @@ export function HeroPlanet() {
         <group position={[0, -1.15, 0]} scale={scale}>
           <group ref={globe} rotation={[0.25, 0, 0.12]}>
             <WireGlobe />
-            <DepthPoints positions={shell} color={CORE} size={2.4} opacity={0.75} />
+            <DepthPoints positions={shell} color={CORE} size={4} opacity={1} />
           </group>
 
           <group rotation={[1.38, 0, 0.12]}>

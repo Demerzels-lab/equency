@@ -23,14 +23,14 @@ function OrbFallback({ color }: { color: string }) {
 
 export function HeroScene({ className }: { className?: string }) {
   return (
-    <Stage className={className} camera={{ position: [0, 0, 9], fov: 42 }} fallback={<OrbFallback color="#2b4dff" />}>
+    <Stage className={className} camera={{ position: [0, 0, 9], fov: 42 }} fallback={<OrbFallback color="#5470ff" />}>
       <HeroPlanet />
     </Stage>
   );
 }
 
 export function OrbScene({ kind, className }: { kind: "core" | "strategy"; className?: string }) {
-  const color = kind === "core" ? "#2b4dff" : "#ff5b24";
+  const color = kind === "core" ? "#5470ff" : "#ff6a33";
   return (
     <Stage className={className} camera={{ position: [0, 0, 6.4], fov: 40 }} fallback={<OrbFallback color={color} />}>
       {kind === "core" ? <DotGlobe color={color} /> : <RingOrb color={color} />}

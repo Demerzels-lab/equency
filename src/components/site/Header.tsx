@@ -94,7 +94,7 @@ export function Header() {
                         transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
                         className="absolute left-1/2 top-full w-72 -translate-x-1/2 pt-3"
                       >
-                        <div className="rounded-lg border border-line bg-card/95 p-2 shadow-[0_24px_60px_-20px_rgba(12,18,34,0.25)] backdrop-blur-md">
+                        <div className="rounded-lg border border-line bg-card/95 p-2 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.7)] backdrop-blur-md">
                           {item.children.map((c) => (
                             <Link key={c.label} href={c.href} className="block rounded-md px-3 py-2.5 transition-colors hover:bg-paper">
                               <div className="text-sm text-ink">{c.label}</div>

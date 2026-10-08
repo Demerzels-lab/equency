@@ -11,7 +11,7 @@ import { Btn } from "@/components/site/Btn";
 import { Faq } from "@/components/site/Faq";
 import { TechVisual } from "@/components/site/TechVisual";
 import { CountUp, GlowCard, Marquee, Reveal, SectionTitle } from "@/components/site/motion";
-import { CORE_TECH, FAQ, HEADLINE_WORDS, PRODUCTS } from "@/lib/site";
+import { CORE_TECH, FAQ, FEATURED_IPOS, HEADLINE_WORDS, PRODUCTS } from "@/lib/site";
 
 export const revalidate = 1800;
 
@@ -49,9 +49,10 @@ export default async function Home() {
     <main>
       {/* ── HERO ─────────────────────────────────────────── */}
       <section className="relative isolate flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-5 pb-16 pt-28">
+        <div className="pointer-events-none absolute left-1/2 top-[62%] -z-10 aspect-square w-[min(760px,120vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--color-core)_28%,transparent),transparent)] blur-2xl" />
         <HeroScene className="!absolute inset-0 -z-10" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-48 bg-gradient-to-t from-paper to-transparent" />
-        <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[520px] w-[min(900px,98vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,var(--color-paper)_45%,transparent)] opacity-90" />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[520px] w-[min(900px,98vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,var(--color-paper)_10%,transparent)] opacity-60" />
         <Reveal className="flex w-full flex-col items-center gap-5 text-center">
           <span className="rounded-full bg-card/70 px-3 py-1 font-body text-xs text-ink-2 ring-1 ring-line backdrop-blur">
             <span className="mr-2 inline-block size-1.5 animate-pulse rounded-full bg-mint align-middle" />
@@ -116,22 +117,60 @@ export default async function Home() {
       <section className="relative isolate overflow-hidden py-28">
         <WaveScene className="!absolute inset-x-0 top-10 bottom-0 -z-10" />
         <Reveal><SectionTitle>Freshly Public</SectionTitle></Reveal>
-        <div className="mx-auto mt-14 max-w-6xl px-5">
+        <Reveal delay={0.05}>
+          <p className="mx-auto mt-4 max-w-xl text-balance text-center font-body text-ink-2">
+            Recent US listings, each with its own Intelligence Core.
+          </p>
+        </Reveal>
+
+        {/* Official logos · 10 notable US IPOs */}
+        <div className="mx-auto mt-14 max-w-7xl px-5">
+          <Marquee>
+            {FEATURED_IPOS.map((c) => (
+              <Link
+                key={c.ticker}
+                href={`/company/${c.ticker}`}
+                className="group/logo flex items-center gap-4 rounded-xl border border-line bg-card/85 py-3 pl-3 pr-6 backdrop-blur-md transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-core/60 hover:shadow-[0_20px_50px_-20px_var(--color-core)]"
+              >
+                <span className="logo-tile grid size-14 shrink-0 place-items-center overflow-hidden rounded-lg">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- tiny vendored PNGs, no optimisation needed */}
+                  <img src={`/logos/${c.ticker}.png`} alt={`${c.name} logo`} width={56} height={56} loading="lazy" className="size-full object-contain" />
+                </span>
+                <span className="flex flex-col">
+                  <span className="whitespace-nowrap text-lg font-medium text-ink transition-colors group-hover/logo:text-core">{c.name}</span>
+                  <span className="flex items-center gap-2 whitespace-nowrap font-body text-xs text-ink-3">
+                    <span className="rounded bg-ink/8 px-1.5 py-0.5 font-mono font-semibold text-ink-2">{c.ticker}</span>
+                    {c.exchange} · {c.listed}
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </Marquee>
+        </div>
+
+        {/* Live SEC EDGAR feed · every 424B4 in the last 180 days */}
+        <div className="mx-auto mt-10 max-w-6xl px-5">
           {seed.length > 0 ? (
-            <Marquee>
-              {seed.slice(0, 16).map((c) => (
-                <Link
-                  key={c.ticker}
-                  href={`/company/${c.ticker}`}
-                  className="flex h-10 items-center gap-2.5 whitespace-nowrap text-xl font-medium text-ink/55 transition-colors hover:text-core"
-                >
-                  <span className="rounded bg-ink/8 px-1.5 py-0.5 font-mono text-xs font-semibold text-ink/70">{c.ticker}</span>
-                  {c.name}
-                </Link>
-              ))}
-            </Marquee>
+            <>
+              <p className="mb-4 text-center font-wide text-[10px] uppercase tracking-[0.2em] text-ink-3">
+                <span className="mr-2 inline-block size-1.5 animate-pulse rounded-full bg-mint align-middle" />
+                Live from SEC EDGAR
+              </p>
+              <Marquee className="[&>div]:[animation-direction:reverse]">
+                {seed.slice(0, 16).map((c) => (
+                  <Link
+                    key={c.ticker}
+                    href={`/company/${c.ticker}`}
+                    className="flex h-10 items-center gap-2.5 whitespace-nowrap text-base font-medium text-ink/55 transition-colors hover:text-core"
+                  >
+                    <span className="rounded bg-ink/8 px-1.5 py-0.5 font-mono text-xs font-semibold text-ink/70">{c.ticker}</span>
+                    {c.name}
+                  </Link>
+                ))}
+              </Marquee>
+            </>
           ) : (
-            <p className="text-center font-body text-ink-3">SEC EDGAR is unreachable right now — the universe will populate on the next refresh.</p>
+            <p className="text-center font-body text-ink-3">SEC EDGAR is unreachable right now — the live feed will populate on the next refresh.</p>
           )}
         </div>
         <div className="mt-10 flex justify-center">

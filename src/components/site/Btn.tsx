@@ -14,7 +14,7 @@ type Props = {
 const SOLID: Record<NonNullable<Props["accent"]>, string> = {
   core: "bg-core text-white ring-core hover:bg-core/85 hover:shadow-[0_10px_30px_-10px_var(--color-core)]",
   strategy: "bg-strategy text-white ring-strategy hover:bg-strategy/85 hover:shadow-[0_10px_30px_-10px_var(--color-strategy)]",
-  ink: "bg-ink text-white ring-ink hover:bg-ink/85",
+  ink: "bg-ink text-paper ring-ink hover:bg-white",
 };
 
 const OUTLINE: Record<NonNullable<Props["accent"]>, string> = {

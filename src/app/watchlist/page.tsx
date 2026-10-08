@@ -17,7 +17,7 @@ export default function WatchlistPage() {
   }, []);
 
   return (
-    <main className="mx-auto max-w-[960px] px-6 pt-28 sm:pt-32 pb-20">
+    <main className="page-main mx-auto max-w-[960px] px-6 pt-28 sm:pt-32 pb-20">
       <div className="section-label mb-2">01 / LOCAL WATCHLIST</div>
       <h1 className="editorial-h2">Companies you <span className="editorial-accent">follow.</span></h1>
       <p className="editorial-lead mt-2 max-w-[60ch]">

@@ -17,7 +17,7 @@ export function TechVisual({ kind }: { kind: "graph" | "orbit" | "bars" }) {
         ))}
         {nodes.map(([x, y], i) => (
           <g key={i}>
-            <circle cx={x} cy={y} r={i === 5 ? 10 : 5} fill={i === 5 ? "var(--color-core)" : "#fff"} stroke="var(--color-ink)" strokeOpacity="0.5" />
+            <circle cx={x} cy={y} r={i === 5 ? 10 : 5} fill={i === 5 ? "var(--color-core)" : "var(--color-card)"} stroke="var(--color-ink)" strokeOpacity="0.5" />
             {i === 5 && <circle cx={x} cy={y} r="10" fill="none" stroke="var(--color-core)" className="origin-center animate-pulse-ring" style={{ transformBox: "fill-box" }} />}
           </g>
         ))}
@@ -41,7 +41,7 @@ export function TechVisual({ kind }: { kind: "graph" | "orbit" | "bars" }) {
   const bars = [62, 88, 45, 110, 76, 130, 98];
   return (
     <svg viewBox="0 0 210 170" className="h-full w-full" aria-hidden>
-      <rect x="20" y="20" width="170" height="130" rx="8" fill="#fff" stroke="var(--color-line-2)" />
+      <rect x="20" y="20" width="170" height="130" rx="8" fill="var(--color-card)" stroke="var(--color-line-2)" />
       {bars.map((h, i) => (
         <rect
           key={i}

@@ -5,37 +5,38 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* EQUENCY palette · "Daylight Orbit" (light reinterpretation of an orbit/space DeFi look).
+  /* EQUENCY palette · "Deep Orbit" (dark). The WebGL globe/orbits read best on a night sky,
+     so every surface is a deep navy-black and accents are lifted for contrast.
      Core = cobalt, Strategy = tangerine. Legacy token names are kept and remapped so every
-     existing page inherits the new identity. */
-  --color-paper: #f6f6f2;
-  --color-paper-2: #ecece6;
-  --color-ink-2: #3c4458;
-  --color-ink-3: #7a8196;
-  --color-line-2: #cfcfc5;
-  --color-core: #2b4dff;
-  --color-core-soft: #e6eaff;
-  --color-strategy: #ff5b24;
-  --color-strategy-soft: #ffe9e0;
-  --color-mint: #12a679;
+     existing page inherits the identity. */
+  --color-paper: #05070d;
+  --color-paper-2: #0a0e18;
+  --color-ink-2: #aab3c9;
+  --color-ink-3: #6c7590;
+  --color-line-2: #283149;
+  --color-core: #5470ff;
+  --color-core-soft: #111a3f;
+  --color-strategy: #ff6a33;
+  --color-strategy-soft: #2a130a;
+  --color-mint: #2fe0a2;
 
-  --color-bg: #f6f6f2;
-  --color-panel: #ffffff;
-  --color-panel-2: #f0f0ea;
-  --color-line: #e2e2da;
-  --color-line-strong: #cfcfc5;
-  --color-ink: #0c1222;
-  --color-ink-dim: #3c4458;
-  --color-ink-faint: #7a8196;
+  --color-bg: #05070d;
+  --color-panel: rgb(13 18 31 / 0.72);
+  --color-panel-2: rgb(22 29 48 / 0.78);
+  --color-line: #1a2134;
+  --color-line-strong: #283149;
+  --color-ink: #eef1fa;
+  --color-ink-dim: #aab3c9;
+  --color-ink-faint: #6c7590;
 
-  --color-accent: #2b4dff;
-  --color-accent-dim: #e6eaff;
-  --color-accent-2: #ff5b24;
-  --color-accent-2-dim: #ffe9e0;
-  --color-pos: #12a679;
-  --color-warn: #d98a00;
-  --color-danger: #e0364f;
-  --color-sim: #7a4dff;
+  --color-accent: #5470ff;
+  --color-accent-dim: #111a3f;
+  --color-accent-2: #ff6a33;
+  --color-accent-2-dim: #2a130a;
+  --color-pos: #2fe0a2;
+  --color-warn: #f5b83d;
+  --color-danger: #ff5470;
+  --color-sim: #9d7dff;
 
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-display: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
@@ -60,75 +61,76 @@
   @keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 }
 
-/* ── shadcn token system, Editorial Light ── */
+/* ── shadcn token system, Deep Orbit (dark) ── */
 :root {
-  --background: #f6f6f2;
-  --foreground: #0c1222;
-  --card: #ffffff;
-  --card-foreground: #0c1222;
-  --popover: #ffffff;
-  --popover-foreground: #0c1222;
-  --primary: #0c1222;
-  --primary-foreground: #ffffff;
-  --secondary: #f0f0ea;
-  --secondary-foreground: #0c1222;
-  --muted: #f0f0ea;
-  --muted-foreground: #7a8196;
-  --accent: #e6eaff;
-  --accent-foreground: #2b4dff;
-  --destructive: #e0364f;
-  --border: #e2e2da;
-  --input: #e2e2da;
-  --ring: #2b4dff;
-  --chart-1: #2b4dff;
-  --chart-2: #12a679;
-  --chart-3: #d98a00;
-  --chart-4: #ff5b24;
-  --chart-5: #e0364f;
+  color-scheme: dark;
+  --background: #05070d;
+  --foreground: #eef1fa;
+  --card: #0c111d;
+  --card-foreground: #eef1fa;
+  --popover: #0c111d;
+  --popover-foreground: #eef1fa;
+  --primary: #eef1fa;
+  --primary-foreground: #05070d;
+  --secondary: #141a2b;
+  --secondary-foreground: #eef1fa;
+  --muted: #141a2b;
+  --muted-foreground: #6c7590;
+  --accent: #111a3f;
+  --accent-foreground: #8ea0ff;
+  --destructive: #ff5470;
+  --border: #1a2134;
+  --input: #232b42;
+  --ring: #5470ff;
+  --chart-1: #5470ff;
+  --chart-2: #2fe0a2;
+  --chart-3: #f5b83d;
+  --chart-4: #ff6a33;
+  --chart-5: #ff5470;
   --radius: 0.5rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #0c1222;
-  --sidebar-primary: #2b4dff;
+  --sidebar: #0c111d;
+  --sidebar-foreground: #eef1fa;
+  --sidebar-primary: #5470ff;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f0f0ea;
-  --sidebar-accent-foreground: #0c1222;
-  --sidebar-border: #e2e2da;
-  --sidebar-ring: #2b4dff;
+  --sidebar-accent: #141a2b;
+  --sidebar-accent-foreground: #eef1fa;
+  --sidebar-border: #1a2134;
+  --sidebar-ring: #5470ff;
 }
 
 .dark {
-  --background: #f6f6f2;
-  --foreground: #0c1222;
-  --card: #ffffff;
-  --card-foreground: #0c1222;
-  --popover: #ffffff;
-  --popover-foreground: #0c1222;
-  --primary: #0c1222;
-  --primary-foreground: #ffffff;
-  --secondary: #f0f0ea;
-  --secondary-foreground: #0c1222;
-  --muted: #f0f0ea;
-  --muted-foreground: #7a8196;
-  --accent: #e6eaff;
-  --accent-foreground: #2b4dff;
-  --destructive: #e0364f;
-  --border: #e2e2da;
-  --input: #e2e2da;
-  --ring: #2b4dff;
-  --chart-1: #2b4dff;
-  --chart-2: #12a679;
-  --chart-3: #d98a00;
-  --chart-4: #ff5b24;
-  --chart-5: #e0364f;
+  --background: #05070d;
+  --foreground: #eef1fa;
+  --card: #0c111d;
+  --card-foreground: #eef1fa;
+  --popover: #0c111d;
+  --popover-foreground: #eef1fa;
+  --primary: #eef1fa;
+  --primary-foreground: #05070d;
+  --secondary: #141a2b;
+  --secondary-foreground: #eef1fa;
+  --muted: #141a2b;
+  --muted-foreground: #6c7590;
+  --accent: #111a3f;
+  --accent-foreground: #8ea0ff;
+  --destructive: #ff5470;
+  --border: #1a2134;
+  --input: #232b42;
+  --ring: #5470ff;
+  --chart-1: #5470ff;
+  --chart-2: #2fe0a2;
+  --chart-3: #f5b83d;
+  --chart-4: #ff6a33;
+  --chart-5: #ff5470;
   --radius: 0.5rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #0c1222;
-  --sidebar-primary: #2b4dff;
+  --sidebar: #0c111d;
+  --sidebar-foreground: #eef1fa;
+  --sidebar-primary: #5470ff;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f0f0ea;
-  --sidebar-accent-foreground: #0c1222;
-  --sidebar-border: #e2e2da;
-  --sidebar-ring: #2b4dff;
+  --sidebar-accent: #141a2b;
+  --sidebar-accent-foreground: #eef1fa;
+  --sidebar-border: #1a2134;
+  --sidebar-ring: #5470ff;
 }
 
 @theme inline {
@@ -193,10 +195,15 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-accent);
-  margin-bottom: 14px;
+  margin-bottom: 18px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  padding: 6px 12px 6px 10px;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--color-accent) 9%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent) 28%, transparent);
+  backdrop-filter: blur(8px);
 }
 .section-label::before {
   content: "";
@@ -205,6 +212,7 @@
   height: 6px;
   background: var(--color-accent);
   transform: rotate(45deg);
+  box-shadow: 0 0 10px var(--color-accent);
 }
 
 .editorial-h1 {
@@ -239,9 +247,13 @@
   font-style: normal;
   font-weight: 400;
   color: var(--color-accent);
+  background: linear-gradient(100deg, #8ea0ff 0%, var(--color-core) 45%, var(--color-strategy) 110%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.panel { background: var(--color-panel); border: 1px solid var(--color-line); border-radius: var(--radius-sm); }
+.panel { background: var(--color-panel); border: 1px solid var(--color-line); border-radius: var(--radius-sm); backdrop-filter: blur(14px); }
 .hairline { border-color: var(--color-line); }
 
 /* Labels are sans now: mono is reserved for genuinely tabular/code content (the .mono class). */
@@ -309,7 +321,7 @@ html.route-loading footer { display: none; }
   border: 1px solid var(--color-ink);
   background: var(--color-ink);
   min-height: 44px;
-  color: #ffffff;
+  color: var(--color-paper);
   white-space: nowrap;
   border-radius: 4px;
   justify-content: center;
@@ -325,10 +337,10 @@ html.route-loading footer { display: none; }
 }
 .btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px -6px rgba(17, 19, 23, 0.25);
-  background: #23272f;
-  color: #ffffff;
-  border-color: #23272f;
+  box-shadow: 0 10px 30px -10px color-mix(in oklab, var(--color-ink) 45%, transparent);
+  background: #ffffff;
+  color: var(--color-paper);
+  border-color: #ffffff;
 }
 .btn:active:not(:disabled) {
   transform: translateY(0);
@@ -338,28 +350,28 @@ html.route-loading footer { display: none; }
   cursor: not-allowed;
 }
 .btn-ember {
-  background: #2b4dff;
-  border-color: #2b4dff;
+  background: var(--color-core);
+  border-color: var(--color-core);
   color: #ffffff;
   font-weight: 600;
-  box-shadow: 0 4px 14px -2px rgba(43, 77, 255, 0.35);
+  box-shadow: 0 6px 22px -6px color-mix(in oklab, var(--color-core) 70%, transparent);
 }
 .btn-ember:hover:not(:disabled) {
-  background: #1f3ad6;
+  background: #6a83ff;
   color: #ffffff;
-  border-color: #1f3ad6;
-  box-shadow: 0 6px 20px -2px rgba(43, 77, 255, 0.45);
+  border-color: #6a83ff;
+  box-shadow: 0 10px 30px -8px color-mix(in oklab, var(--color-core) 85%, transparent);
 }
 .btn-ghost {
-  color: #0c1222;
-  border-color: #e2e2da;
-  background: #ffffff;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  color: var(--color-ink);
+  border-color: var(--color-line-strong);
+  background: color-mix(in oklab, var(--color-panel-2) 60%, transparent);
+  box-shadow: none;
 }
 .btn-ghost:hover:not(:disabled) {
-  background: #f6f6f2;
-  border-color: #2b4dff;
-  color: #2b4dff;
+  background: color-mix(in oklab, var(--color-core) 12%, transparent);
+  border-color: var(--color-core);
+  color: #ffffff;
 }
 .btn-sm {
   min-height: 36px;
@@ -376,12 +388,13 @@ html.lenis, html.lenis body { height: auto; }
 .page-bg {
   position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background:
-    radial-gradient(60% 45% at 50% 0%, rgba(43, 77, 255, 0.07), transparent 70%),
-    radial-gradient(40% 35% at 90% 30%, rgba(255, 91, 36, 0.05), transparent 70%),
+    radial-gradient(60% 45% at 50% 0%, rgba(84, 112, 255, 0.16), transparent 70%),
+    radial-gradient(40% 35% at 90% 30%, rgba(255, 106, 51, 0.07), transparent 70%),
+    radial-gradient(50% 40% at 10% 80%, rgba(84, 112, 255, 0.06), transparent 70%),
     var(--color-paper);
 }
 .dot-field {
-  background-image: radial-gradient(rgba(12, 18, 34, 0.16) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(170, 185, 230, 0.16) 1px, transparent 1px);
   background-size: 18px 18px;
   mask-image: radial-gradient(70% 70% at 50% 50%, #000 30%, transparent 80%);
 }
@@ -403,3 +416,34 @@ html.lenis, html.lenis body { height: auto; }
   mask-image: radial-gradient(90% 90% at 0% 0%, #000 10%, transparent 65%);
 }
 .marquee-mask { mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+
+/* ── Premium inner pages (mirrors the landing: ambient orbit, glass surfaces, staged entrance) ── */
+.page-ambient-glow {
+  background:
+    radial-gradient(42% 60% at 78% 18%, color-mix(in oklab, var(--color-core) 22%, transparent), transparent 70%),
+    radial-gradient(30% 40% at 96% 4%, color-mix(in oklab, var(--color-strategy) 12%, transparent), transparent 70%);
+}
+
+/* Staged entrance for the direct children of an inner page's <main> (landing "Reveal" feel). */
+.page-main > * { animation: pagerise 900ms var(--ease-out-expo) both; }
+.page-main > *:nth-child(1) { animation-delay: 40ms; }
+.page-main > *:nth-child(2) { animation-delay: 110ms; }
+.page-main > *:nth-child(3) { animation-delay: 180ms; }
+.page-main > *:nth-child(4) { animation-delay: 250ms; }
+.page-main > *:nth-child(5) { animation-delay: 320ms; }
+.page-main > *:nth-child(n + 6) { animation-delay: 390ms; }
+@keyframes pagerise { from { opacity: 0; transform: translateY(18px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+
+/* Glass treatment for every flat panel surface on inner pages (Tailwind arbitrary bg-panel). */
+.page-main [class*="bg-[color:var(--color-panel)]"],
+.page-main [data-slot="card"] {
+  backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04), 0 30px 60px -40px rgb(0 0 0 / 0.8);
+}
+
+/* Company logo tile used in "Freshly Public". */
+.logo-tile { background: #ffffff; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08), 0 10px 30px -12px color-mix(in oklab, var(--color-core) 60%, transparent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .page-main > * { animation: none; }
+}

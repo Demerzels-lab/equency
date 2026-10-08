@@ -22,7 +22,7 @@ export default async function StrategyDetail({ params }: { params: Promise<{ key
   );
 
   return (
-    <main className="mx-auto max-w-[1240px] px-6 pt-28 sm:pt-32 pb-20">
+    <main className="page-main mx-auto max-w-[1240px] px-6 pt-28 sm:pt-32 pb-20">
       <div className="mb-4">
         <Link href="/strategies" className="font-mono text-xs text-muted-foreground hover:text-[color:var(--color-accent)] inline-flex items-center gap-1.5 transition-colors">
           ← Back to Strategies

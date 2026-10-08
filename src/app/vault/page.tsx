@@ -91,7 +91,7 @@ export default async function VaultPage() {
   const live = await readVaultLiveness();
   const onTestnet = live.factoryHasCode;
   return (
-    <main className="pt-28 sm:pt-32 pb-20">
+    <main className="page-main pt-28 sm:pt-32 pb-20">
       {/* hero */}
       <section className="relative overflow-hidden border-b border-[color:var(--color-line)]">
         <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />

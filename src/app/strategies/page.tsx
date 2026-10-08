@@ -5,7 +5,7 @@ export const metadata = { title: "Strategies · EQUENCY" };
 
 export default function StrategiesPage() {
   return (
-    <main className="mx-auto max-w-[1240px] px-6 pt-28 sm:pt-32 pb-20">
+    <main className="page-main mx-auto max-w-[1240px] px-6 pt-28 sm:pt-32 pb-20">
       <div className="section-label">01 / QUANTITATIVE ARCHITECTURE</div>
       <h1 className="editorial-h2">
         Deterministic <span className="editorial-accent">strategy models.</span>

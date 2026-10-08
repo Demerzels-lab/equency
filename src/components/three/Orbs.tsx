@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { DepthPoints, PointerTilt, Ring, fibonacciSphere } from "./primitives";
 
 /** Strategy orb: nested gyroscope rings around a glowing core (Boros-ball analogue). */
-export function RingOrb({ color = "#ff5b24" }: { color?: string }) {
+export function RingOrb({ color = "#ff6a33" }: { color?: string }) {
   const rings = useRef<THREE.Group>(null);
   const layers = useMemo(() => Array.from({ length: 14 }, (_, i) => i), []);
   useFrame(({ clock }) => {
@@ -38,7 +38,7 @@ export function RingOrb({ color = "#ff5b24" }: { color?: string }) {
 }
 
 /** Core orb: dotted lattice globe with an equatorial band (V2-ball analogue). */
-export function DotGlobe({ color = "#2b4dff" }: { color?: string }) {
+export function DotGlobe({ color = "#5470ff" }: { color?: string }) {
   const ref = useRef<THREE.Group>(null);
   const pts = useMemo(() => fibonacciSphere(1800, 1.55), []);
   const inner = useMemo(() => fibonacciSphere(500, 0.9), []);
@@ -49,7 +49,7 @@ export function DotGlobe({ color = "#2b4dff" }: { color?: string }) {
     <PointerTilt strength={0.3}>
       <group ref={ref} rotation={[0.35, 0, 0]}>
         <DepthPoints positions={pts} color={color} size={3.2} />
-        <DepthPoints positions={inner} color="#0c1222" size={2.4} opacity={0.5} />
+        <DepthPoints positions={inner} color="#b9c6ff" size={2.2} opacity={0.35} />
         <group rotation={[Math.PI / 2 - 0.2, 0, 0]}>
           <Ring rx={1.95} color={color} opacity={0.4} />
           <Ring rx={2.1} color={color} opacity={0.15} />
@@ -60,7 +60,7 @@ export function DotGlobe({ color = "#2b4dff" }: { color?: string }) {
 }
 
 /** Undulating dotted wave plane — sits behind the partners/marquee section. */
-export function DotWave({ color = "#0c1222" }: { color?: string }) {
+export function DotWave({ color = "#8ea0ff" }: { color?: string }) {
   const cols = 120;
   const rows = 34;
   const ref = useRef<THREE.Points>(null);
@@ -93,7 +93,7 @@ export function DotWave({ color = "#0c1222" }: { color?: string }) {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial color={color} size={0.045} transparent opacity={0.5} sizeAttenuation depthWrite={false} />
+      <pointsMaterial color={color} size={0.045} transparent opacity={0.45} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} />
     </points>
   );
 }

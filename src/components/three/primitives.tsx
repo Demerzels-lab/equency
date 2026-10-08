@@ -19,17 +19,20 @@ export function fibonacciSphere(count: number, radius: number): Float32Array {
   return pts;
 }
 
-/** Points whose opacity fades with depth (front bright, back faint) — gives volume on a light bg. */
+/** Points whose opacity fades with depth (front bright, back faint). Additive blending makes the
+ *  lattice glow against the dark sky; overlapping dots bloom instead of muddying. */
 export function DepthPoints({
   positions,
   color,
   size = 2.2,
   opacity = 0.9,
+  additive = true,
 }: {
   positions: Float32Array;
   color: string;
   size?: number;
   opacity?: number;
+  additive?: boolean;
 }) {
   const geom = useMemo(() => {
     const g = new THREE.BufferGeometry();
@@ -43,6 +46,7 @@ export function DepthPoints({
       new THREE.ShaderMaterial({
         transparent: true,
         depthWrite: false,
+        blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending,
         uniforms: {
           uColor: { value: new THREE.Color(color) },
           uSize: { value: size },
@@ -73,7 +77,7 @@ export function DepthPoints({
           }
         `,
       }),
-    [color, size, opacity, dpr],
+    [color, size, opacity, dpr, additive],
   );
 
   return <points geometry={geom} material={mat} />;

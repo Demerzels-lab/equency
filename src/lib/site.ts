@@ -120,3 +120,19 @@ export const FOOTER = [
     ],
   },
 ];
+
+/** Ten notable US-listed IPOs shown with their official logos in the landing's "Freshly Public"
+ *  strip. Logos are vendored in /public/logos (official marks, nominative use); every ticker
+ *  resolves in SEC's company_tickers.json so the link opens a real Intelligence Core. */
+export const FEATURED_IPOS: { ticker: string; name: string; exchange: "NASDAQ" | "NYSE"; listed: string }[] = [
+  { ticker: "FIG", name: "Figma", exchange: "NYSE", listed: "Jul 2025" },
+  { ticker: "CRCL", name: "Circle", exchange: "NYSE", listed: "Jun 2025" },
+  { ticker: "CRWV", name: "CoreWeave", exchange: "NASDAQ", listed: "Mar 2025" },
+  { ticker: "KLAR", name: "Klarna", exchange: "NYSE", listed: "Sep 2025" },
+  { ticker: "CHYM", name: "Chime", exchange: "NASDAQ", listed: "Jun 2025" },
+  { ticker: "GEMI", name: "Gemini", exchange: "NASDAQ", listed: "Sep 2025" },
+  { ticker: "BLSH", name: "Bullish", exchange: "NYSE", listed: "Aug 2025" },
+  { ticker: "ETOR", name: "eToro", exchange: "NASDAQ", listed: "May 2025" },
+  { ticker: "RBRK", name: "Rubrik", exchange: "NYSE", listed: "Apr 2024" },
+  { ticker: "RDDT", name: "Reddit", exchange: "NYSE", listed: "Mar 2024" },
+];

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { SmoothScroll } from "@/components/site/SmoothScroll";
+import { PageAmbient } from "@/components/site/PageAmbient";
 import { CommandPalette } from "@/components/CommandPalette";
 import { TopProgress } from "@/components/TopProgress";
 import { CompareBar } from "@/components/CompareBar";
@@ -24,17 +25,20 @@ export const metadata: Metadata = {
     "Every newly public company gets an Intelligence Core that continuously researches its market, business and signals.",
 };
 
-export const viewport: Viewport = { themeColor: "#f6f6f2" };
+export const viewport: Viewport = { themeColor: "#05070d", colorScheme: "dark" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn(outfit.variable, inter.variable, syncopate.variable, mono.variable)}>
+    <html lang="en" className={cn("dark", outfit.variable, inter.variable, syncopate.variable, mono.variable)}>
       <body className="min-h-screen font-sans text-foreground antialiased">
         <div className="page-bg" aria-hidden />
         <SmoothScroll />
         <WalletProvider>
           <Header />
-          <div className="relative isolate">{children}</div>
+          <div className="relative isolate">
+            <PageAmbient />
+            {children}
+          </div>
           <Footer />
         </WalletProvider>
         <TopProgress />

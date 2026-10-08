@@ -71,7 +71,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
   ].sort((a, b) => (a.at < b.at ? 1 : -1));
 
   return (
-    <main className="mx-auto max-w-[1400px] px-6 pt-28 sm:pt-32 pb-20">
+    <main className="page-main mx-auto max-w-[1400px] px-6 pt-28 sm:pt-32 pb-20">
       {/* SECTION BREADCRUMB */}
       <div className="flex items-center justify-between pb-3 mb-6 border-b border-[color:var(--color-line)]">
         <div className="section-label mb-0">01 // INTELLIGENCE CORE · SEC GROUND TRUTH</div>
