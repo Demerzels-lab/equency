@@ -13,6 +13,7 @@ import { ScoreGauge } from "@/components/ScoreGauge";
 import { PriceChart } from "@/components/PriceChart";
 import { WatchButton } from "@/components/WatchButton";
 import { ResearchConsole, type FeedItem } from "@/components/ResearchConsole";
+import { CompanyWebsitePreview } from "@/components/CompanyWebsitePreview";
 import { FundamentalsPanel, NewsPanel } from "@/components/sections";
 import { ThesisTimeline } from "@/components/ThesisTimeline";
 import { CompareToggle } from "@/components/CompareToggle";
@@ -171,6 +172,15 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
       {/* READING LAYOUT · research on the left, market data rail on the right */}
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_340px]">
         <div className="flex min-w-0 flex-col gap-3">
+          {/* COMPANY WEB RESEARCH · View-only Browser Preview (Brief §8, §18, §42) */}
+          <Panel title="Company Web Research · Official Domain" badge={<span className="font-mono text-[9px] uppercase px-1.5 py-0.5 rounded border border-[color:var(--color-line)] bg-[color:var(--color-panel-2)] text-[color:var(--color-accent)] font-semibold">VIEW ONLY</span>}>
+            <CompanyWebsitePreview
+              url={ci.identity.officialWebsite}
+              name={ci.identity.name}
+              ticker={symbol}
+            />
+          </Panel>
+
           <Panel title="Research Environment" badge={<DataModeBadge mode="LIVE" />}>
             <ResearchConsole items={feed} ticker={symbol} />
           </Panel>

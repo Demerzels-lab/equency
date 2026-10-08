@@ -3,7 +3,7 @@
 // is LIVE only when a real source answered (brief §0, §57, §58).
 import "server-only";
 import { getSubmissions } from "@/lib/providers/sec";
-import { getQuote } from "@/lib/providers/finnhub";
+import { getQuote, getCompanyProfile } from "@/lib/providers/finnhub";
 import { has } from "@/lib/config";
 import { ageBucket, daysSince } from "@/lib/util/dates";
 import type {
@@ -38,6 +38,7 @@ export async function buildCompanyIntelligence(
 
   // Market state · LIVE from Finnhub, else honest SIMULATED placeholder.
   const quote = symbol ? await getQuote(symbol) : null;
+  const profile = symbol ? await getCompanyProfile(symbol) : null;
   const marketMode = quote ? "LIVE" : "SIMULATED";
 
   const daysPublic = daysSince(sub.firstPublicDate);
@@ -47,8 +48,13 @@ export async function buildCompanyIntelligence(
     .filter((e): e is RadarEvent => e !== null)
     .slice(0, 12);
 
+  const resolvedWebsite = sub.identity.officialWebsite || profile?.weburl || undefined;
+
   return {
-    identity: sub.identity,
+    identity: {
+      ...sub.identity,
+      officialWebsite: resolvedWebsite,
+    },
     ipo: {
       ipoDate: sub.firstPublicDate,
       daysPublic,

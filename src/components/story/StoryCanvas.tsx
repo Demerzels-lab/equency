@@ -66,11 +66,11 @@ export function StoryCanvas({
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
     scene.add(ambientLight);
 
-    const goldLight = new THREE.PointLight(0xeb5729, 3.2, 16);
+    const goldLight = new THREE.PointLight(0x0284c7, 3.2, 16);
     goldLight.position.set(4, 3, 5);
     scene.add(goldLight);
 
-    const indigoLight = new THREE.PointLight(0x2e4cd8, 2.2, 16);
+    const indigoLight = new THREE.PointLight(0x4f46e5, 2.2, 16);
     indigoLight.position.set(-4, -3, -2);
     scene.add(indigoLight);
 
@@ -193,7 +193,7 @@ export function StoryCanvas({
     // Wireframe Halo
     const wireGeom = new THREE.OctahedronGeometry(1.28, 0);
     const wireMat = new THREE.MeshBasicMaterial({
-      color: 0xeb5729,
+      color: 0x0284c7,
       wireframe: true,
       transparent: true,
       opacity: 0.7,
@@ -203,13 +203,13 @@ export function StoryCanvas({
 
     // Orbital Coordinates Rings
     const ring1Geom = new THREE.TorusGeometry(1.9, 0.015, 16, 96);
-    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0xeb5729, transparent: true, opacity: 0.55 });
+    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x0284c7, transparent: true, opacity: 0.55 });
     const ring1 = new THREE.Mesh(ring1Geom, ring1Mat);
     ring1.rotation.x = Math.PI * 0.35;
     ch0Group.add(ring1);
 
     const ring2Geom = new THREE.TorusGeometry(2.2, 0.012, 16, 96);
-    const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x2e4cd8, transparent: true, opacity: 0.45 });
+    const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x4f46e5, transparent: true, opacity: 0.45 });
     const ring2 = new THREE.Mesh(ring2Geom, ring2Mat);
     ring2.rotation.y = Math.PI * 0.4;
     ch0Group.add(ring2);

@@ -30,6 +30,21 @@ interface RawQuote {
   t: number; // unix seconds
 }
 
+interface RawCompanyProfile {
+  weburl?: string;
+  name?: string;
+  ticker?: string;
+  finnhubIndustry?: string;
+  logo?: string;
+}
+
+/** Get company profile (including official website). */
+export async function getCompanyProfile(
+  symbol: string,
+): Promise<RawCompanyProfile | null> {
+  return fh<RawCompanyProfile>(`/stock/profile2?symbol=${encodeURIComponent(symbol)}`, 86_400);
+}
+
 /** Live quote. null => caller should present SIMULATED. */
 export async function getQuote(
   symbol: string,
