@@ -173,18 +173,18 @@ export function StoryHeroSearch({
         </button>
 
         {open && matches.length > 0 && (
-          <ul className="absolute left-0 right-0 top-full z-40 mt-2 overflow-hidden rounded-xl border border-[color:var(--color-line-strong)] bg-[color:var(--color-panel)] shadow-2xl">
+          <ul className="absolute left-0 right-0 top-full z-40 mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl backdrop-blur-xl divide-y divide-slate-100">
             {matches.map((u) => (
               <li key={u.ticker}>
                 <button
                   type="button"
                   onClick={() => pick(u.ticker)}
-                  className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[color:var(--color-panel-2)]"
+                  className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-slate-50"
                 >
-                  <span className="font-mono text-xs font-bold text-[color:var(--color-accent)]">
+                  <span className="font-mono text-xs font-bold text-[#0284c7]">
                     {u.ticker}
                   </span>
-                  <span className="truncate text-xs text-[color:var(--color-ink-dim)] ml-3">
+                  <span className="truncate text-xs text-slate-600 ml-3">
                     {u.name}
                   </span>
                 </button>
@@ -194,28 +194,27 @@ export function StoryHeroSearch({
         )}
       </form>
 
-      {/* Preset emiten triggers */}
       {/* Preset emiten triggers styled as Web3 cryptographic keychips */}
       <div className="flex flex-wrap items-center gap-1.5 pt-1">
-        <span className="font-mono text-xs text-muted-foreground mr-1">Sample Cores:</span>
+        <span className="font-mono text-xs text-slate-500 mr-1">Sample Cores:</span>
         {PRESETS.map((p) => (
           <button
             key={p}
             type="button"
             onClick={() => pick(p)}
-            className="px-2.5 py-1 rounded-md border border-[color:var(--color-line)] bg-[color:var(--color-panel)] font-mono text-xs font-bold text-foreground transition-all hover:border-[color:var(--color-accent)] hover:text-[color:var(--color-accent)] hover:shadow-[0_0_12px_rgba(2,132,199,0.25)] active:scale-95"
+            className="px-2.5 py-1 rounded-md border border-slate-200 bg-white font-mono text-xs font-semibold text-slate-700 shadow-xs transition-all hover:border-[#0284c7] hover:text-[#0284c7] active:scale-95"
           >
             [{p}]
           </button>
         ))}
-        <span className="font-mono text-[11px] text-muted-foreground ml-auto hidden sm:inline">
+        <span className="font-mono text-[11px] text-slate-400 ml-auto hidden sm:inline">
           3D canvas responds live
         </span>
       </div>
 
       {/* Live Core Preview Dossier */}
       {core && (
-        <div className="overflow-hidden rounded-2xl border border-[color:var(--color-line-strong)] bg-[color:var(--color-panel)]/95 p-5 shadow-2xl backdrop-blur-md transition-all">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-lg backdrop-blur-md transition-all text-slate-900">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="shrink-0">
@@ -223,29 +222,29 @@ export function StoryHeroSearch({
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-base font-bold text-foreground">
+                  <span className="font-mono text-base font-bold text-slate-900">
                     {core.ticker}
                   </span>
-                  <span className="font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-accent)] border border-[color:var(--color-line)] px-1.5 py-0.5 rounded-full">
+                  <span className="font-mono text-[10px] tracking-wider uppercase text-[#0284c7] border border-sky-200 bg-sky-50 px-2 py-0.5 rounded-full font-semibold">
                     {core.exchange || "SEC"}
                   </span>
                 </div>
-                <div className="text-xs text-muted-foreground truncate max-w-[200px] sm:max-w-[280px]">
+                <div className="text-xs text-slate-500 truncate max-w-[200px] sm:max-w-[280px]">
                   {core.name}
                 </div>
               </div>
             </div>
 
             <div className="text-right font-mono">
-              <div className="text-sm font-bold text-foreground">
+              <div className="text-sm font-bold text-slate-900">
                 {core.price != null ? fmtUsd(core.price) : "-"}
               </div>
               {core.changePct != null && (
                 <div
-                  className={`text-xs ${
+                  className={`text-xs font-semibold ${
                     core.changePct >= 0
-                      ? "text-[color:var(--color-pos)]"
-                      : "text-[color:var(--color-danger)]"
+                      ? "text-emerald-600"
+                      : "text-rose-600"
                   }`}
                 >
                   {core.changePct >= 0 ? "+" : ""}
@@ -255,7 +254,7 @@ export function StoryHeroSearch({
             </div>
           </div>
 
-          <div className="mt-4 pt-3.5 border-t border-[color:var(--color-line)] flex items-center justify-between gap-3">
+          <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               {/* Mini Precision Radial Ring */}
               <div className="relative w-9 h-9 flex-shrink-0 grid place-items-center">
@@ -263,33 +262,33 @@ export function StoryHeroSearch({
                   <path
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     fill="none"
-                    stroke="var(--color-line)"
+                    stroke="#e2e8f0"
                     strokeWidth="3"
                   />
                   <path
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     fill="none"
-                    stroke="var(--color-accent)"
+                    stroke="#0284c7"
                     strokeWidth="3"
                     strokeDasharray={`${Math.max(0, Math.min(100, core.overall ?? 0))}, 100`}
                     strokeLinecap="round"
                   />
                 </svg>
-                <span className="font-mono text-[10px] font-bold text-[color:var(--color-accent)]">
+                <span className="font-mono text-[10px] font-bold text-[#0284c7]">
                   {core.overall ?? "-"}
                 </span>
               </div>
 
               <div>
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-accent)] font-semibold">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[#0284c7] font-semibold">
                     Intelligence Score
                   </span>
-                  <span className="font-mono text-xs font-semibold text-[color:var(--color-ink)]">
+                  <span className="font-mono text-xs font-bold text-slate-900">
                     {core.overall != null ? `${core.overall}/100` : "-/100"}
                   </span>
                 </div>
-                <div className="text-xs text-muted-foreground">
+                <div className="text-xs text-slate-500">
                   {core.daysPublic != null ? `${core.daysPublic}d Public` : "Newly Public"}
                 </div>
               </div>
@@ -297,7 +296,7 @@ export function StoryHeroSearch({
 
             <Link
               href={`/company/${encodeURIComponent(core.ticker)}`}
-              className="btn btn-sm shrink-0"
+              className="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors shrink-0"
             >
               Open Full Thesis →
             </Link>

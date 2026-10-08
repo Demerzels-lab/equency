@@ -6,13 +6,12 @@ const X_URL = "https://x.com";
 const SECTIONS = [
   {
     num: "01",
-    title: "Platform",
+    title: "Solutions",
     links: [
-      { label: "Intelligence", href: "/" },
-      { label: "Explore Universe", href: "/explore" },
-      { label: "Strategies", href: "/strategies" },
-      { label: "Strategy Vault", href: "/vault" },
-      { label: "Watchlist", href: "/watchlist" },
+      { label: "EquencyObserve", href: "/explore" },
+      { label: "EquencyScore", href: "/strategies" },
+      { label: "EquencyVault", href: "/vault" },
+      { label: "EquencyAlpha", href: "/#build" },
     ],
   },
   {
@@ -22,15 +21,15 @@ const SECTIONS = [
       { label: "ERC-4626 Vault", href: "/vault" },
       { label: "Block Explorer", href: EXPLORER, external: true },
       { label: "Robinhood Chain", href: "https://docs.robinhood.com/chain", external: true },
-      { label: "Foundry Test Suites", href: "/vault#tests" },
+      { label: "Foundry Test Suite", href: "/vault#tests" },
     ],
   },
   {
     num: "03",
     title: "Data Sources",
     links: [
-      { label: "SEC EDGAR Ingestion", href: "https://www.sec.gov/edgar", external: true },
-      { label: "Finnhub Market Stream", href: "https://finnhub.io", external: true },
+      { label: "SEC EDGAR Stream", href: "https://www.sec.gov/edgar", external: true },
+      { label: "Finnhub Market Data", href: "https://finnhub.io", external: true },
       { label: "On-Chain State", href: EXPLORER, external: true },
     ],
   },
@@ -38,71 +37,68 @@ const SECTIONS = [
 
 export function SiteFooter() {
   return (
-    <footer className="relative border-t border-[color:var(--color-line)] bg-[color:var(--color-bg)] py-16 px-6 z-20">
-      <div className="mx-auto max-w-[1240px]">
-        <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr_1fr_1fr] pb-12 border-b border-[color:var(--color-line)]">
-          {/* Brand & Manifesto */}
-          <div className="space-y-4 max-w-sm">
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rotate-45 bg-[color:var(--color-accent)]" />
-              <span className="font-sans text-xs font-extrabold tracking-[0.24em] text-[color:var(--color-ink)]">
-                EQUENCY
-              </span>
+    <footer className="footer-main">
+      <div className="max-w-[1500px] mx-auto">
+        <div className="footer-inner">
+          {/* Monumental Logo Wordmark on Left */}
+          <div className="space-y-6 max-w-lg">
+            <div className="footer-logo-text">
+              EQUENCY
             </div>
-            <p className="text-xs leading-relaxed text-[color:var(--color-ink-dim)]">
-              Continuous research and deterministic intelligence for newly public companies. Verified
-              state and non-custodial capital execution on Robinhood Chain.
+            <p className="font-mono text-xs text-slate-400 leading-relaxed max-w-md">
+              Verifiable intelligence and non-custodial capital execution for newly public companies on Robinhood Chain (#46630).
             </p>
-            <div className="font-mono text-[10px] tracking-[0.16em] uppercase text-[color:var(--color-ink-faint)]">
-              TESTNET 46630 // ERC-4626 SPEC
+            <div className="font-mono text-[11px] text-[#38bdf8] uppercase tracking-wider">
+              ● PROVEN BY DETERMINISTIC CONSENSUS
             </div>
           </div>
 
-          {/* Editorial Link Columns */}
-          {SECTIONS.map((sec) => (
-            <div key={sec.title} className="space-y-3">
-              <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-[color:var(--color-accent)]">
-                {sec.num} / {sec.title}
+          {/* Directory Link Groups on Right */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-10 font-mono text-xs">
+            {SECTIONS.map((sec) => (
+              <div key={sec.title} className="space-y-4">
+                <div className="text-[11px] text-[#38bdf8] uppercase tracking-widest font-bold">
+                  {sec.num} // {sec.title}
+                </div>
+                <ul className="space-y-2.5">
+                  {sec.links.map((link) => (
+                    <li key={link.label}>
+                      {link.external ? (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="eigen-link text-slate-400 hover:text-white transition-colors"
+                        >
+                          {link.label}
+                        </a>
+                      ) : (
+                        <Link
+                          href={link.href}
+                          className="eigen-link text-slate-400 hover:text-white transition-colors"
+                        >
+                          {link.label}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className="space-y-2">
-                {sec.links.map((link) => (
-                  <li key={link.label}>
-                    {link.external ? (
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-[color:var(--color-ink-dim)] hover:text-[color:var(--color-ink)] transition-colors duration-150 inline-flex items-center gap-1"
-                      >
-                        {link.label}
-                        <span className="text-[10px] opacity-60">↗</span>
-                      </a>
-                    ) : (
-                      <Link
-                        href={link.href}
-                        className="text-xs text-[color:var(--color-ink-dim)] hover:text-[color:var(--color-ink)] transition-colors duration-150"
-                      >
-                        {link.label}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-mono text-[10px] tracking-[0.1em] text-[color:var(--color-ink-faint)] uppercase">
+        <div className="mt-20 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-mono text-[11px] text-slate-400 uppercase tracking-wider">
           <div>
-            © {new Date().getFullYear()} EQUENCY RESEARCH PROTOCOL. INDEPENDENT ON-CHAIN BUILD.
+            © {new Date().getFullYear()} EQUENCY PROTOCOL. BUILT FOR THE AGENTIC ERA.
           </div>
-          <div className="flex items-center gap-4">
-            <a href={X_URL} target="_blank" rel="noopener noreferrer" className="hover:text-[color:var(--color-ink)]">
+          <div className="flex items-center gap-6">
+            <a href={X_URL} target="_blank" rel="noopener noreferrer" className="eigen-link text-slate-400 hover:text-white">
               X (TWITTER)
             </a>
-            <a href={EXPLORER} target="_blank" rel="noopener noreferrer" className="hover:text-[color:var(--color-ink)]">
-              CHAIN EXPLORER
+            <a href={EXPLORER} target="_blank" rel="noopener noreferrer" className="eigen-link text-slate-400 hover:text-white">
+              EXPLORER
             </a>
           </div>
         </div>

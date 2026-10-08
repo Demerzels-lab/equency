@@ -46,7 +46,7 @@ export function StoryCanvas({
 
     // --- SETUP SCENE, CAMERA, RENDERER ---
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0xf8f7f4, 0.04);
+    scene.fog = new THREE.FogExp2(0xf8fafc, 0.035);
 
     const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0, 8.2);
@@ -59,22 +59,22 @@ export function StoryCanvas({
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.05;
     container.appendChild(renderer.domElement);
 
-    // --- LIGHTING ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
+    // --- LIGHTING (Clean Light DeFi Colorway: Pure White Ambient & Azure Accent) ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2.2);
     scene.add(ambientLight);
 
-    const goldLight = new THREE.PointLight(0x0284c7, 3.2, 16);
+    const goldLight = new THREE.PointLight(0x0284c7, 3.2, 18);
     goldLight.position.set(4, 3, 5);
     scene.add(goldLight);
 
-    const indigoLight = new THREE.PointLight(0x4f46e5, 2.2, 16);
+    const indigoLight = new THREE.PointLight(0x38bdf8, 2.5, 20);
     indigoLight.position.set(-4, -3, -2);
     scene.add(indigoLight);
 
-    const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1.8);
     sunLight.position.set(0, 8, 4);
     scene.add(sunLight);
 
@@ -82,8 +82,8 @@ export function StoryCanvas({
     const root = new THREE.Group();
     scene.add(root);
 
-    // Ambient Web3 Spatial Quantum Data Nodes (LayerZero / Monad style)
-    const ambientCount = 200;
+    // Ambient Web3 Spatial Quantum Data Nodes (Clean slate/azure micro-nodes)
+    const ambientCount = 180;
     const ambientPos = new Float32Array(ambientCount * 3);
     for (let i = 0; i < ambientCount; i++) {
       ambientPos[i * 3] = (Math.random() - 0.5) * 16;
@@ -93,10 +93,10 @@ export function StoryCanvas({
     const ambientGeom = new THREE.BufferGeometry();
     ambientGeom.setAttribute("position", new THREE.BufferAttribute(ambientPos, 3));
     const ambientMat = new THREE.PointsMaterial({
-      color: 0x00f0ff,
-      size: 0.035,
+      color: 0x64748b,
+      size: 0.03,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.35,
     });
     const ambientPoints = new THREE.Points(ambientGeom, ambientMat);
     scene.add(ambientPoints);
@@ -155,17 +155,17 @@ export function StoryCanvas({
     function renderTextPlate(text: string) {
       textCtx.clearRect(0, 0, 1024, 360);
 
-      // Cyber Holographic Glass Background
+      // Clean Light Frosted Glass Background
       const grad = textCtx.createLinearGradient(40, 40, 984, 320);
-      grad.addColorStop(0, "rgba(8, 12, 22, 0.92)");
-      grad.addColorStop(1, "rgba(15, 23, 42, 0.88)");
+      grad.addColorStop(0, "rgba(255, 255, 255, 0.98)");
+      grad.addColorStop(1, "rgba(241, 245, 249, 0.98)");
       textCtx.fillStyle = grad;
       textCtx.beginPath();
       textCtx.roundRect(40, 40, 944, 280, 20);
       textCtx.fill();
 
-      // Cyber Grid Lines inside the plate
-      textCtx.strokeStyle = "rgba(0, 240, 255, 0.08)";
+      // Precision Grid Lines inside the plate
+      textCtx.strokeStyle = "rgba(226, 232, 240, 0.9)";
       textCtx.lineWidth = 1;
       for (let x = 60; x < 960; x += 40) {
         textCtx.beginPath();
@@ -174,16 +174,16 @@ export function StoryCanvas({
         textCtx.stroke();
       }
 
-      // Glowing Cyan Border
+      // Elegant Azure Border
       textCtx.lineWidth = 2.5;
-      textCtx.strokeStyle = "rgba(0, 240, 255, 0.75)";
+      textCtx.strokeStyle = "rgba(2, 132, 199, 0.45)";
       textCtx.beginPath();
       textCtx.roundRect(40, 40, 944, 280, 20);
       textCtx.stroke();
 
-      // Corner Tech Brackets (Web3 HUD markers)
+      // Corner Tech Brackets (HUD markers)
       textCtx.lineWidth = 4;
-      textCtx.strokeStyle = "#00f0ff";
+      textCtx.strokeStyle = "#0284c7";
       // Top-Left
       textCtx.beginPath(); textCtx.moveTo(40, 70); textCtx.lineTo(40, 40); textCtx.lineTo(70, 40); textCtx.stroke();
       // Top-Right
@@ -194,25 +194,25 @@ export function StoryCanvas({
       textCtx.beginPath(); textCtx.moveTo(984, 290); textCtx.lineTo(984, 320); textCtx.lineTo(954, 320); textCtx.stroke();
 
       // Live Status Beacon + Header
-      textCtx.fillStyle = "#00f0ff";
+      textCtx.fillStyle = "#0284c7";
       textCtx.beginPath();
       textCtx.arc(80, 92, 6, 0, Math.PI * 2);
       textCtx.fill();
 
       textCtx.font = "bold 20px monospace";
-      textCtx.fillStyle = "#38bdf8";
-      textCtx.fillText("ROBINHOOD TESTNET #46630 // LIVE PROTOCOL CORE", 102, 98);
+      textCtx.fillStyle = "#0284c7";
+      textCtx.fillText("ROBINHOOD TESTNET #46630 // VERIFIABLE INTELLIGENCE", 102, 98);
 
-      // Large Main Ticker with Holographic Glow
+      // Large Main Ticker
       textCtx.font = "900 98px -apple-system, BlinkMacSystemFont, monospace";
-      textCtx.fillStyle = "#ffffff";
+      textCtx.fillStyle = "#0f172a";
       const clean = (text || "EQUENCY").toUpperCase();
       textCtx.fillText(clean, 80, 206);
 
       // Cryptographic Hash & Deterministic Stamp
       const pseudoHash = "0x" + Array.from(clean).reduce((acc, c) => acc + c.charCodeAt(0).toString(16), "7f").padEnd(16, "0").slice(0, 16);
       textCtx.font = "600 21px monospace";
-      textCtx.fillStyle = "rgba(148, 163, 184, 0.95)";
+      textCtx.fillStyle = "#64748b";
       textCtx.fillText(`SEC 424B4 · DETERMINISTIC MATH · HASH [${pseudoHash}...]`, 80, 268);
 
       textTexture.needsUpdate = true;
@@ -229,12 +229,12 @@ export function StoryCanvas({
     plateMesh.position.set(0, -1.3, 0);
     ch0Group.add(plateMesh);
 
-    // Faceted Diamond Octahedron
+    // Faceted Diamond Octahedron (Platinum iridescent light aesthetic)
     const octGeom = new THREE.OctahedronGeometry(1.25, 0);
     const octMat = new THREE.MeshStandardMaterial({
-      color: 0x0f172a,
-      roughness: 0.15,
-      metalness: 0.9,
+      color: 0xffffff,
+      roughness: 0.12,
+      metalness: 0.85,
       flatShading: true,
       transparent: true,
       opacity: 0.95,
@@ -242,13 +242,13 @@ export function StoryCanvas({
     const octMesh = new THREE.Mesh(octGeom, octMat);
     ch0Group.add(octMesh);
 
-    // Wireframe Halo with Cyan Glow
+    // Wireframe Halo with Azure Glow
     const wireGeom = new THREE.OctahedronGeometry(1.28, 0);
     const wireMat = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
+      color: 0x0284c7,
       wireframe: true,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.75,
     });
     const wireMesh = new THREE.Mesh(wireGeom, wireMat);
     ch0Group.add(wireMesh);
@@ -256,23 +256,23 @@ export function StoryCanvas({
     // Outer Geometric Tesseract Cage
     const cageGeom = new THREE.IcosahedronGeometry(1.6, 0);
     const cageMat = new THREE.MeshBasicMaterial({
-      color: 0x8b5cf6,
+      color: 0xcbd5e1,
       wireframe: true,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.5,
     });
     const cageMesh = new THREE.Mesh(cageGeom, cageMat);
     ch0Group.add(cageMesh);
 
     // Orbital Coordinates Rings
     const ring1Geom = new THREE.TorusGeometry(2.0, 0.015, 16, 96);
-    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.65 });
+    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x0284c7, transparent: true, opacity: 0.65 });
     const ring1 = new THREE.Mesh(ring1Geom, ring1Mat);
     ring1.rotation.x = Math.PI * 0.35;
     ch0Group.add(ring1);
 
     const ring2Geom = new THREE.TorusGeometry(2.35, 0.012, 16, 96);
-    const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.5 });
+    const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.45 });
     const ring2 = new THREE.Mesh(ring2Geom, ring2Mat);
     ring2.rotation.y = Math.PI * 0.4;
     ch0Group.add(ring2);
@@ -283,11 +283,11 @@ export function StoryCanvas({
 
     const cylGeom = new THREE.CylinderGeometry(1.0, 1.0, 0.6, 32);
     const cylMat = new THREE.MeshStandardMaterial({
-      color: 0x20242c,
-      metalness: 0.82,
-      roughness: 0.24,
+      color: 0xe2e8f0,
+      metalness: 0.75,
+      roughness: 0.25,
       transparent: true,
-      opacity: 1.0,
+      opacity: 0.95,
     });
     const topCap = new THREE.Mesh(cylGeom, cylMat);
     const botCap = new THREE.Mesh(cylGeom, cylMat);
@@ -297,7 +297,7 @@ export function StoryCanvas({
     // Inner Glowing Core
     const innerSphere = new THREE.Mesh(
       new THREE.IcosahedronGeometry(0.75, 1),
-      new THREE.MeshBasicMaterial({ color: 0xeb5729, wireframe: true, transparent: true, opacity: 0.85 })
+      new THREE.MeshBasicMaterial({ color: 0x0284c7, wireframe: true, transparent: true, opacity: 0.85 })
     );
     ch1Group.add(innerSphere);
 
@@ -318,7 +318,7 @@ export function StoryCanvas({
     streamGeom.setAttribute("position", new THREE.BufferAttribute(streamPos, 3));
     const streamPoints = new THREE.Points(
       streamGeom,
-      new THREE.PointsMaterial({ color: 0xeb5729, size: 0.05, transparent: true, opacity: 0.75 })
+      new THREE.PointsMaterial({ color: 0x0284c7, size: 0.05, transparent: true, opacity: 0.75 })
     );
     ch1Group.add(streamPoints);
 
@@ -327,7 +327,7 @@ export function StoryCanvas({
     root.add(ch2Group);
 
     const stratSpheres: THREE.Mesh[] = [];
-    const stratColors = [0xeb5729, 0x2e4cd8, 0x059669];
+    const stratColors = [0x0284c7, 0x2563eb, 0x059669];
     for (let i = 0; i < 3; i++) {
       const angle = (i / 3) * Math.PI * 2;
       const sMesh = new THREE.Mesh(
@@ -353,7 +353,7 @@ export function StoryCanvas({
     ]);
     const stratLines = new THREE.Line(
       lineGeom,
-      new THREE.LineBasicMaterial({ color: 0xeb5729, transparent: true, opacity: 0.5 })
+      new THREE.LineBasicMaterial({ color: 0x0284c7, transparent: true, opacity: 0.4 })
     );
     ch2Group.add(stratLines);
 
@@ -364,12 +364,12 @@ export function StoryCanvas({
     const vaultBase = new THREE.Mesh(
       new THREE.CylinderGeometry(1.3, 1.3, 1.8, 36, 1, true),
       new THREE.MeshStandardMaterial({
-        color: 0x1a1d24,
+        color: 0xf1f5f9,
         roughness: 0.22,
-        metalness: 0.9,
+        metalness: 0.88,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 1.0,
+        opacity: 0.95,
       })
     );
     ch3Group.add(vaultBase);
@@ -378,7 +378,7 @@ export function StoryCanvas({
     for (let i = 0; i < 4; i++) {
       const vRing = new THREE.Mesh(
         new THREE.TorusGeometry(1.32, 0.02, 16, 64),
-        new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0xeb5729 : 0x2e4cd8, transparent: true, opacity: 0.85 })
+        new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0x0284c7 : 0x2563eb, transparent: true, opacity: 0.85 })
       );
       vRing.rotation.x = Math.PI / 2;
       vRing.position.y = (i - 1.5) * 0.5;
@@ -394,34 +394,34 @@ export function StoryCanvas({
     const shieldMesh = new THREE.Mesh(
       shieldGeom,
       new THREE.MeshStandardMaterial({
-        color: 0x1c1e24,
-        roughness: 0.15,
-        metalness: 0.88,
+        color: 0xf8fafc,
+        roughness: 0.18,
+        metalness: 0.85,
         flatShading: true,
         transparent: true,
-        opacity: 1.0,
+        opacity: 0.95,
       })
     );
     ch4Group.add(shieldMesh);
 
     const shieldWire = new THREE.Mesh(
       new THREE.TetrahedronGeometry(1.54, 0),
-      new THREE.MeshBasicMaterial({ color: 0xeb5729, wireframe: true, transparent: true, opacity: 0.85 })
+      new THREE.MeshBasicMaterial({ color: 0x0284c7, wireframe: true, transparent: true, opacity: 0.8 })
     );
     ch4Group.add(shieldWire);
 
-    // ── CHAPTER 5: INSTANCED MESH 10x10 DATA MATRIX ──
+    // ── CHAPTER 5: INSTANCED MESH 10x10 DATA MATRIX WAVE (Deep Background Ripple) ──
     const ch5Group = new THREE.Group();
     root.add(ch5Group);
 
     const matrixCount = 100;
-    const boxGeom = new THREE.BoxGeometry(0.24, 1.4, 0.24);
+    const boxGeom = new THREE.BoxGeometry(0.22, 1.2, 0.22);
     const boxMat = new THREE.MeshStandardMaterial({
-      color: 0x232730,
-      roughness: 0.35,
-      metalness: 0.7,
+      color: 0x94a3b8,
+      roughness: 0.5,
+      metalness: 0.3,
       transparent: true,
-      opacity: 1.0,
+      opacity: 0.2,
     });
     const instancedMatrix = new THREE.InstancedMesh(boxGeom, boxMat, matrixCount);
     ch5Group.add(instancedMatrix);
@@ -469,64 +469,6 @@ export function StoryCanvas({
     };
     window.addEventListener("pointermove", onWindowPointerMove, { passive: true });
 
-    // Interactive Drag Orbit & Click on 3D Model
-    const onPointerDown = (e: PointerEvent) => {
-      if (e.button !== 0) return;
-      isDragging = true;
-      startPointer.x = e.clientX;
-      startPointer.y = e.clientY;
-      lastPointer.x = e.clientX;
-      lastPointer.y = e.clientY;
-      pointerDownTime = performance.now();
-      dragVelocity.x = 0;
-      dragVelocity.y = 0;
-      try {
-        container.setPointerCapture(e.pointerId);
-      } catch {}
-      container.style.cursor = "grabbing";
-    };
-
-    const onPointerMove = (e: PointerEvent) => {
-      if (!isDragging) return;
-      const dx = e.clientX - lastPointer.x;
-      const dy = e.clientY - lastPointer.y;
-      lastPointer.x = e.clientX;
-      lastPointer.y = e.clientY;
-
-      // Apply drag to orientation
-      userRotation.y += dx * 0.007;
-      userRotation.x += dy * 0.007;
-
-      // Track inertia velocity
-      dragVelocity.y = dx * 0.006;
-      dragVelocity.x = dy * 0.006;
-    };
-
-    const onPointerUp = (e: PointerEvent) => {
-      if (!isDragging) return;
-      isDragging = false;
-      try {
-        container.releasePointerCapture(e.pointerId);
-      } catch {}
-      container.style.cursor = isHovering3D ? "pointer" : "grab";
-
-      // If clicked without dragging (tap/click), test raycast hit on 3D elements
-      const dist = Math.hypot(e.clientX - startPointer.x, e.clientY - startPointer.y);
-      const elapsed = performance.now() - pointerDownTime;
-      if (dist < 8 && elapsed < 350) {
-        raycaster.setFromCamera(pointerCoord, camera);
-        const hits = raycaster.intersectObjects(root.children, true);
-        if (hits.length > 0) {
-          handle.pulse();
-        }
-      }
-    };
-
-    container.addEventListener("pointerdown", onPointerDown);
-    container.addEventListener("pointermove", onPointerMove);
-    container.addEventListener("pointerup", onPointerUp);
-    container.addEventListener("pointercancel", onPointerUp);
-
     // Handle Interface
     const handle: StoryCanvasHandle = {
       setProgress(p: number) {
@@ -537,17 +479,13 @@ export function StoryCanvas({
         renderTextPlate(name);
       },
       pulse() {
-        pulseBoost = 2.4;
+        pulseBoost = 2.0;
       },
       resize: onResize,
       dispose() {
         cancelAnimationFrame(animId);
         window.removeEventListener("resize", onResize);
         window.removeEventListener("pointermove", onWindowPointerMove);
-        container.removeEventListener("pointerdown", onPointerDown);
-        container.removeEventListener("pointermove", onPointerMove);
-        container.removeEventListener("pointerup", onPointerUp);
-        container.removeEventListener("pointercancel", onPointerUp);
         if (container.contains(renderer.domElement)) {
           container.removeChild(renderer.domElement);
         }
@@ -609,13 +547,6 @@ export function StoryCanvas({
       camera.lookAt(0, 0, 0);
 
       // Raycast to check hover over active 3D model
-      raycaster.setFromCamera(pointerCoord, camera);
-      const hits = raycaster.intersectObjects(root.children, true);
-      isHovering3D = hits.length > 0;
-      if (!isDragging) {
-        container.style.cursor = isHovering3D ? "pointer" : "grab";
-      }
-
       // ROOT HORIZONTAL STAGE GLIDE:
       // Glides smoothly from right to left / left to right across the screen
       const isMobile = window.innerWidth < 860;
@@ -624,25 +555,25 @@ export function StoryCanvas({
       root.position.y = (isMobile ? 1.1 : 0) + mouse.y * 0.15;
 
       // SEAMLESS PER-CHAPTER TRANSITIONS:
-      // Instead of jarring scaling at (0,0,0), chapters glide naturally in depth and elevation
+      // Smooth continuous overlap of 1.25 to prevent clipping/stuttering between chapters (especially Score to Vault)
+      const FADE_WINDOW = 1.25;
       chapterGroups.forEach((group, idx) => {
         const d = smoothProgress - idx;
         const absD = Math.abs(d);
 
-        if (absD >= 1.0) {
+        if (absD >= FADE_WINDOW) {
           group.visible = false;
         } else {
           group.visible = true;
-          const w = 1.0 - absD;
+          const w = Math.max(0, 1.0 - absD / FADE_WINDOW);
           // Hermite smoothstep fade
           const smoothFade = w * w * (3 - 2 * w);
 
           setGroupOpacity(group, smoothFade);
 
           // Glide gracefully along depth and elevation:
-          // Negative Z pushes upcoming/exiting items further into the dark fog
-          group.position.set(0, d * 0.85, -absD * 2.8);
-          group.scale.setScalar(0.88 + 0.12 * smoothFade);
+          group.position.set(0, d * 0.7, -absD * 2.2);
+          group.scale.setScalar(0.85 + 0.15 * smoothFade);
         }
       });
 
@@ -704,14 +635,15 @@ export function StoryCanvas({
         shieldWire.rotation.y -= delta * 0.35;
       }
 
-      // Ch 5: Instanced Matrix Data Wave
+      // Ch 5: Instanced Matrix Data Wave (Positioned deep in the background floor)
       if (ch5Group.visible) {
-        ch5Group.rotation.y = Math.sin(time * 0.35) * 0.18;
+        ch5Group.rotation.y = Math.sin(time * 0.35) * 0.12;
         for (let i = 0; i < matrixCount; i++) {
           const x = (i % 10) - 4.5;
           const z = Math.floor(i / 10) - 4.5;
-          const h = 0.4 + (Math.sin(x * 0.5 + time * 2) + Math.cos(z * 0.5 + time * 1.8) + 2) * 0.35;
-          dummy.position.set(x * 0.32, -1.2 + h * 0.5, z * 0.32);
+          const h = 0.3 + (Math.sin(x * 0.5 + time * 2) + Math.cos(z * 0.5 + time * 1.8) + 2) * 0.25;
+          // Pushed low (-3.0) and deep into background (z - 4.2) so it never blocks content
+          dummy.position.set(x * 0.32, -3.0 + h * 0.25, z * 0.32 - 4.2);
           dummy.scale.set(1, h, 1);
           dummy.updateMatrix();
           instancedMatrix.setMatrixAt(i, dummy.matrix);
