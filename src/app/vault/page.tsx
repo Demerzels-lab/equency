@@ -122,7 +122,7 @@ export default async function VaultPage() {
             <div key={s.n} className="bg-[color:var(--color-panel)] p-6 hover:bg-[color:var(--color-panel-2)] transition-colors duration-150">
               <div className="flex items-baseline justify-between">
                 <span className="text-base font-bold tracking-tight text-[color:var(--color-ink)]">{s.t}</span>
-                <span className="font-mono text-xs font-bold text-[color:var(--color-accent)]">{s.n} //</span>
+                <span className="font-mono text-xs font-bold text-[color:var(--color-accent)]">{s.n} {"//"}</span>
               </div>
               <p className="mt-2 text-xs leading-relaxed text-[color:var(--color-ink-dim)]">{s.d}</p>
             </div>

@@ -26,7 +26,7 @@ export default function StrategiesPage() {
                 <div className="space-y-3 max-w-xl">
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-xs font-bold text-[color:var(--color-accent)]">
-                      0{idx + 1} //
+                      0{idx + 1} {"//"}
                     </span>
                     <h2 className="text-xl sm:text-2xl font-bold text-[color:var(--color-ink)] group-hover:text-[color:var(--color-accent)] transition-colors inline-flex items-center gap-2">
                       {s.name}

@@ -31,7 +31,16 @@ export default async function ExplorePage() {
   } catch {
     ipos = [];
   }
-  const universe = ipos.filter((i) => i.ticker && !/acquisition/i.test(i.name)).slice(0, 40);
+  // EDGAR returns one hit per 424B4 filing; an issuer can file several (amendments, multiple
+  // share classes) → dedupe by ticker so every company appears once.
+  const seen = new Set<string>();
+  const universe = ipos
+    .filter((i) => {
+      if (!i.ticker || /acquisition/i.test(i.name) || seen.has(i.ticker)) return false;
+      seen.add(i.ticker);
+      return true;
+    })
+    .slice(0, 40);
 
   const rows: Row[] = await mapLimit(universe, 6, async (i) => {
     const d = daysSince(i.filedAt) ?? null;

@@ -12,8 +12,13 @@ export async function GET() {
   try {
     const today = new Date().toISOString().slice(0, 10);
     const ipos = await searchRecentIpos(isoDaysAgo(90), today, "424B4");
+    const seen = new Set<string>();
     const universe = ipos
-      .filter((i) => i.ticker && !/acquisition/i.test(i.name))
+      .filter((i) => {
+        if (!i.ticker || /acquisition/i.test(i.name) || seen.has(i.ticker)) return false;
+        seen.add(i.ticker);
+        return true;
+      })
       .slice(0, 48)
       .map((i) => ({ ticker: i.ticker, name: i.name, filedAt: i.filedAt, cik: i.cik }));
     return NextResponse.json({ universe });
