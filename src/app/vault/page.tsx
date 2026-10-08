@@ -2,7 +2,7 @@ import { Display, AsciiIcon } from "@/components/brand";
 import { CopyField } from "@/components/CopyField";
 import { VaultApp } from "@/components/VaultApp";
 import { readVaultLiveness } from "@/lib/chain";
-import { TESTNET, explorerAddr, shortAddr } from "@/lib/deployments";
+import { MAINNET, explorerAddr, shortAddr } from "@/lib/deployments";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -27,17 +27,17 @@ const ARCH = [
   { t: "AssetRegistry", art: "✓ ✓ ✓\n □ □\n✓ ✓ ✓", d: "Only verified tokens, never arbitrary addresses." },
   { t: "Policy", art: "├─┤\n│▓│\n├─┤", d: "Max position / cash reserve / max positions, enforced in the contract." },
   { t: "ExecutionAdapter", art: " ⇄ \n╱ ╲\n⇄ ⇄", d: "One interface per DEX; core untouched by integrations." },
-  { t: "Oracle", art: "·◉·\n╱│╲\n· ·", d: "Chainlink on mainnet, owner-set on testnet. Freshness checked." },
+  { t: "Oracle", art: "·◉·\n╱│╲\n· ·", d: "Chainlink price adapter, freshness checked. Feeds wired per asset after on-chain verification." },
 ];
 
 /** The quick read of the vault's status: deployment headline, summary, and the live facts. */
-function VaultVerdict({ onTestnet, vaultCount, contractCount }: { onTestnet: boolean; vaultCount: number | null; contractCount: number }) {
-  const statusColor = onTestnet ? "var(--color-pos)" : "var(--color-sim)";
+function VaultVerdict({ onMainnet, vaultCount, contractCount }: { onMainnet: boolean; vaultCount: number | null; contractCount: number }) {
+  const statusColor = onMainnet ? "var(--color-pos)" : "var(--color-sim)";
   const stats = [
     { label: "Contracts", value: String(contractCount), sub: "on-chain verified" },
     { label: "Foundry tests", value: "14 / 14", sub: "passing test suite" },
-    { label: "Testnet 46630", value: onTestnet ? "Active" : "Pending", sub: "robinhood chain" },
-    { label: "Mainnet 4663", value: "Review", sub: "unpause gate" },
+    { label: "Mainnet 4663", value: onMainnet ? "Live" : "Deployed", sub: "robinhood chain" },
+    { label: "Settlement", value: "USDG", sub: "real · Paxos" },
     { label: "User Vaults", value: vaultCount != null ? String(vaultCount) : "0", sub: "non-custodial" },
   ];
   return (
@@ -52,12 +52,12 @@ function VaultVerdict({ onTestnet, vaultCount, contractCount }: { onTestnet: boo
                 SPEC // PROTOCOL
               </span>
               <span className="font-mono inline-flex items-center gap-1.5 text-[9px] uppercase px-2 py-0.5 rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-bg)]" style={{ color: statusColor }}>
-                <span className={onTestnet ? "pulse" : ""} style={{ display: "inline-block", width: 5, height: 5, borderRadius: 9999, background: statusColor }} />
-                {onTestnet ? "DEPLOYED" : "PENDING"}
+                <span className={onMainnet ? "pulse" : ""} style={{ display: "inline-block", width: 5, height: 5, borderRadius: 9999, background: statusColor }} />
+                {onMainnet ? "MAINNET" : "DEPLOYED"}
               </span>
             </div>
             <div className="mt-4 text-4xl sm:text-5xl font-black tracking-tight" style={{ color: statusColor }}>
-              {onTestnet ? "LIVE" : "PENDING"}
+              {onMainnet ? "LIVE" : "DEPLOYED"}
             </div>
           </div>
           <div className="mt-6 pt-4 border-t border-[color:var(--color-line)] flex items-center justify-between font-mono text-xs">
@@ -67,10 +67,10 @@ function VaultVerdict({ onTestnet, vaultCount, contractCount }: { onTestnet: boo
         </div>
         <div className="flex flex-col justify-between gap-6 p-6 sm:p-8 bg-[color:var(--color-panel)]">
           <p className="max-w-[72ch] text-sm leading-relaxed text-[color:var(--color-ink-dim)]">
-            The vault architecture is completely implemented, fully tested{" "}
-            <span className="font-semibold text-[color:var(--color-ink)]">(14/14 Foundry tests including real-USDG mainnet fork)</span>, and{" "}
-            {onTestnet ? "live on Robinhood Chain testnet" : "awaiting on-chain verification"}. Mainnet deployment remains gated until external audit
-            and intentional administrative unpause.
+            The vault is <span className="font-semibold text-[color:var(--color-ink)]">live on Robinhood Chain mainnet</span>, settled in the
+            real USDG and fully tested{" "}
+            <span className="font-semibold text-[color:var(--color-ink)]">(14/14 Foundry tests including real-USDG mainnet fork)</span>.
+            Launch posture is custody-only: vaults ship paused and real-USDG deposits open after the external audit.
           </p>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 pt-4 border-t border-[color:var(--color-line)]">
             {stats.map((s) => (
@@ -89,7 +89,7 @@ function VaultVerdict({ onTestnet, vaultCount, contractCount }: { onTestnet: boo
 
 export default async function VaultPage() {
   const live = await readVaultLiveness();
-  const onTestnet = live.factoryHasCode;
+  const onMainnet = live.factoryHasCode;
   return (
     <main className="page-main pt-28 sm:pt-32 pb-20">
       {/* hero */}
@@ -105,7 +105,7 @@ export default async function VaultPage() {
             buys verified assets within limits enforced on-chain, and never lets the AI sign a transaction.
           </p>
 
-          <VaultVerdict onTestnet={onTestnet} vaultCount={live.vaultCount} contractCount={Object.keys(TESTNET.contracts).length} />
+          <VaultVerdict onMainnet={onMainnet} vaultCount={live.vaultCount} contractCount={Object.keys(MAINNET.contracts).length} />
 
           <div className="mt-12 max-w-xl">
             <VaultApp />
@@ -154,7 +154,7 @@ export default async function VaultPage() {
       {/* verified chain facts */}
       <section className="mx-auto max-w-[1240px] px-6 py-20">
         <div className="section-label">04 / ROBINHOOD CHAIN PROOF</div>
-        <h2 className="editorial-h2 mb-8">Verified on Robinhood <span className="editorial-accent">Chain.</span></h2>
+        <h2 className="editorial-h2 mb-8">Live on Robinhood Chain <span className="editorial-accent">mainnet.</span></h2>
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="border border-[color:var(--color-line)] bg-[color:var(--color-panel)] p-6">
             <div className="font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-accent)] font-semibold mb-3">SETTLEMENT ASSET</div>
@@ -166,38 +166,38 @@ export default async function VaultPage() {
           </div>
           <div className="border border-[color:var(--color-line)] bg-[color:var(--color-panel)] p-6">
             <div className="font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-accent)] font-semibold mb-3">NETWORK &amp; ASSET PARAMETERS</div>
-            <Row k="Mainnet ID" v="4663" />
-            <Row k="Testnet ID" v="46630 (mock deployment)" />
+            <Row k="Network" v="Robinhood Chain mainnet" />
+            <Row k="Chain ID" v="4663" />
             <Row k="Gas Token" v="ETH" />
-            <Row k="Stock Synthetics" v="TSLA, NVDA (18 decimals)" />
-            <Row k="Oracle Standard" v="Chainlink Feed (mainnet)" />
+            <Row k="Stock Tokens" v="TSLA, NVDA (18 decimals)" />
+            <Row k="Oracle Standard" v="Chainlink price adapter" />
           </div>
         </div>
 
         {/* Deployed contracts */}
-        <div className="mt-6 border border-[color:var(--color-line)] bg-[color:var(--color-panel)] overflow-hidden">
+        <div id="contracts" className="mt-6 scroll-mt-28 border border-[color:var(--color-line)] bg-[color:var(--color-panel)] overflow-hidden">
           <div className="flex items-center justify-between border-b border-[color:var(--color-line)] px-6 py-3.5 bg-[color:var(--color-panel-2)]/50">
             <span className="font-mono text-[11px] font-bold text-[color:var(--color-ink)] inline-flex items-center gap-2">
-              {onTestnet && <span style={{ width: 6, height: 6, borderRadius: 9999, background: "var(--color-pos)" }} />}
-              DEPLOYED CONTRACTS // {TESTNET.label} ({TESTNET.chainId})
+              {onMainnet && <span style={{ width: 6, height: 6, borderRadius: 9999, background: "var(--color-pos)" }} />}
+              DEPLOYED CONTRACTS // {MAINNET.label} ({MAINNET.chainId})
             </span>
-            <span className="font-mono text-[10px] uppercase font-bold" style={{ color: onTestnet ? "var(--color-pos)" : "var(--color-warn)" }}>
-              {onTestnet ? "VERIFIED ON-CHAIN" : live.reachable ? "NOT FOUND" : "SEE EXPLORER"}
+            <span className="font-mono text-[10px] uppercase font-bold" style={{ color: onMainnet ? "var(--color-pos)" : "var(--color-warn)" }}>
+              {onMainnet ? "VERIFIED ON-CHAIN" : live.reachable ? "NOT FOUND" : "SEE EXPLORER"}
               {live.vaultCount != null ? ` · ${live.vaultCount} VAULTS` : ""}
             </span>
           </div>
           <Table>
             <TableBody>
-              {Object.entries(TESTNET.contracts).map(([name, addr]) => (
+              {Object.entries(MAINNET.contracts).map(([name, addr]) => (
                 <TableRow key={name} className="border-b border-[color:var(--color-line)] hover:bg-[color:var(--color-panel-2)] transition-colors">
                   <TableCell className="font-mono text-xs py-3.5 px-6 font-semibold text-[color:var(--color-ink)]">
                     {name}
                     {(name === "USDG" || name === "TSLA" || name === "NVDA") && (
-                      <span className="font-mono text-[9px] uppercase tracking-wider ml-2 px-1.5 py-0.5 rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-bg)] text-[color:var(--color-sim)]">mock</span>
+                      <span className="font-mono text-[9px] uppercase tracking-wider ml-2 px-1.5 py-0.5 rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-bg)] text-[color:var(--color-pos)]">real asset</span>
                     )}
                   </TableCell>
                   <TableCell className="text-right py-3.5 px-6">
-                    <a href={explorerAddr(TESTNET.chainId, addr)} target="_blank" rel="noreferrer" className="font-mono text-xs text-[color:var(--color-accent)] hover:underline inline-flex items-center gap-1">
+                    <a href={explorerAddr(MAINNET.chainId, addr)} target="_blank" rel="noreferrer" className="font-mono text-xs text-[color:var(--color-accent)] hover:underline inline-flex items-center gap-1">
                       {shortAddr(addr)} <span>↗</span>
                     </a>
                   </TableCell>
@@ -210,9 +210,10 @@ export default async function VaultPage() {
         <div className="mt-6 border border-[color:var(--color-line)] bg-[color:var(--color-panel)] p-6">
           <div className="font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-accent)] font-semibold mb-2">INTEGRITY &amp; SECURITY DISCLOSURE</div>
           <p className="text-xs leading-relaxed text-[color:var(--color-ink-dim)]">
-            Deployed on <span className="font-semibold text-[color:var(--color-pos)]">Robinhood Chain testnet 46630</span> with verified mock USDG/stock contracts.
-            All contract logic executes on-chain. Smart contracts are independent and non-custodial; user vaults ship with paused state by default.
-            Mainnet real capital deposits stay restricted until independent external audit and explicit governance unpause. Every metric reads from ground-truth chain state.
+            Deployed on <span className="font-semibold text-[color:var(--color-pos)]">Robinhood Chain mainnet 4663</span> against the real USDG and
+            Robinhood stock tokens, with source verified on Sourcify. All contract logic executes on-chain; contracts are non-custodial and user
+            vaults ship paused by default. Real-USDG deposits stay closed until the independent external audit and an explicit unpause; trading
+            (DEX execution) and Chainlink price feeds are enabled in a later release. Every metric reads from ground-truth chain state.
           </p>
         </div>
       </section>

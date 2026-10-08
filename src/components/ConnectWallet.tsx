@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 // Minimal real wallet connect via the injected provider (no heavy deps). It genuinely
-// connects and can add/switch to Robinhood Chain · but is HONEST that no EQUENCY vault
-// contracts are deployed yet, so no capital action is possible (web3-ship §0).
+// connects and can add/switch to Robinhood Chain mainnet, where the EQUENCY vault contracts
+// are deployed (custody-only, vaults ship paused until audit).
 const RH_MAINNET = {
   chainId: "0x1237", // 4663
   chainName: "Robinhood Chain",
@@ -60,7 +60,7 @@ export function ConnectWallet() {
   }
 
   const short = account ? `${account.slice(0, 6)}…${account.slice(-4)}` : null;
-  const onRH = chainId === RH_MAINNET.chainId || chainId === "0xb626"; // 4663 or 46630
+  const onRH = chainId === RH_MAINNET.chainId; // 4663
 
   if (!account) {
     return (
@@ -74,7 +74,7 @@ export function ConnectWallet() {
           <span className="transition-transform group-hover:translate-x-1">→</span>
         </button>
         <p className="label mt-2 normal-case" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>
-          Contracts live on testnet 46630 (mock stack). Connect to view; in-app deposit flow lands next.
+          Contracts live on Robinhood Chain mainnet (4663) with real USDG. Connect to continue.
         </p>
         {error && <p className="mt-2 text-xs" style={{ color: "var(--color-danger)" }}>{error}</p>}
       </div>
@@ -101,16 +101,14 @@ export function ConnectWallet() {
         </button>
       )}
       <div className="mt-3 border-t hairline pt-3 text-xs leading-relaxed" style={{ color: "var(--color-ink-faint)" }}>
-        {chainId === "0xb626" ? (
+        {onRH ? (
           <>
-            EQUENCY Strategy Vault contracts are <span style={{ color: "var(--color-pos)" }}>live on testnet 46630</span> (mock
-            USDG/stock stack). The in-app create-vault / deposit flow is being wired next; for now the deployed
-            contracts are verifiable on the explorer below.
+            EQUENCY Strategy Vault contracts are <span style={{ color: "var(--color-pos)" }}>live on Robinhood Chain mainnet</span> with
+            the real USDG. Vaults ship paused; real-USDG deposits open after the external audit.
           </>
         ) : (
           <>
-            No vault is deployed on this network. Contracts are live on <span style={{ color: "var(--color-pos)" }}>testnet 46630</span>;
-            mainnet stays off until review. Switch to Robinhood Chain to continue.
+            EQUENCY runs on <span style={{ color: "var(--color-pos)" }}>Robinhood Chain mainnet (4663)</span>. Switch networks to continue.
           </>
         )}
       </div>

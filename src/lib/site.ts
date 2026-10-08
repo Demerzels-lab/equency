@@ -108,7 +108,7 @@ export const FOOTER = [
     links: [
       { label: "Strategy Vault", href: "/vault" },
       { label: "Contracts", href: "/vault#contracts" },
-      { label: "Block Explorer", href: "https://explorer.testnet.chain.robinhood.com", external: true },
+      { label: "Block Explorer", href: "https://robinhoodchain.blockscout.com", external: true },
     ],
   },
   {

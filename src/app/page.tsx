@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { searchRecentIpos } from "@/lib/providers/sec";
 import { readVaultLiveness } from "@/lib/chain";
-import { TESTNET } from "@/lib/deployments";
+import { MAINNET } from "@/lib/deployments";
 import { STRATEGY_LIST } from "@/lib/strategy/strategies";
 import { daysSince } from "@/lib/util/dates";
 import { HeroScene, OrbScene, WaveScene } from "@/components/site/Scenes";
@@ -40,7 +40,7 @@ export default async function Home() {
     { label: "IPOs tracked · 180d (SEC 424B4)", value: unique.length },
     { label: "New listings · last 90 days", value: last90 },
     { label: "Strategy models", value: STRATEGY_LIST.length },
-    { label: "Contracts on Robinhood testnet", value: Object.keys(TESTNET.contracts).length },
+    { label: "Contracts on Robinhood Chain mainnet", value: Object.keys(MAINNET.contracts).length },
     { label: "Non-custodial vaults created", value: live?.vaultCount ?? 0, note: live?.reachable ? "read live from chain" : "chain unreachable" },
     { label: "Foundry tests passing", value: 14, suffix: "/14" },
   ];

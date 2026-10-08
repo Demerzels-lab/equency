@@ -8,8 +8,10 @@ export const SEC_USER_AGENT =
 export const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY || "";
 export const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 
-// Robinhood testnet RPC for reading live vault state (public endpoint by default; set
-// RH_RPC_TESTNET to an Alchemy URL for reliability).
+// Robinhood Chain RPCs for reading live vault state (public endpoints by default; set
+// RH_RPC_MAINNET / RH_RPC_TESTNET to an Alchemy URL for reliability).
+export const RH_RPC_MAINNET =
+  process.env.RH_RPC_MAINNET || "https://rpc.mainnet.chain.robinhood.com/rpc";
 export const RH_RPC_TESTNET =
   process.env.RH_RPC_TESTNET || "https://rpc.testnet.chain.robinhood.com/rpc";
 // Use the rolling "flash-latest" alias by default · pinning an exact version breaks

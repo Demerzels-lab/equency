@@ -42,6 +42,6 @@ export const FAQ = [
   },
   {
     q: "Is any of this live onchain?",
-    a: "The Strategy Vault is deployed and verified on Robinhood testnet. Mainnet uses the real USDG and ships paused until external review.",
+    a: "Yes. The Strategy Vault is deployed on Robinhood Chain mainnet (4663) with the real USDG, and its source is verified. Vaults ship paused; real-USDG deposits open after the external audit.",
   },
 ];

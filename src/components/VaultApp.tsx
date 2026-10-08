@@ -75,6 +75,7 @@ export function VaultApp() {
   const C = (dep?.contracts ?? {}) as Record<string, Address>;
   const hasAdapter = !!C.Adapter && C.Adapter !== zeroAddress;
   const isTestnet = dep?.chainId === 46630;
+  const isMainnet = dep?.chainId === 4663;
   const stocks = [C.TSLA ? { sym: "TSLA", addr: C.TSLA } : null, C.NVDA ? { sym: "NVDA", addr: C.NVDA } : null].filter(Boolean) as { sym: string; addr: Address }[];
   const symOf = (a: string) => stocks.find((s) => s.addr.toLowerCase() === a.toLowerCase())?.sym ?? shortAddr(a);
 
@@ -167,7 +168,7 @@ export function VaultApp() {
           Connect Wallet <span className="transition-transform group-hover:translate-x-1">→</span>
         </button>
         <p className="label mt-2 normal-case" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>
-          Live on testnet 46630 (mock USDG). Connect to run the full Intelligence → Capital loop on-chain.
+          Live on Robinhood Chain mainnet (4663) with real USDG. Connect to create your non-custodial Strategy Vault.
         </p>
         <Msg msg={msg} />
       </div>
@@ -179,24 +180,22 @@ export function VaultApp() {
       {/* header + network switcher */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b hairline pb-3">
         <div className="label">Connected · <span className="mono normal-case" style={{ color: "var(--color-ink)" }}>{shortAddr(account)}</span></div>
-        <div className="flex items-center gap-1">
-          {[46630, 4663].map((id) => (
-            <Button
-              key={id} type="button" size="sm"
-              variant={dep?.chainId === id ? "secondary" : "outline"}
-              onClick={() => switchTo(id)}
-              className="label rounded-sm"
-            >
-              {id === 46630 ? "Testnet" : "Mainnet"}
-            </Button>
-          ))}
-        </div>
+        {isMainnet ? (
+          <span className="label inline-flex items-center gap-1.5" style={{ color: "var(--color-pos)" }}>
+            <span className="pulse" style={{ display: "inline-block", width: 6, height: 6, borderRadius: 9999, background: "var(--color-pos)" }} />
+            Robinhood Chain · Mainnet
+          </span>
+        ) : (
+          <Button type="button" size="sm" variant="outline" onClick={() => switchTo(4663)} className="label rounded-sm">
+            Switch to Robinhood Chain
+          </Button>
+        )}
       </div>
 
       {/* unknown / undeployed network */}
       {!dep ? (
         <div className="py-5 text-sm" style={{ color: "var(--color-warn)" }}>
-          Unsupported network. Switch to Robinhood Testnet or Mainnet above.
+          Unsupported network. Switch to Robinhood Chain mainnet (4663) above.
         </div>
       ) : !deployed ? (
         <div className="py-5">
@@ -204,8 +203,7 @@ export function VaultApp() {
             <span className="mono" style={{ color: "var(--color-sim)" }}>{dep.label} ({dep.chainId})</span> · EQUENCY vault is <span style={{ color: "var(--color-sim)" }}>not deployed here yet</span>.
           </div>
           <p className="label mt-2 normal-case leading-relaxed" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>
-            The mainnet deploy script is dry-run verified (real USDG + Chainlink oracle, custody-only, ~0.00021 ETH gas)
-            and ships <span className="mono">paused</span> · pending external review + a separate authorization. Switch to Testnet to try the live flow.
+            EQUENCY runs on Robinhood Chain mainnet (4663). Switch networks above to continue.
           </p>
         </div>
       ) : (
@@ -233,7 +231,12 @@ export function VaultApp() {
                   <a href={explorerAddr(dep.chainId, st.vault)} target="_blank" rel="noreferrer" className="mono text-xs" style={{ color: "var(--color-accent)" }}>{shortAddr(st.vault)} ↗</a>
                   <span className="mono text-xs" style={{ color: st.paused ? "var(--color-warn)" : "var(--color-pos)" }}>{st.paused ? "PAUSED" : "ACTIVE"}</span>
                 </div>
-                {st.paused && <Btn onClick={unpause} busy={busy === "Unpause vault"} className="mt-2">Unpause (owner acknowledges unaudited)</Btn>}
+                {st.paused && !isMainnet && <Btn onClick={unpause} busy={busy === "Unpause vault"} className="mt-2">Unpause (owner acknowledges unaudited)</Btn>}
+                {st.paused && isMainnet && (
+                  <p className="label mt-2 normal-case leading-relaxed" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>
+                    Your vault is live on mainnet and ships paused. Real-USDG deposits open after the external audit.
+                  </p>
+                )}
               </Step>
 
               <div className="my-4 grid grid-cols-3 gap-3 border-y hairline py-3">
