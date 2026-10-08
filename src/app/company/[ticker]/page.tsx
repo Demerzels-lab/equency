@@ -5,6 +5,7 @@ import { buildCompanyIntelligence } from "@/lib/providers/company";
 import { getFundamentals } from "@/lib/providers/xbrl";
 import { getCompanyNews } from "@/lib/providers/finnhub";
 import { getPriceSeries } from "@/lib/providers/yahoo";
+import { checkEmbeddable, websiteFromFilings } from "@/lib/providers/website";
 import { computeScore, type Dimension, type ScoreResult } from "@/lib/intelligence/score";
 import { reason, type ThesisDirection } from "@/lib/intelligence/reasoning";
 import { DataModeBadge, Dot, Panel, tierColor } from "@/components/primitives";
@@ -174,11 +175,9 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         <div className="flex min-w-0 flex-col gap-3">
           {/* COMPANY WEB RESEARCH · View-only Browser Preview (Brief §8, §18, §42) */}
           <Panel title="Company Web Research · Official Domain" badge={<span className="font-mono text-[9px] uppercase px-1.5 py-0.5 rounded border border-[color:var(--color-line)] bg-[color:var(--color-panel-2)] text-[color:var(--color-accent)] font-semibold">VIEW ONLY</span>}>
-            <CompanyWebsitePreview
-              url={ci.identity.officialWebsite}
-              name={ci.identity.name}
-              ticker={symbol}
-            />
+            <Suspense fallback={<WebsiteSkel />}>
+              <WebsitePreviewSection ci={ci} symbol={symbol} />
+            </Suspense>
           </Panel>
 
           <Panel title="Research Environment" badge={<DataModeBadge mode="LIVE" />}>
@@ -379,6 +378,41 @@ function ThesisList({ title, items, sign, color }: { title: string; items: strin
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+/** Resolves the official site (SEC/Finnhub → issuer's own SEC filing) and whether it may be
+ *  framed, then renders the preview · streamed so the page shell never waits on it. */
+async function WebsitePreviewSection({ ci, symbol }: { ci: CompanyIntelligence; symbol: string }) {
+  let url = ci.identity.officialWebsite;
+  let source: string | undefined;
+  if (!url) {
+    const fromFiling = await websiteFromFilings(ci.filings);
+    if (fromFiling) {
+      url = fromFiling.url;
+      source = `SEC ${fromFiling.form}`;
+    }
+  }
+  const embed = url ? await checkEmbeddable(url.startsWith("http") ? url : `https://${url}`) : null;
+  return (
+    <CompanyWebsitePreview
+      url={embed?.url ?? url}
+      name={ci.identity.name}
+      ticker={symbol}
+      embeddable={embed?.embeddable ?? false}
+      reason={embed?.reason}
+      botWall={embed?.botWall}
+      source={source}
+    />
+  );
+}
+
+function WebsiteSkel() {
+  return (
+    <div className="overflow-hidden rounded-md border border-[color:var(--color-line)]">
+      <div className="h-[46px] border-b border-[color:var(--color-line)] bg-[color:var(--color-panel-2)]/60" />
+      <div className="grid h-[380px] place-items-center font-mono text-[11px] text-[color:var(--color-ink-faint)]">Resolving official website…</div>
     </div>
   );
 }
