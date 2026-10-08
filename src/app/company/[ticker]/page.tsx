@@ -172,12 +172,24 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_340px]">
         <div className="flex min-w-0 flex-col gap-3">
           <Panel title="Research Environment" badge={<DataModeBadge mode="LIVE" />}>
-            <ResearchConsole items={feed} />
+            <ResearchConsole items={feed} ticker={symbol} />
           </Panel>
           <NewsPanel items={news} />
         </div>
 
         <div className="flex min-w-0 flex-col gap-3">
+          {/* ROBINHOOD CHAIN ONCHAIN HUD (Brief §31, §40, §46) */}
+          <Panel title="Onchain Exposure · Robinhood Chain" badge={<span className="font-mono text-[9px] uppercase px-1.5 py-0.5 rounded border border-[color:var(--color-line)] bg-[color:var(--color-panel-2)] text-[color:var(--color-pos)] font-semibold">CHAIN 4663</span>}>
+            <Row label="Settlement Asset" value="USDG (6 decimals)" />
+            <Row label="Gas Token" value="ETH" />
+            <Row label="Stock Token Pair" value={`rh${symbol} · Verified`} />
+            <Row label="Oracle Mechanism" value="Chainlink Sub-second" />
+            <div className="mt-2 pt-2 border-t border-[color:var(--color-line)] flex items-center justify-between text-[10px] font-mono">
+              <span className="text-muted-foreground uppercase">Execution Route</span>
+              <span className="text-foreground/80 font-semibold">Non-custodial Policy Engine</span>
+            </div>
+          </Panel>
+
           <Panel title="Reasoning Engine">
             <div className="label normal-case tracking-normal text-muted-foreground">EQUENCY Reasoning Engine</div>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">

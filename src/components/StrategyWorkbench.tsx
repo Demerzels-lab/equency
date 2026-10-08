@@ -108,6 +108,53 @@ export function StrategyWorkbench({ strategy, recs, sparks = {} }: { strategy: S
 
       {/* Ranked recommendations */}
       <Panel title={`Ranked recommendations · ${recs.length}`} className="min-w-0" bodyClassName="p-0">
+        {/* Institutional Segmented Capital Allocation Bar (Brief §28-§33) */}
+        <div className="p-3.5 border-b border-border bg-secondary/30">
+          <div className="flex items-center justify-between text-[10px] font-mono uppercase text-muted-foreground mb-1.5 tracking-wider">
+            <span>Portfolio Composition</span>
+            <span>100% Capital Accounted</span>
+          </div>
+          <div className="flex h-2.5 w-full overflow-hidden rounded-sm bg-secondary border border-border/80">
+            {alloc.allocations.map((a, i) => (
+              <div
+                key={a.ticker}
+                style={{ width: `${a.pct * 100}%` }}
+                className={`h-full border-r border-black/40 ${
+                  i % 3 === 0 ? "bg-emerald-500" : i % 3 === 1 ? "bg-cyan-500" : "bg-indigo-500"
+                }`}
+                title={`${a.ticker}: ${(a.pct * 100).toFixed(0)}%`}
+              />
+            ))}
+            {alloc.cashPct > 0 && (
+              <div
+                style={{ width: `${alloc.cashPct * 100}%` }}
+                className="h-full bg-muted-foreground/30"
+                title={`Cash Reserve: ${(alloc.cashPct * 100).toFixed(0)}%`}
+              />
+            )}
+          </div>
+          <div className="flex flex-wrap items-center gap-3 mt-2 text-[10px] font-mono">
+            {alloc.allocations.map((a, i) => (
+              <span key={a.ticker} className="flex items-center gap-1.5">
+                <span
+                  className={`h-1.5 w-1.5 rounded-xs ${
+                    i % 3 === 0 ? "bg-emerald-500" : i % 3 === 1 ? "bg-cyan-500" : "bg-indigo-500"
+                  }`}
+                />
+                <span className="text-foreground font-semibold">{a.ticker}</span>
+                <span className="text-muted-foreground">{(a.pct * 100).toFixed(0)}%</span>
+              </span>
+            ))}
+            {alloc.cashPct > 0 && (
+              <span className="flex items-center gap-1.5 text-muted-foreground">
+                <span className="h-1.5 w-1.5 rounded-xs bg-muted-foreground/40" />
+                <span>USDG Reserve</span>
+                <span>{(alloc.cashPct * 100).toFixed(0)}%</span>
+              </span>
+            )}
+          </div>
+        </div>
+
         {recs.length === 0 ? (
           <div className="p-6 text-xs text-muted-foreground">No recommendations resolved from the live universe right now.</div>
         ) : (
