@@ -195,22 +195,23 @@ export function StoryHeroSearch({
       </form>
 
       {/* Preset emiten triggers */}
-      <p id="hero-hint" className="hint">
-        Try{" "}
-        {PRESETS.map((p, idx) => (
-          <span key={p}>
-            <button
-              type="button"
-              onClick={() => pick(p)}
-              className="hero-example"
-            >
-              {p.toLowerCase()}
-            </button>
-            {idx < PRESETS.length - 1 ? ", " : ""}.
-          </span>
-        ))}{" "}
-        The 3D canvas morphs with your input.
-      </p>
+      {/* Preset emiten triggers styled as Web3 cryptographic keychips */}
+      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+        <span className="font-mono text-xs text-muted-foreground mr-1">Sample Cores:</span>
+        {PRESETS.map((p) => (
+          <button
+            key={p}
+            type="button"
+            onClick={() => pick(p)}
+            className="px-2.5 py-1 rounded-md border border-[color:var(--color-line)] bg-[color:var(--color-panel)] font-mono text-xs font-bold text-foreground transition-all hover:border-[color:var(--color-accent)] hover:text-[color:var(--color-accent)] hover:shadow-[0_0_12px_rgba(2,132,199,0.25)] active:scale-95"
+          >
+            [{p}]
+          </button>
+        ))}
+        <span className="font-mono text-[11px] text-muted-foreground ml-auto hidden sm:inline">
+          3D canvas responds live
+        </span>
+      </div>
 
       {/* Live Core Preview Dossier */}
       {core && (

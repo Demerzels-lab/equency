@@ -82,6 +82,25 @@ export function StoryCanvas({
     const root = new THREE.Group();
     scene.add(root);
 
+    // Ambient Web3 Spatial Quantum Data Nodes (LayerZero / Monad style)
+    const ambientCount = 200;
+    const ambientPos = new Float32Array(ambientCount * 3);
+    for (let i = 0; i < ambientCount; i++) {
+      ambientPos[i * 3] = (Math.random() - 0.5) * 16;
+      ambientPos[i * 3 + 1] = (Math.random() - 0.5) * 12;
+      ambientPos[i * 3 + 2] = (Math.random() - 0.5) * 12 - 2;
+    }
+    const ambientGeom = new THREE.BufferGeometry();
+    ambientGeom.setAttribute("position", new THREE.BufferAttribute(ambientPos, 3));
+    const ambientMat = new THREE.PointsMaterial({
+      color: 0x00f0ff,
+      size: 0.035,
+      transparent: true,
+      opacity: 0.45,
+    });
+    const ambientPoints = new THREE.Points(ambientGeom, ambientMat);
+    scene.add(ambientPoints);
+
     // State Variables
     let targetProgress = 0;
     let smoothProgress = 0;
@@ -124,7 +143,7 @@ export function StoryCanvas({
     const ch0Group = new THREE.Group();
     root.add(ch0Group);
 
-    // Dynamic 2D Canvas Texture for the 3D Ticker Badge
+    // Dynamic 2D Canvas Texture for the 3D Ticker Badge with Web3 Holographic Aesthetics
     const textCanvas = document.createElement("canvas");
     textCanvas.width = 1024;
     textCanvas.height = 360;
@@ -136,32 +155,65 @@ export function StoryCanvas({
     function renderTextPlate(text: string) {
       textCtx.clearRect(0, 0, 1024, 360);
 
-      // Plate Glass Background (frosted white studio plate)
-      textCtx.fillStyle = "rgba(255, 255, 255, 0.94)";
-      textCtx.roundRect(40, 40, 944, 280, 24);
+      // Cyber Holographic Glass Background
+      const grad = textCtx.createLinearGradient(40, 40, 984, 320);
+      grad.addColorStop(0, "rgba(8, 12, 22, 0.92)");
+      grad.addColorStop(1, "rgba(15, 23, 42, 0.88)");
+      textCtx.fillStyle = grad;
+      textCtx.beginPath();
+      textCtx.roundRect(40, 40, 944, 280, 20);
       textCtx.fill();
 
-      // Border with Accent Ember
-      textCtx.lineWidth = 3.5;
-      textCtx.strokeStyle = "rgba(235, 87, 41, 0.75)";
-      textCtx.roundRect(40, 40, 944, 280, 24);
+      // Cyber Grid Lines inside the plate
+      textCtx.strokeStyle = "rgba(0, 240, 255, 0.08)";
+      textCtx.lineWidth = 1;
+      for (let x = 60; x < 960; x += 40) {
+        textCtx.beginPath();
+        textCtx.moveTo(x, 50);
+        textCtx.lineTo(x, 310);
+        textCtx.stroke();
+      }
+
+      // Glowing Cyan Border
+      textCtx.lineWidth = 2.5;
+      textCtx.strokeStyle = "rgba(0, 240, 255, 0.75)";
+      textCtx.beginPath();
+      textCtx.roundRect(40, 40, 944, 280, 20);
       textCtx.stroke();
 
-      // Ticker Header
-      textCtx.font = "bold 24px monospace";
-      textCtx.fillStyle = "#eb5729";
-      textCtx.fillText("INTELLIGENCE CORE // ACTIVE", 80, 95);
+      // Corner Tech Brackets (Web3 HUD markers)
+      textCtx.lineWidth = 4;
+      textCtx.strokeStyle = "#00f0ff";
+      // Top-Left
+      textCtx.beginPath(); textCtx.moveTo(40, 70); textCtx.lineTo(40, 40); textCtx.lineTo(70, 40); textCtx.stroke();
+      // Top-Right
+      textCtx.beginPath(); textCtx.moveTo(984, 70); textCtx.lineTo(984, 40); textCtx.lineTo(954, 40); textCtx.stroke();
+      // Bottom-Left
+      textCtx.beginPath(); textCtx.moveTo(40, 290); textCtx.lineTo(40, 320); textCtx.lineTo(70, 320); textCtx.stroke();
+      // Bottom-Right
+      textCtx.beginPath(); textCtx.moveTo(984, 290); textCtx.lineTo(984, 320); textCtx.lineTo(954, 320); textCtx.stroke();
 
-      // Large Main Ticker
-      textCtx.font = "bold 96px -apple-system, system-ui, sans-serif";
-      textCtx.fillStyle = "#111317";
+      // Live Status Beacon + Header
+      textCtx.fillStyle = "#00f0ff";
+      textCtx.beginPath();
+      textCtx.arc(80, 92, 6, 0, Math.PI * 2);
+      textCtx.fill();
+
+      textCtx.font = "bold 20px monospace";
+      textCtx.fillStyle = "#38bdf8";
+      textCtx.fillText("ROBINHOOD TESTNET #46630 // LIVE PROTOCOL CORE", 102, 98);
+
+      // Large Main Ticker with Holographic Glow
+      textCtx.font = "900 98px -apple-system, BlinkMacSystemFont, monospace";
+      textCtx.fillStyle = "#ffffff";
       const clean = (text || "EQUENCY").toUpperCase();
-      textCtx.fillText(clean, 80, 210);
+      textCtx.fillText(clean, 80, 206);
 
-      // Subtitle
-      textCtx.font = "500 24px monospace";
-      textCtx.fillStyle = "#525866";
-      textCtx.fillText("SEC 424B4 · DETERMINISTIC STATE", 80, 270);
+      // Cryptographic Hash & Deterministic Stamp
+      const pseudoHash = "0x" + Array.from(clean).reduce((acc, c) => acc + c.charCodeAt(0).toString(16), "7f").padEnd(16, "0").slice(0, 16);
+      textCtx.font = "600 21px monospace";
+      textCtx.fillStyle = "rgba(148, 163, 184, 0.95)";
+      textCtx.fillText(`SEC 424B4 · DETERMINISTIC MATH · HASH [${pseudoHash}...]`, 80, 268);
 
       textTexture.needsUpdate = true;
     }
@@ -180,36 +232,47 @@ export function StoryCanvas({
     // Faceted Diamond Octahedron
     const octGeom = new THREE.OctahedronGeometry(1.25, 0);
     const octMat = new THREE.MeshStandardMaterial({
-      color: 0x181a20,
-      roughness: 0.18,
-      metalness: 0.85,
+      color: 0x0f172a,
+      roughness: 0.15,
+      metalness: 0.9,
       flatShading: true,
       transparent: true,
-      opacity: 1.0,
+      opacity: 0.95,
     });
     const octMesh = new THREE.Mesh(octGeom, octMat);
     ch0Group.add(octMesh);
 
-    // Wireframe Halo
+    // Wireframe Halo with Cyan Glow
     const wireGeom = new THREE.OctahedronGeometry(1.28, 0);
     const wireMat = new THREE.MeshBasicMaterial({
-      color: 0x0284c7,
+      color: 0x00f0ff,
       wireframe: true,
       transparent: true,
-      opacity: 0.7,
+      opacity: 0.85,
     });
     const wireMesh = new THREE.Mesh(wireGeom, wireMat);
     ch0Group.add(wireMesh);
 
+    // Outer Geometric Tesseract Cage
+    const cageGeom = new THREE.IcosahedronGeometry(1.6, 0);
+    const cageMat = new THREE.MeshBasicMaterial({
+      color: 0x8b5cf6,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.35,
+    });
+    const cageMesh = new THREE.Mesh(cageGeom, cageMat);
+    ch0Group.add(cageMesh);
+
     // Orbital Coordinates Rings
-    const ring1Geom = new THREE.TorusGeometry(1.9, 0.015, 16, 96);
-    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x0284c7, transparent: true, opacity: 0.55 });
+    const ring1Geom = new THREE.TorusGeometry(2.0, 0.015, 16, 96);
+    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.65 });
     const ring1 = new THREE.Mesh(ring1Geom, ring1Mat);
     ring1.rotation.x = Math.PI * 0.35;
     ch0Group.add(ring1);
 
-    const ring2Geom = new THREE.TorusGeometry(2.2, 0.012, 16, 96);
-    const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x4f46e5, transparent: true, opacity: 0.45 });
+    const ring2Geom = new THREE.TorusGeometry(2.35, 0.012, 16, 96);
+    const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.5 });
     const ring2 = new THREE.Mesh(ring2Geom, ring2Mat);
     ring2.rotation.y = Math.PI * 0.4;
     ch0Group.add(ring2);
@@ -490,6 +553,8 @@ export function StoryCanvas({
         }
         renderer.dispose();
         textTexture.dispose();
+        ambientGeom.dispose();
+        ambientMat.dispose();
       },
     };
     handleRef.current = handle;
@@ -503,6 +568,10 @@ export function StoryCanvas({
       animId = requestAnimationFrame(animate);
       const delta = clock.getDelta();
       const time = clock.getElapsedTime();
+
+      // Ambient particle gentle celestial drift
+      ambientPoints.rotation.y = time * 0.025;
+      ambientPoints.rotation.x = Math.sin(time * 0.02) * 0.04;
 
       // RobinID dampening: buttery smooth progression with zero jerk
       smoothProgress += (targetProgress - smoothProgress) * 0.075;
