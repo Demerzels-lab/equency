@@ -6,10 +6,11 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronDown, Menu, Search, Star, X } from "lucide-react";
 import clsx from "clsx";
-import { NAV, type NavItem } from "@/lib/site";
+import { NAV, X_HANDLE, X_URL, type NavItem } from "@/lib/site";
 import { getWatchlist } from "@/lib/watchlist";
 import { NavConnect } from "@/components/NavConnect";
 import { Logo } from "./Logo";
+import { XIcon } from "./XIcon";
 
 const isActive = (item: NavItem, path: string) =>
   (item.match ?? []).some((m) => path === m || path.startsWith(m + "/"));
@@ -133,6 +134,16 @@ export function Header() {
               </span>
             )}
           </Link>
+          <a
+            href={X_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`EQUENCY on X (${X_HANDLE})`}
+            title={`Follow ${X_HANDLE} on X`}
+            className="grid size-9 place-items-center rounded text-ink-2 ring-1 ring-inset ring-line-2 transition-colors hover:text-ink"
+          >
+            <XIcon size={14} />
+          </a>
           <NavConnect />
         </div>
 
@@ -181,6 +192,9 @@ export function Header() {
                 <Link href="/watchlist" className="flex items-center gap-2 text-lg text-ink-2">
                   <Star size={16} /> Watchlist {watchCount > 0 && `(${watchCount})`}
                 </Link>
+                <a href={X_URL} target="_blank" rel="noopener noreferrer" className="ml-4 flex items-center gap-2 text-lg text-ink-2">
+                  <XIcon size={15} /> {X_HANDLE}
+                </a>
               </div>
               <NavConnect />
             </div>

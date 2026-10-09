@@ -1,15 +1,8 @@
 import Link from "next/link";
-import { FOOTER } from "@/lib/site";
+import { FOOTER, X_HANDLE, X_URL } from "@/lib/site";
 import { Btn } from "./Btn";
 import { Logo } from "./Logo";
-
-function XIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  );
-}
+import { XIcon } from "./XIcon";
 
 export function Footer() {
   return (
@@ -44,13 +37,16 @@ export function Footer() {
             <Btn href="/strategies" accent="strategy" className="w-40">Strategies</Btn>
           </div>
           <a
-            href="https://x.com"
+            href={X_URL}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="EQUENCY on X"
-            className="grid size-10 place-items-center rounded-sm bg-ink/8 text-ink transition-colors hover:bg-ink hover:text-paper lg:size-8"
+            aria-label={`EQUENCY on X (${X_HANDLE})`}
+            className="group inline-flex items-center gap-2.5 text-sm text-ink-2 transition-colors hover:text-ink"
           >
-            <XIcon />
+            <span className="grid size-10 place-items-center rounded-sm bg-ink/8 text-ink transition-colors group-hover:bg-ink group-hover:text-paper lg:size-8">
+              <XIcon />
+            </span>
+            Follow {X_HANDLE}
           </a>
           <div className="max-w-xs lg:text-right">
             <p className="text-base text-ink">Intelligence for the newly public.</p>

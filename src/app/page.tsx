@@ -5,6 +5,8 @@ import { MAINNET } from "@/lib/deployments";
 import { STRATEGY_LIST } from "@/lib/strategy/strategies";
 import { HeroScene, OrbScene, WaveScene } from "@/components/site/Scenes";
 import { CoreSearch } from "@/components/site/CoreSearch";
+import { ContractAddress } from "@/components/site/ContractAddress";
+import { PHASES } from "@/lib/roadmap";
 import { Btn } from "@/components/site/Btn";
 import { Faq } from "@/components/site/Faq";
 import { TechVisual } from "@/components/site/TechVisual";
@@ -49,6 +51,7 @@ export default async function Home() {
             Intelligence for the <span className="editorial-accent">newly public.</span>
           </h1>
           <p className="max-w-2xl text-balance text-lg text-ink md:text-2xl">{BRAND.statement}</p>
+          <ContractAddress className="mt-2 [text-shadow:none]" />
         </Reveal>
         <a
           href="#find-core"
@@ -182,7 +185,7 @@ export default async function Home() {
       <div className="hr-fade mx-auto max-w-7xl" />
 
       {/* ── FRESHLY PUBLIC · the newest minds (brief §8, §23) ────── */}
-      <section className="relative isolate overflow-hidden py-28">
+      <section id="freshly-public" className="relative isolate scroll-mt-24 overflow-hidden py-28">
         <WaveScene className="!absolute inset-x-0 top-10 bottom-0 -z-10" />
         <Reveal><SectionTitle>Freshly Public</SectionTitle></Reveal>
         <Reveal delay={0.05}>
@@ -281,6 +284,49 @@ export default async function Home() {
           <p className="text-center font-wide text-xs uppercase tracking-[0.2em] text-ink-3">
             Intelligence <span className="text-core">→</span> Strategy <span className="text-strategy">→</span> Capital
           </p>
+        </Reveal>
+      </section>
+
+      <div className="hr-fade mx-auto max-w-7xl" />
+
+      {/* ── ROADMAP TEASER · full story on /roadmap ──────────────── */}
+      <section id="roadmap" className="mx-auto max-w-7xl scroll-mt-24 px-5 py-24 md:px-8">
+        <Reveal><SectionTitle>Roadmap</SectionTitle></Reveal>
+        <Reveal delay={0.05}>
+          <h2 className="mx-auto mt-6 max-w-3xl text-balance text-center text-3xl font-light leading-tight md:text-5xl">
+            Every new market <span className="editorial-accent">gets a Mind.</span>
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-balance text-center font-body text-ink-2">
+            Newly public companies are the foundation. Next, the Intelligence Core framework expands to new markets as they emerge.
+          </p>
+        </Reveal>
+        <div className="relative mt-14">
+          <div className="absolute left-[10%] right-[10%] top-[23px] hidden h-px bg-gradient-to-r from-mint/60 via-line-2 to-strategy/50 md:block" />
+          <div className="relative grid gap-8 md:grid-cols-5 md:gap-4">
+            <Reveal className="flex gap-4 md:flex-col md:items-center md:text-center">
+              <span className="relative grid size-12 shrink-0 place-items-center rounded-full bg-paper font-mono text-[10px] text-mint ring-1 ring-mint/60">
+                <span className="absolute inset-0 animate-ping rounded-full ring-1 ring-mint/40 [animation-duration:2.6s]" />
+                LIVE
+              </span>
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-mint">Today</div>
+                <div className="mt-1 text-lg text-ink">Newly public companies</div>
+              </div>
+            </Reveal>
+            {PHASES.map((p, i) => (
+              <Reveal key={p.n} delay={0.08 * (i + 1)} className="flex gap-4 md:flex-col md:items-center md:text-center">
+                <span className={`grid size-12 shrink-0 place-items-center rounded-full bg-paper font-mono text-xs ring-1 ${p.accent === "core" ? "text-core ring-core/45" : "text-strategy ring-strategy/45"}`}>{p.n}</span>
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">{p.conditional ? "Roadmap · conditional" : "Roadmap"}</div>
+                  <div className="mt-1 text-lg text-ink">{p.market}</div>
+                  <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-3">{p.label}</div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+        <Reveal className="mt-12 flex justify-center">
+          <Btn href="/roadmap" accent="core" className="min-w-56">See the full roadmap →</Btn>
         </Reveal>
       </section>
 

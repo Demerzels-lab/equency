@@ -55,6 +55,7 @@ export const NAV: NavItem[] = [
     ],
   },
   { label: "Vault", href: "/vault", match: ["/vault"] },
+  { label: "Roadmap", href: "/roadmap", match: ["/roadmap"] },
   {
     label: "Resources",
     children: [
@@ -134,6 +135,7 @@ export const FOOTER = [
     links: [
       { label: "Strategy Vault", href: "/vault" },
       { label: "Contracts", href: "/vault#contracts" },
+      { label: "Roadmap", href: "/roadmap" },
       { label: "Block Explorer", href: "https://robinhoodchain.blockscout.com", external: true },
     ],
   },
@@ -150,6 +152,13 @@ export const FOOTER = [
 /** Ten notable US-listed IPOs shown with their official logos in the landing's "Freshly Public"
  *  strip. Logos are vendored in /public/logos (official marks, nominative use); every ticker
  *  resolves in SEC's company_tickers.json so the link opens a real Intelligence Core. */
+/** Project contract address. Set NEXT_PUBLIC_TOKEN_CA (Vercel env) when it's announced; empty shows "Announcing soon". */
+export const TOKEN_CA = (process.env.NEXT_PUBLIC_TOKEN_CA ?? "").trim();
+
+/** Official EQUENCY account on X. */
+export const X_URL = "https://x.com/Equencymind";
+export const X_HANDLE = "@Equencymind";
+
 export const FEATURED_IPOS: { ticker: string; name: string; exchange: "NASDAQ" | "NYSE"; listed: string }[] = [
   { ticker: "FIG", name: "Figma", exchange: "NYSE", listed: "Jul 2025" },
   { ticker: "CRCL", name: "Circle", exchange: "NYSE", listed: "Jun 2025" },
