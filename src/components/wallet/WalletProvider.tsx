@@ -71,3 +71,5 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
   return <Ctx.Provider value={{ account, chainId, hasWallet, connect, switchChain, eth: getEth }}>{children}</Ctx.Provider>;
 }
+
+
