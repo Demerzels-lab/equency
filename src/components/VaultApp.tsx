@@ -56,7 +56,9 @@ const getEth = (): Eth | undefined => (globalThis as unknown as { ethereum?: Eth
 const fUSDG = (v: bigint) => Number(formatUnits(v, 6)).toLocaleString("en-US", { maximumFractionDigits: 2 });
 
 interface Position { addr: Address; sym: string; value6: bigint; bal: bigint }
-interface State { usdg: bigint; vault: Address | null; paused: boolean; nav: bigint; idle: bigint; shares: bigint; positions: Position[] }
+interface State { usdg: bigint; vaults: Address[]; vault: Address | null; paused: boolean; nav: bigint; idle: bigint; shares: bigint; positions: Position[] }
+/** One row of the owner's vault history (GET /api/vault-history, mainnet). */
+interface HistoryItem { vault: string; index: number; txHash: string | null; block: number | null; timestamp: number | null; maxPositionBps: number | null; cashReserveBps: number | null; maxPositions: number | null; paused: boolean | null }
 /** Confirmed vault-creation receipt, shown in the success popup. */
 interface Created { hash: `0x${string}`; vault: Address | null; block: bigint; gasUsed: bigint; chainId: number }
 
@@ -69,6 +71,14 @@ export function VaultApp() {
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string; hash?: string } | null>(null);
   const [created, setCreated] = useState<Created | null>(null);
+  // Which of the owner's vaults the panel shows (null = latest).
+  const [sel, setSel] = useState<Address | null>(null);
+  // History is tagged with the owner it belongs to, so switching wallets never shows stale rows.
+  const [historyOf, setHistoryOf] = useState<{ owner: string; items: HistoryItem[] } | null>(null);
+  const history = historyOf && account && historyOf.owner === account.toLowerCase() ? historyOf.items : null;
+  const setHistory = (fn: (h: HistoryItem[] | null) => HistoryItem[]) => {
+    if (account) setHistoryOf({ owner: account.toLowerCase(), items: fn(history) });
+  };
   const [depIn, setDepIn] = useState("1000");
   const [allocIn, setAllocIn] = useState("300");
   const [allocSym, setAllocSym] = useState("TSLA");
@@ -113,8 +123,9 @@ export function VaultApp() {
     try {
       const usdg = await pub.readContract({ address: C.USDG, abi: erc20, functionName: "balanceOf", args: [account] });
       const vaults = await pub.readContract({ address: C.VaultFactory, abi: factoryAbi, functionName: "vaultsOf", args: [account] }) as Address[];
-      const vault = vaults.length ? vaults[vaults.length - 1] : null;
-      if (!vault) { setSt({ usdg, vault: null, paused: false, nav: 0n, idle: 0n, shares: 0n, positions: [] }); return; }
+      const selected = sel && vaults.some((v) => v.toLowerCase() === sel.toLowerCase()) ? sel : null;
+      const vault = selected ?? (vaults.length ? vaults[vaults.length - 1] : null);
+      if (!vault) { setSt({ usdg, vaults, vault: null, paused: false, nav: 0n, idle: 0n, shares: 0n, positions: [] }); return; }
       const [paused, nav, shares, idle, posAddrs] = await Promise.all([
         pub.readContract({ address: vault, abi: vaultAbi, functionName: "paused" }),
         pub.readContract({ address: vault, abi: vaultAbi, functionName: "totalAssets" }),
@@ -130,11 +141,32 @@ export function VaultApp() {
         ]);
         positions.push({ addr: a, sym: symOf(a), value6, bal });
       }
-      setSt({ usdg, vault, paused, nav, shares, idle, positions });
+      setSt({ usdg, vaults, vault, paused, nav, shares, idle, positions });
     } catch { /* read failed */ }
-  }, [pub, account, deployed, C.USDG, C.VaultFactory]);
+  }, [pub, account, deployed, C.USDG, C.VaultFactory, sel]);
 
-  useEffect(() => { refresh(); }, [refresh]);
+  // Vault history with creation transactions (server reads chain; mainnet only).
+  const loadHistory = useCallback(async () => {
+    if (!account || dep?.chainId !== 4663) return;
+    const owner = account.toLowerCase();
+    try {
+      const r = await fetch(`/api/vault-history?owner=${account}`, { cache: "no-store" });
+      const j = (await r.json()) as { items?: HistoryItem[] };
+      const server = j.items ?? [];
+      // Keep just-created rows the server can't see yet (RPC lag right after confirmation).
+      setHistoryOf((h) => {
+        const pending = h && h.owner === owner ? h.items.filter((x) => !server.some((y) => y.vault.toLowerCase() === x.vault.toLowerCase()) && x.txHash) : [];
+        const merged = [...pending, ...server];
+        const total = merged.length;
+        return { owner, items: merged.map((x, i) => ({ ...x, index: total - i })) };
+      });
+    } catch {
+      setHistoryOf((h) => (h && h.owner === owner ? h : { owner, items: [] }));
+    }
+  }, [account, dep?.chainId]);
+
+  useEffect(() => { refresh(); loadHistory(); }, [refresh, loadHistory]);
+
 
   async function run(label: string, fn: () => Promise<`0x${string}`>) {
     if (!wallet || !pub) return null;
@@ -164,6 +196,15 @@ export function VaultApp() {
       vault = vs.length ? vs[vs.length - 1] : null;
     } catch { /* popup still shows the tx */ }
     setCreated({ hash: receipt.transactionHash, vault, block: receipt.blockNumber, gasUsed: receipt.gasUsed, chainId: dep.chainId });
+    if (vault) {
+      setSel(vault);
+      // Show the new vault in history immediately; the server fills in the rest on reload.
+      setHistory((h) => [
+        { vault, index: (h?.length ?? 0) + 1, txHash: receipt.transactionHash, block: Number(receipt.blockNumber), timestamp: Math.floor(Date.now() / 1000), maxPositionBps: 3000, cashReserveBps: 2000, maxPositions: 5, paused: true },
+        ...(h ?? []).filter((x) => x.vault.toLowerCase() !== vault!.toLowerCase()),
+      ]);
+    }
+    void loadHistory();
   }
   const unpause = () => run("Unpause vault", () => w().writeContract({ address: st!.vault!, abi: vaultAbi, functionName: "unpause", chain: ch, account: a() }));
   async function deposit() {
@@ -193,6 +234,7 @@ export function VaultApp() {
   }
 
   return (
+    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
     <div className="panel p-5">
       {/* header + network switcher */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b hairline pb-3">
@@ -243,7 +285,7 @@ export function VaultApp() {
             </Step>
           ) : (
             <>
-              <Step n="2" title="Vault" done>
+              <Step n="2" title={st.vaults.length > 1 ? `Vault #${st.vaults.findIndex((v) => v.toLowerCase() === st.vault!.toLowerCase()) + 1} of ${st.vaults.length}` : "Vault"} done>
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
                   <a href={explorerAddr(dep.chainId, st.vault)} target="_blank" rel="noreferrer" className="mono text-xs" style={{ color: "var(--color-accent)" }}>{shortAddr(st.vault)} ↗</a>
                   <span className="mono text-xs" style={{ color: st.paused ? "var(--color-warn)" : "var(--color-pos)" }}>{st.paused ? "PAUSED" : "ACTIVE"}</span>
@@ -254,6 +296,10 @@ export function VaultApp() {
                     Your vault is live on mainnet and ships paused. Real-USDG deposits open after the external audit.
                   </p>
                 )}
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <Btn onClick={createVault} busy={busy === "Create vault"} small>+ Create another vault</Btn>
+                  <span className="label normal-case" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>Growth defaults · 30% · 20% · 5 positions</span>
+                </div>
               </Step>
 
               <div className="my-4 grid grid-cols-3 gap-3 border-y hairline py-3">
@@ -362,6 +408,102 @@ export function VaultApp() {
           )}
         </DialogContent>
       </Dialog>
+    </div>
+
+    <VaultHistory
+      chainId={dep?.chainId}
+      items={dep?.chainId === 4663 ? history : (st?.vaults ?? []).map((v, i) => ({ vault: v, index: i + 1, txHash: null, block: null, timestamp: null, maxPositionBps: null, cashReserveBps: null, maxPositions: null, paused: null })).reverse()}
+      loading={dep?.chainId === 4663 && history === null}
+      selected={st?.vault ?? null}
+      onSelect={(v) => setSel(v as Address)}
+    />
+    </div>
+  );
+}
+
+/** The owner's Strategy Vaults, newest first · each links to its creation TRANSACTION. */
+function VaultHistory({ chainId, items, loading, selected, onSelect }: {
+  chainId?: number;
+  items: HistoryItem[] | null;
+  loading: boolean;
+  selected: string | null;
+  onSelect: (vault: string) => void;
+}) {
+  const fmt = (ts: number | null) =>
+    ts ? new Date(ts * 1000).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "·";
+  const pct = (bps: number | null) => (bps == null ? "·" : `${bps / 100}%`);
+  return (
+    <div className="panel p-5">
+      <div className="flex items-center justify-between border-b hairline pb-3">
+        <span className="label">Vault history</span>
+        <span className="label normal-case" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>
+          {loading ? "reading chain…" : items ? `${items.length} vault${items.length === 1 ? "" : "s"}` : ""}
+        </span>
+      </div>
+
+      {items === null && loading && (
+        <div className="space-y-2 pt-3">
+          {[0, 1].map((i) => <div key={i} className="h-16 animate-pulse rounded-md bg-[color:var(--color-panel-2)]" />)}
+        </div>
+      )}
+      {items !== null && items.length === 0 && (
+        <p className="pt-4 text-xs leading-relaxed" style={{ color: "var(--color-ink-faint)" }}>
+          No vaults yet. Each vault you create appears here with its creation transaction on Blockscout.
+        </p>
+      )}
+
+      <ul className="flex flex-col gap-2 pt-3">
+        {(items ?? []).map((it) => {
+          const active = !!selected && selected.toLowerCase() === it.vault.toLowerCase();
+          return (
+            <li key={it.vault}>
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => onSelect(it.vault)}
+                onKeyDown={(e) => { if (e.key === "Enter") onSelect(it.vault); }}
+                className={cn(
+                  "cursor-pointer rounded-md border p-3 transition-colors",
+                  active ? "border-[color:var(--color-core)] bg-[color:color-mix(in_oklab,var(--color-core)_10%,transparent)]" : "border-[color:var(--color-line)] hover:bg-[color:var(--color-panel-2)]",
+                )}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-medium" style={{ color: "var(--color-ink)" }}>
+                    Vault #{it.index}
+                    {active && <span className="label ml-2" style={{ color: "var(--color-core)" }}>viewing</span>}
+                  </span>
+                  {it.paused != null && (
+                    <span className="mono text-[10px]" style={{ color: it.paused ? "var(--color-warn)" : "var(--color-pos)" }}>{it.paused ? "PAUSED" : "ACTIVE"}</span>
+                  )}
+                </div>
+                <div className="mono mt-1 flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 text-[11px]" style={{ color: "var(--color-ink-faint)" }}>
+                  <span>{shortAddr(it.vault)}</span>
+                  <span>{fmt(it.timestamp)}</span>
+                </div>
+                {it.maxPositionBps != null && (
+                  <div className="mono mt-1 text-[10px]" style={{ color: "var(--color-ink-faint)" }}>
+                    max {pct(it.maxPositionBps)} · reserve {pct(it.cashReserveBps)} · {it.maxPositions} positions
+                  </div>
+                )}
+                <div className="mt-2 flex items-center gap-4 text-[11px]">
+                  {it.txHash && chainId ? (
+                    <a href={explorerTx(chainId, it.txHash)} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="underline-offset-2 hover:underline" style={{ color: "var(--color-accent)" }}>
+                      Creation tx {shortAddr(it.txHash)} ↗
+                    </a>
+                  ) : chainId === 4663 ? (
+                    <span style={{ color: "var(--color-ink-faint)" }}>locating tx…</span>
+                  ) : null}
+                  {chainId && (
+                    <a href={explorerAddr(chainId, it.vault)} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="underline-offset-2 hover:underline" style={{ color: "var(--color-ink-faint)" }}>
+                      Contract ↗
+                    </a>
+                  )}
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

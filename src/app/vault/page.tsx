@@ -107,7 +107,7 @@ export default async function VaultPage() {
 
           <VaultVerdict onMainnet={onMainnet} vaultCount={live.vaultCount} contractCount={Object.keys(MAINNET.contracts).length} />
 
-          <div className="mt-12 max-w-xl">
+          <div className="mt-12 max-w-5xl">
             <VaultApp />
           </div>
         </div>
