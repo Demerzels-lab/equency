@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   createPublicClient, createWalletClient, custom, defineChain,
   parseAbi, parseUnits, formatUnits, zeroAddress, type Address, type PublicClient, type WalletClient, type Chain,
@@ -38,6 +38,8 @@ const factoryAbi = parseAbi([
   "function createVault(uint16,uint16,uint8,uint256) returns (address)",
   "function vaultsOf(address) view returns (address[])",
 ]);
+// keccak256("VaultCreated(address,address,uint16,uint16,uint8,uint256)")
+const VAULT_CREATED_TOPIC = "0x41cc40ef682aa92e66d50e5b0486544dfdcf402e3837fceb60bcf32dd357f136";
 const vaultAbi = parseAbi([
   "function paused() view returns (bool)",
   "function unpause()",
@@ -69,6 +71,11 @@ export function VaultApp() {
   const [wallet, setWallet] = useState<WalletClient | null>(null);
   const [st, setSt] = useState<State | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  // Synchronous in-flight lock: React state alone can't stop a second click landing before the
+  // re-render, nor a click in the gap between a receipt and the success popup.
+  const inFlight = useRef(false);
+  const [phase, setPhase] = useState<"sign" | "confirm" | null>(null);
+  const [confirmAnother, setConfirmAnother] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string; hash?: string } | null>(null);
   const [created, setCreated] = useState<Created | null>(null);
   // Which of the owner's vaults the panel shows (null = latest).
@@ -168,33 +175,47 @@ export function VaultApp() {
   useEffect(() => { refresh(); loadHistory(); }, [refresh, loadHistory]);
 
 
-  async function run(label: string, fn: () => Promise<`0x${string}`>) {
-    if (!wallet || !pub) return null;
-    setBusy(label); setMsg(null);
+  /** Send one transaction. `hold` keeps the lock after the receipt (caller releases it). */
+  async function run(label: string, fn: () => Promise<`0x${string}`>, opts?: { hold?: boolean }) {
+    if (!wallet || !pub || inFlight.current) return null;
+    inFlight.current = true;
+    setBusy(label); setMsg(null); setPhase("sign");
+    let hold = false;
     try {
       const hash = await fn();
+      setPhase("confirm");
       const receipt = await pub.waitForTransactionReceipt({ hash });
       if (receipt.status !== "success") throw new Error("transaction reverted");
       setMsg({ kind: "ok", text: `${label} confirmed`, hash });
       await refresh();
+      hold = !!opts?.hold;
       return receipt;
     } catch (e: unknown) {
       setMsg({ kind: "err", text: `${label}: ${e instanceof Error ? e.message.split("\n")[0] : "failed"}` });
       return null;
-    } finally { setBusy(null); }
+    } finally {
+      if (!hold) release();
+    }
   }
+  function release() {
+    inFlight.current = false;
+    setBusy(null); setPhase(null);
+  }
+  const busyText = phase === "sign" ? "Confirm in wallet…" : phase === "confirm" ? "Confirming on-chain…" : "…";
 
   const w = () => wallet!; const a = () => account!; const ch = dep ? buildChain(dep) : (undefined as unknown as Chain);
   const faucet = () => run("Mint 10,000 test USDG", () => w().writeContract({ address: C.USDG, abi: erc20, functionName: "mint", args: [a(), parseUnits("10000", 6)], chain: ch, account: a() }));
   async function createVault() {
-    const receipt = await run("Create vault", () => w().writeContract({ address: C.VaultFactory, abi: factoryAbi, functionName: "createVault", args: [3000, 2000, 5, parseUnits("1000000", 6)], chain: ch, account: a() }));
-    if (!receipt || !pub || !dep) return;
-    // The new vault is the caller's latest one in the factory registry.
-    let vault: Address | null = null;
+    // Lock is held from click until the success popup is on screen (released in finally).
+    const receipt = await run("Create vault", () => w().writeContract({ address: C.VaultFactory, abi: factoryAbi, functionName: "createVault", args: [3000, 2000, 5, parseUnits("1000000", 6)], chain: ch, account: a() }), { hold: true });
+    if (!receipt) return;
     try {
-      const vs = (await pub.readContract({ address: C.VaultFactory, abi: factoryAbi, functionName: "vaultsOf", args: [a()] })) as Address[];
-      vault = vs.length ? vs[vs.length - 1] : null;
-    } catch { /* popup still shows the tx */ }
+    if (!pub || !dep) return;
+    // The vault THIS transaction created, from its own VaultCreated event (topics[2]) ·
+    // not "latest in the registry", which could belong to another concurrent transaction.
+    let vault: Address | null = null;
+    const ev = receipt.logs.find((l) => l.address.toLowerCase() === C.VaultFactory.toLowerCase() && l.topics[0] === VAULT_CREATED_TOPIC);
+    if (ev?.topics[2]) vault = (`0x${ev.topics[2].slice(26)}`) as Address;
     setCreated({ hash: receipt.transactionHash, vault, block: receipt.blockNumber, gasUsed: receipt.gasUsed, chainId: dep.chainId });
     if (vault) {
       setSel(vault);
@@ -205,6 +226,9 @@ export function VaultApp() {
       ]);
     }
     void loadHistory();
+    } finally {
+      release();
+    }
   }
   const unpause = () => run("Unpause vault", () => w().writeContract({ address: st!.vault!, abi: vaultAbi, functionName: "unpause", chain: ch, account: a() }));
   async function deposit() {
@@ -281,7 +305,7 @@ export function VaultApp() {
           {!st?.vault ? (
             <Step n="2" title="Create your Strategy Vault">
               <div className="label mb-2 normal-case" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>Growth defaults · 30% max position · 20% cash reserve · 5 positions · ships paused</div>
-              <Btn onClick={createVault} busy={busy === "Create vault"}>Create vault</Btn>
+              <Btn onClick={createVault} busy={busy === "Create vault"} busyText={busyText}>Create vault</Btn>
             </Step>
           ) : (
             <>
@@ -297,7 +321,7 @@ export function VaultApp() {
                   </p>
                 )}
                 <div className="mt-3 flex flex-wrap items-center gap-3">
-                  <Btn onClick={createVault} busy={busy === "Create vault"} small>+ Create another vault</Btn>
+                  <Btn onClick={() => setConfirmAnother(true)} busy={busy === "Create vault"} busyText={busyText} small>+ Create another vault</Btn>
                   <span className="label normal-case" style={{ letterSpacing: 0, color: "var(--color-ink-faint)" }}>Growth defaults · 30% · 20% · 5 positions</span>
                 </div>
               </Step>
@@ -357,6 +381,35 @@ export function VaultApp() {
       )}
 
       <Msg msg={msg} chainId={dep?.chainId} />
+
+      {/* Confirm before creating an ADDITIONAL vault · it's a real mainnet transaction */}
+      <Dialog open={confirmAnother} onOpenChange={setConfirmAnother}>
+        <DialogContent>
+          <div className="flex flex-col gap-4">
+            <div>
+              <DialogTitle>Create another Strategy Vault?</DialogTitle>
+              <DialogDescription className="mt-1">
+                This sends one transaction from {account ? shortAddr(account) : "your wallet"} on {dep?.label ?? "Robinhood Chain"}.
+                You will have {(st?.vaults.length ?? 0) + 1} vaults.
+              </DialogDescription>
+            </div>
+            <div className="rounded-lg border border-[color:var(--color-line)] bg-[color:var(--color-panel-2)] p-4 font-mono text-xs text-[color:var(--color-ink-dim)]">
+              Growth defaults · 30% max position · 20% cash reserve · 5 positions · ships paused
+            </div>
+            <div className="flex items-center justify-end gap-3">
+              <DialogClose className="px-3 py-2 text-xs text-[color:var(--color-ink-faint)] transition-colors hover:text-[color:var(--color-ink)]">Cancel</DialogClose>
+              <button
+                type="button"
+                disabled={busy !== null}
+                onClick={() => { setConfirmAnother(false); void createVault(); }}
+                className="rounded-md bg-[color:var(--color-ink)] px-4 py-2 text-sm font-medium text-[color:var(--color-bg)] transition-colors hover:bg-white disabled:opacity-50"
+              >
+                Create vault
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Success popup · links to the creation TRANSACTION on Blockscout (not the contract) */}
       <Dialog open={!!created} onOpenChange={(o) => { if (!o) setCreated(null); }}>
@@ -535,10 +588,10 @@ function Input({ value, onChange, suffix }: { value: string; onChange: (v: strin
     </div>
   );
 }
-function Btn({ onClick, busy, children, className = "", small }: { onClick: () => void; busy?: boolean; children: React.ReactNode; className?: string; small?: boolean }) {
+function Btn({ onClick, busy, busyText = "…", children, className = "", small }: { onClick: () => void; busy?: boolean; busyText?: string; children: React.ReactNode; className?: string; small?: boolean }) {
   return (
     <Button type="button" onClick={onClick} disabled={busy} variant="outline" size={small ? "sm" : "default"} className={cn("label rounded-sm", className)}>
-      {busy ? "…" : children}
+      {busy ? busyText : children}
     </Button>
   );
 }
