@@ -2,6 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getNewlyPublicUniverse } from "@/lib/providers/universe";
 
 // Cache warmer for the newly-public universe, called by Vercel Cron (vercel.json).
+// Schedule is daily (06:00 UTC) because the Hobby plan rejects any cron that runs more than once a
+// day. On Pro, tighten it to "*/20 * * * *".
 // The universe needs ~185 paced SEC calls on a cold cache (~25 s). Hitting it on a schedule means
 // visitors always read a warm cache: a stale entry is served instantly and refreshed in the
 // background, and per-company confirmations (3 h cache) stay warm so a refresh costs ~3 calls.
