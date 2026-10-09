@@ -71,6 +71,11 @@ export function explorerAddr(chainId: number, addr: string): string {
   return d ? `${d.explorer}/address/${addr}` : "#";
 }
 
+export function explorerTx(chainId: number, hash: string): string {
+  const d = DEPLOYMENTS[chainId];
+  return d ? `${d.explorer}/tx/${hash}` : "#";
+}
+
 export function shortAddr(a: string): string {
   return `${a.slice(0, 6)}…${a.slice(-4)}`;
 }

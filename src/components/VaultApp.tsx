@@ -6,8 +6,9 @@ import {
   parseAbi, parseUnits, formatUnits, zeroAddress, type Address, type PublicClient, type WalletClient, type Chain,
 } from "viem";
 import {
-  DEPLOYMENTS, deploymentByHex, isDeployed, explorerAddr, shortAddr, CHAIN_HEX, type VaultDeployment,
+  DEPLOYMENTS, deploymentByHex, isDeployed, explorerAddr, explorerTx, shortAddr, CHAIN_HEX, type VaultDeployment,
 } from "@/lib/deployments";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input as UiInput } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -56,6 +57,8 @@ const fUSDG = (v: bigint) => Number(formatUnits(v, 6)).toLocaleString("en-US", {
 
 interface Position { addr: Address; sym: string; value6: bigint; bal: bigint }
 interface State { usdg: bigint; vault: Address | null; paused: boolean; nav: bigint; idle: bigint; shares: bigint; positions: Position[] }
+/** Confirmed vault-creation receipt, shown in the success popup. */
+interface Created { hash: `0x${string}`; vault: Address | null; block: bigint; gasUsed: bigint; chainId: number }
 
 export function VaultApp() {
   const { account: acctStr, chainId: chainHex, connect, switchChain } = useWallet();
@@ -65,6 +68,7 @@ export function VaultApp() {
   const [st, setSt] = useState<State | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string; hash?: string } | null>(null);
+  const [created, setCreated] = useState<Created | null>(null);
   const [depIn, setDepIn] = useState("1000");
   const [allocIn, setAllocIn] = useState("300");
   const [allocSym, setAllocSym] = useState("TSLA");
@@ -133,21 +137,34 @@ export function VaultApp() {
   useEffect(() => { refresh(); }, [refresh]);
 
   async function run(label: string, fn: () => Promise<`0x${string}`>) {
-    if (!wallet || !pub) return;
+    if (!wallet || !pub) return null;
     setBusy(label); setMsg(null);
     try {
       const hash = await fn();
-      await pub.waitForTransactionReceipt({ hash });
+      const receipt = await pub.waitForTransactionReceipt({ hash });
+      if (receipt.status !== "success") throw new Error("transaction reverted");
       setMsg({ kind: "ok", text: `${label} confirmed`, hash });
       await refresh();
+      return receipt;
     } catch (e: unknown) {
       setMsg({ kind: "err", text: `${label}: ${e instanceof Error ? e.message.split("\n")[0] : "failed"}` });
+      return null;
     } finally { setBusy(null); }
   }
 
   const w = () => wallet!; const a = () => account!; const ch = dep ? buildChain(dep) : (undefined as unknown as Chain);
   const faucet = () => run("Mint 10,000 test USDG", () => w().writeContract({ address: C.USDG, abi: erc20, functionName: "mint", args: [a(), parseUnits("10000", 6)], chain: ch, account: a() }));
-  const createVault = () => run("Create vault", () => w().writeContract({ address: C.VaultFactory, abi: factoryAbi, functionName: "createVault", args: [3000, 2000, 5, parseUnits("1000000", 6)], chain: ch, account: a() }));
+  async function createVault() {
+    const receipt = await run("Create vault", () => w().writeContract({ address: C.VaultFactory, abi: factoryAbi, functionName: "createVault", args: [3000, 2000, 5, parseUnits("1000000", 6)], chain: ch, account: a() }));
+    if (!receipt || !pub || !dep) return;
+    // The new vault is the caller's latest one in the factory registry.
+    let vault: Address | null = null;
+    try {
+      const vs = (await pub.readContract({ address: C.VaultFactory, abi: factoryAbi, functionName: "vaultsOf", args: [a()] })) as Address[];
+      vault = vs.length ? vs[vs.length - 1] : null;
+    } catch { /* popup still shows the tx */ }
+    setCreated({ hash: receipt.transactionHash, vault, block: receipt.blockNumber, gasUsed: receipt.gasUsed, chainId: dep.chainId });
+  }
   const unpause = () => run("Unpause vault", () => w().writeContract({ address: st!.vault!, abi: vaultAbi, functionName: "unpause", chain: ch, account: a() }));
   async function deposit() {
     if (!st?.vault || !pub) return;
@@ -293,7 +310,58 @@ export function VaultApp() {
         </>
       )}
 
-      <Msg msg={msg} />
+      <Msg msg={msg} chainId={dep?.chainId} />
+
+      {/* Success popup · links to the creation TRANSACTION on Blockscout (not the contract) */}
+      <Dialog open={!!created} onOpenChange={(o) => { if (!o) setCreated(null); }}>
+        <DialogContent>
+          {created && (
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <span className="grid size-10 place-items-center rounded-full bg-[color:color-mix(in_oklab,var(--color-pos)_18%,transparent)] text-lg text-[color:var(--color-pos)]">✓</span>
+                <div>
+                  <DialogTitle>Strategy Vault created</DialogTitle>
+                  <DialogDescription>
+                    Confirmed on {DEPLOYMENTS[created.chainId]?.label ?? "Robinhood Chain"} · block {created.block.toString()}
+                  </DialogDescription>
+                </div>
+              </div>
+
+              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 rounded-lg border border-[color:var(--color-line)] bg-[color:var(--color-panel-2)] p-4 font-mono text-xs">
+                <dt className="text-[color:var(--color-ink-faint)]">Transaction</dt>
+                <dd className="truncate text-right text-[color:var(--color-ink)]" title={created.hash}>{shortAddr(created.hash)}</dd>
+                {created.vault && (
+                  <>
+                    <dt className="text-[color:var(--color-ink-faint)]">Your vault</dt>
+                    <dd className="truncate text-right text-[color:var(--color-ink)]" title={created.vault}>{shortAddr(created.vault)}</dd>
+                  </>
+                )}
+                <dt className="text-[color:var(--color-ink-faint)]">Gas used</dt>
+                <dd className="text-right text-[color:var(--color-ink)]">{created.gasUsed.toLocaleString("en-US")}</dd>
+                <dt className="text-[color:var(--color-ink-faint)]">Status</dt>
+                <dd className="text-right text-[color:var(--color-warn)]">{created.chainId === 4663 ? "PAUSED · opens after audit" : "PAUSED · unpause to deposit"}</dd>
+              </dl>
+
+              <a
+                href={explorerTx(created.chainId, created.hash)}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-[color:var(--color-ink)] px-5 py-3 text-sm font-medium text-[color:var(--color-bg)] transition-colors hover:bg-white"
+              >
+                View transaction on Blockscout ↗
+              </a>
+              <div className="flex items-center justify-between text-xs">
+                {created.vault ? (
+                  <a href={explorerAddr(created.chainId, created.vault)} target="_blank" rel="noreferrer" className="text-[color:var(--color-ink-faint)] transition-colors hover:text-[color:var(--color-ink)]">
+                    View vault contract ↗
+                  </a>
+                ) : <span />}
+                <DialogClose className="text-[color:var(--color-ink-faint)] transition-colors hover:text-[color:var(--color-ink)]">Close</DialogClose>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -332,12 +400,23 @@ function Btn({ onClick, busy, children, className = "", small }: { onClick: () =
     </Button>
   );
 }
-function Msg({ msg }: { msg: { kind: "ok" | "err"; text: string; hash?: string } | null }) {
+function Msg({ msg, chainId }: { msg: { kind: "ok" | "err"; text: string; hash?: string } | null; chainId?: number }) {
   if (!msg) return null;
-  // explorer tx link uses whichever chain is active via the connected deployment
   return (
     <div className="mt-3 text-xs" style={{ color: msg.kind === "ok" ? "var(--color-pos)" : "var(--color-danger)" }}>
-      {msg.text}{msg.hash && <> · <span className="mono" style={{ color: "var(--color-ink-faint)" }}>{shortAddr(msg.hash)}</span></>}
+      {msg.text}
+      {msg.hash && (
+        <>
+          {" · "}
+          {chainId ? (
+            <a href={explorerTx(chainId, msg.hash)} target="_blank" rel="noreferrer" className="mono underline-offset-2 hover:underline" style={{ color: "var(--color-ink-faint)" }}>
+              {shortAddr(msg.hash)} ↗
+            </a>
+          ) : (
+            <span className="mono" style={{ color: "var(--color-ink-faint)" }}>{shortAddr(msg.hash)}</span>
+          )}
+        </>
+      )}
     </div>
   );
 }
