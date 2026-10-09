@@ -4,10 +4,20 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { isWatched, toggleWatch } from "@/lib/watchlist";
 import { inCompare, toggleCompare } from "@/lib/compare";
+import { CoreStatusPill } from "@/components/CoreStatus";
+import type { CoreStatus } from "@/lib/core-identity";
 
-export type Row = { ticker: string; name: string; daysPublic: number | null; bucket: string; sector: string; filedAt: string };
+export type Row = { ticker: string; name: string; daysPublic: number | null; bucket: string; sector: string; filedAt: string; status: CoreStatus; phase: string };
 
-const BUCKETS = ["ALL", "NEW", "RECENT", "EARLY PUBLIC", "EMERGING", "SEASONED"];
+// Age buckets (lib/util/dates ageBucket) shown as the day windows the brief asks for (§24).
+const BUCKETS: { value: string; label: string }[] = [
+  { value: "ALL", label: "All days public" },
+  { value: "NEW", label: "Day 0–7" },
+  { value: "RECENT", label: "Day 8–30" },
+  { value: "EARLY PUBLIC", label: "Day 31–90" },
+  { value: "EMERGING", label: "Day 91–180" },
+  { value: "SEASONED", label: "Day 180+" },
+];
 type SortKey = "days" | "ticker" | "name";
 
 export function ExploreGrid({ rows }: { rows: Row[] }) {
@@ -58,7 +68,7 @@ export function ExploreGrid({ rows }: { rows: Row[] }) {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search ticker, name..."
+              placeholder="Find a Core by ticker or name…"
               className="font-mono h-10 w-full rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-panel)] pl-4 pr-10 text-xs text-[color:var(--color-ink)] outline-none placeholder:text-[color:var(--color-ink-faint)] focus:border-[color:var(--color-accent)] transition-colors"
             />
             <span className="absolute right-3.5 top-1/2 -translate-y-1/2 font-mono text-[10px] text-[color:var(--color-ink-faint)]">/</span>
@@ -69,7 +79,7 @@ export function ExploreGrid({ rows }: { rows: Row[] }) {
             onChange={(e) => setBucket(e.target.value)}
             className="font-mono h-10 rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-panel)] px-3 text-xs text-[color:var(--color-ink)] outline-none cursor-pointer hover:border-[color:var(--color-line-strong)] transition-colors"
           >
-            {BUCKETS.map((b) => <option key={b} value={b}>{b}</option>)}
+            {BUCKETS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
           </select>
 
           <select
@@ -82,18 +92,19 @@ export function ExploreGrid({ rows }: { rows: Row[] }) {
         </div>
 
         <div className="font-mono text-[11px] text-[color:var(--color-ink-faint)] tracking-wider uppercase">
-          <span className="font-bold text-[color:var(--color-ink)]">{view.length}</span> COMPANIES RECORDED
+          <span className="font-bold text-[color:var(--color-ink)]">{view.length}</span> INTELLIGENCE CORES
         </div>
       </div>
 
       <div className="overflow-x-auto border border-[color:var(--color-line)] bg-[color:var(--color-panel)]">
-        <table className="w-full min-w-[720px] text-left border-collapse">
+        <table className="w-full min-w-[900px] text-left border-collapse">
           <thead>
             <tr className="border-b border-[color:var(--color-line)] bg-[color:var(--color-panel-2)]/50">
               <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">{th("ticker", "TICKER")}</th>
               <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">{th("name", "COMPANY")}</th>
-              <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)] text-right">{th("days", "DAYS PUBLIC")}</th>
-              <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">STATUS</th>
+              <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)] text-right">{th("days", "PUBLIC")}</th>
+              <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">CORE</th>
+              <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">MISSION</th>
               <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)]">SECTOR</th>
               <th className="py-3.5 px-5 font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-ink-faint)] text-right">ACTION</th>
             </tr>
@@ -113,18 +124,13 @@ export function ExploreGrid({ rows }: { rows: Row[] }) {
                   </Link>
                 </td>
                 <td className="py-4 px-5 font-mono text-sm font-semibold tabular-nums text-right text-[color:var(--color-ink)]">
-                  {r.daysPublic != null ? `${r.daysPublic}d` : "-"}
+                  {r.daysPublic != null ? `Day ${r.daysPublic}` : "-"}
                 </td>
                 <td className="py-4 px-5">
-                  <span
-                    className={`font-mono text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
-                      r.bucket === "NEW"
-                        ? "border-[color:var(--color-accent)]/40 bg-[color:var(--color-accent-dim)] text-[color:var(--color-accent)] font-bold"
-                        : "border-[color:var(--color-line)] bg-[color:var(--color-bg)] text-[color:var(--color-ink-dim)]"
-                    }`}
-                  >
-                    {r.bucket}
-                  </span>
+                  <CoreStatusPill status={r.status} />
+                </td>
+                <td className="py-4 px-5 whitespace-nowrap font-mono text-xs text-[color:var(--color-ink)]">
+                  {r.phase}
                 </td>
                 <td className="py-4 px-5 max-w-[220px] truncate font-mono text-xs text-[color:var(--color-ink-dim)]">
                   {r.sector}
@@ -153,14 +159,20 @@ export function ExploreGrid({ rows }: { rows: Row[] }) {
                     >
                       VS
                     </button>
+                    <Link
+                      href={`/company/${r.ticker}`}
+                      className="font-mono whitespace-nowrap rounded-full border border-[color:var(--color-accent)]/40 px-3 py-1 text-[10px] uppercase tracking-wider text-[color:var(--color-accent)] transition-colors hover:bg-[color:var(--color-accent)] hover:text-white"
+                    >
+                      Enter Core →
+                    </Link>
                   </span>
                 </td>
               </tr>
             ))}
             {view.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-12 px-5 text-center font-mono text-xs text-[color:var(--color-ink-faint)]">
-                  No newly public companies match the current filter query.
+                <td colSpan={7} className="py-12 px-5 text-center font-mono text-xs text-[color:var(--color-ink-faint)]">
+                  No Intelligence Cores match this filter.
                 </td>
               </tr>
             )}

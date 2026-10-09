@@ -31,7 +31,7 @@ export default async function StrategyDetail({ params }: { params: Promise<{ key
 
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-[color:var(--color-line)] pb-6">
         <div>
-          <div className="section-label mb-2">02 / QUANTITATIVE MODEL</div>
+          <div className="section-label mb-2">STRATEGY MODE</div>
           <div className="flex items-center gap-3">
             <h1 className="editorial-h2">{strategy.name}</h1>
             <Badge variant="outline" className="label rounded-sm border-border">{strategy.risk}</Badge>
@@ -47,8 +47,8 @@ export default async function StrategyDetail({ params }: { params: Promise<{ key
       <StrategyVerdict strategy={strategy.name} recs={recs} />
 
       <p className="mb-3 text-[11px] leading-relaxed text-muted-foreground">
-        Ranked by deterministic fit over each company&apos;s Intelligence Core (SEC + market signals).
-        No capital moves here · allocations are suggestions. Vault execution lives in the Vault tab.
+        Every Core ranked by rule-based fit against this strategy (SEC + market signals). Review a Core before you act ·
+        no capital moves here, allocations are suggestions until you deploy through your Strategy Vault.
       </p>
 
       <StrategyWorkbench strategy={strategy} recs={recs} sparks={sparks} />

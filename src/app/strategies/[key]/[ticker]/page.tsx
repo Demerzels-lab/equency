@@ -87,7 +87,7 @@ export default async function RecommendationDetail({ params }: { params: Promise
           <div className="flex items-center gap-2">
             <WatchButton ticker={ci.identity.ticker} name={ci.identity.name} />
             <Link href={`/company/${ci.identity.ticker}`} className="label inline-flex items-center rounded-sm border border-border px-3 py-2 transition-colors hover:border-accent-surface hover:text-foreground">
-              Intelligence Core →
+              Review Core →
             </Link>
           </div>
         </div>
@@ -174,12 +174,12 @@ export default async function RecommendationDetail({ params }: { params: Promise
             </div>
           </Panel>
 
-          <Panel title="Add to vault">
+          <Panel title="Intelligence becomes capital">
             <p className="text-xs leading-relaxed text-muted-foreground">
-              Create a Strategy Vault position on Robinhood Chain. Onchain execution lives in the Vault tab.
+              Review the allocation, then deploy through your non-custodial Strategy Vault on Robinhood Chain mainnet.
             </p>
             <Link href="/vault" className="label mt-3 inline-flex w-full items-center justify-center rounded-sm border border-border py-2 transition-colors hover:border-accent-surface hover:text-foreground">
-              Open the Vault →
+              Open Vault →
             </Link>
           </Panel>
         </div>

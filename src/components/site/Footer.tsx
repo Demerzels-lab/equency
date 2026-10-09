@@ -40,8 +40,8 @@ export function Footer() {
 
         <div className="flex flex-col gap-5 lg:items-end">
           <div className="flex gap-3">
-            <Btn href="/strategies" accent="strategy" className="w-40">Strategy</Btn>
-            <Btn href="/explore" accent="core" className="w-40">Core</Btn>
+            <Btn href="/explore" accent="core" className="w-40">Explore Cores</Btn>
+            <Btn href="/strategies" accent="strategy" className="w-40">Strategies</Btn>
           </div>
           <a
             href="https://x.com"
@@ -52,14 +52,17 @@ export function Footer() {
           >
             <XIcon />
           </a>
-          <p className="max-w-xs font-body text-xs leading-relaxed text-ink-3 lg:text-right">
-            Verifiable intelligence and non-custodial capital execution for newly public companies on Robinhood Chain.
-          </p>
+          <div className="max-w-xs lg:text-right">
+            <p className="text-base text-ink">Intelligence for the newly public.</p>
+            <p className="mt-1 font-body text-xs leading-relaxed text-ink-3">
+              Every newly public company gets an Intelligence Core. Intelligence → Strategy → Capital, on Robinhood Chain.
+            </p>
+          </div>
         </div>
       </div>
       <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-3 border-t border-line px-5 py-6 text-xs text-ink-3 sm:flex-row sm:items-center md:px-8">
         <Logo className="text-ink" />
-        <span className="font-body">© {new Date().getFullYear()} EQUENCY Protocol. The AI proposes, you approve.</span>
+        <span className="font-body">© {new Date().getFullYear()} EQUENCY. Research and strategy tooling, not financial advice. You approve every move.</span>
       </div>
     </footer>
   );

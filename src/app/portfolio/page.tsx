@@ -59,7 +59,7 @@ export default function PortfolioPage() {
   return (
     <main className="page-main mx-auto max-w-[1240px] px-6 pt-28 sm:pt-32 pb-20">
       <div className="flex items-center gap-3">
-        <div className="section-label mb-0">01 / SIMULATED EXECUTION</div>
+        <div className="section-label mb-0">STRATEGY / PAPER PORTFOLIO</div>
         <span className="font-mono text-[10px] tracking-widest uppercase border border-[color:var(--color-sim)] text-[color:var(--color-sim)] px-2 py-0.5 rounded-sm">
           DEVICE-LOCAL
         </span>

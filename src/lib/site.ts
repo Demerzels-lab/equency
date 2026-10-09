@@ -1,11 +1,30 @@
-// Site chrome + marketing copy for the Daylight Orbit frontend. All product data (universe,
-// scores, theses, vault state) comes from the real providers — this file only holds navigation
-// and static explanatory copy.
+// Site chrome + the EQUENCY copy system (brand brief §43). All product data (universe, scores,
+// theses, vault state) comes from the real providers · this file only holds navigation and
+// static explanatory copy.
+//
+//   One-liner          Intelligence for the newly public.
+//   Product statement  Every newly public company gets an Intelligence Core.
+//   Architecture       Intelligence → Strategy → Capital
 import { FAQ as HOME_FAQ } from "@/lib/home-content";
 
 export type Accent = "core" | "strategy";
 
-export const HEADLINE_WORDS = ["Researching", "Scoring", "Tracking", "Decoding", "Allocating", "Monitoring"];
+export const BRAND = {
+  oneLiner: "Intelligence for the newly public.",
+  statement: "Every newly public company gets an Intelligence Core.",
+  explanation:
+    "EQUENCY continuously researches companies entering the public market, turning filings, market activity, events and emerging signals into an evolving intelligence layer.",
+  system: "Intelligence → Strategy → Capital",
+};
+
+/** Brand brief §4 · the five ideas a visitor should understand, in order. */
+export const MENTAL_MODEL = [
+  { n: "01", title: "A company goes public", copy: "A newly public company enters the EQUENCY universe the day its final prospectus lands on SEC EDGAR." },
+  { n: "02", title: "It gets an Intelligence Core", copy: "It stops being just a ticker. A persistent intelligence layer is attached to it from day one." },
+  { n: "03", title: "The Core researches", copy: "Filings, fundamentals, ownership, price, volume, news and the official site · every datum tagged with its source and freshness." },
+  { n: "04", title: "It builds a thesis", copy: "What is happening, why it matters, what supports it, and what could invalidate it. The thesis changes when the evidence does." },
+  { n: "05", title: "Intelligence becomes capital", copy: "Turn the thesis into a strategy you review, then deploy through an onchain Strategy Vault. You approve every move." },
+];
 
 export type NavItem = {
   label: string;
@@ -19,66 +38,73 @@ export const NAV: NavItem[] = [
     label: "Core",
     match: ["/explore", "/company", "/compare", "/watchlist"],
     children: [
-      { label: "Explore universe", href: "/explore", desc: "Every IPO from SEC 424B4 filings." },
-      { label: "Compare", href: "/compare", desc: "Side-by-side Intelligence Cores." },
-      { label: "Watchlist", href: "/watchlist", desc: "Companies you follow." },
+      { label: "Explore Cores", href: "/explore", desc: "Every newly public company and its Core." },
+      { label: "Compare Cores", href: "/compare", desc: "Intelligence Cores, side by side." },
+      { label: "Watchlist", href: "/watchlist", desc: "The Cores you follow." },
     ],
   },
   {
     label: "Strategy",
     match: ["/strategies", "/portfolio"],
     children: [
-      { label: "All strategies", href: "/strategies", desc: "Deterministic fit ranking." },
+      { label: "Explore Strategies", href: "/strategies", desc: "Turn intelligence into strategy." },
       { label: "Growth", href: "/strategies/growth", desc: "Fundamentals & accumulation." },
       { label: "Momentum", href: "/strategies/momentum", desc: "Price, volume & catalysts." },
       { label: "Defensive", href: "/strategies/defensive", desc: "Balance-sheet quality." },
-      { label: "Paper portfolio", href: "/portfolio", desc: "Test a thesis, no capital." },
+      { label: "Paper portfolio", href: "/portfolio", desc: "Test a strategy, no capital." },
     ],
   },
   { label: "Vault", href: "/vault", match: ["/vault"] },
   {
     label: "Resources",
     children: [
-      { label: "How it works", href: "/#technology", desc: "Evidence, reasoning, scoring." },
-      { label: "FAQ", href: "/#faq", desc: "Custody, data and AI." },
-      { label: "Contracts", href: "/vault#contracts", desc: "Verified on Robinhood Chain." },
+      { label: "How it works", href: "/#how-it-works", desc: "Company → Core → Thesis → Strategy → Capital." },
+      { label: "Inside the Core", href: "/#technology", desc: "Evidence, reasoning, scoring." },
+      { label: "FAQ", href: "/#faq", desc: "Data, trust and custody." },
+      { label: "Contracts", href: "/vault#contracts", desc: "Live on Robinhood Chain mainnet." },
     ],
   },
 ];
 
+/** The two layers of one system (brief §10): the Core first, Strategy downstream of it. */
 export const PRODUCTS = [
-  {
-    key: "strategy" as const,
-    title: "STRATEGY",
-    badge: "ALLOCATE",
-    copy: "Rank the newly public universe by deterministic strategy-fit, size positions under policy limits, then execute in a non-custodial vault.",
-    primary: { label: "Open Strategies", href: "/strategies" },
-    secondary: { label: "Strategy Vault", href: "/vault" },
-  },
   {
     key: "core" as const,
     title: "CORE",
-    badge: "OBSERVE",
-    copy: "Every newly public company gets a living Intelligence Core — SEC filings, market data and an AI thesis grounded strictly in evidence.",
+    badge: "INTELLIGENCE",
+    headline: "Every company gets a Core.",
+    copy: "A living Intelligence Core researches the company's filings, market and events, remembers what changed, and keeps its thesis current.",
     primary: { label: "Explore Cores", href: "/explore" },
-    secondary: { label: "How it works", href: "/#technology" },
+    secondary: { label: "How it works", href: "/#how-it-works" },
+  },
+  {
+    key: "strategy" as const,
+    title: "STRATEGY",
+    badge: "DOWNSTREAM",
+    headline: "Turn intelligence into strategy.",
+    copy: "Rank newly public companies against deterministic strategy rules, market signals and Intelligence Core research.",
+    primary: { label: "Explore Strategies", href: "/strategies" },
+    secondary: { label: "Strategy Vault", href: "/vault" },
   },
 ];
 
 export const CORE_TECH = [
   {
     title: "Evidence Graph",
-    copy: "SEC EDGAR filings, XBRL fundamentals, Finnhub market data — every datum tagged with source tier and freshness, LIVE or honestly SIMULATED.",
+    tag: "SOURCE OF TRUTH",
+    copy: "The evidence behind the Core's current thesis. SEC filings, XBRL fundamentals and market data, each tagged with its source tier and freshness · LIVE, or honestly marked SIMULATED.",
     visual: "graph" as const,
   },
   {
     title: "Reasoning Engine",
-    copy: "An AI model synthesises the thesis — drivers, risks, catalysts — from the evidence packet only. It never invents a number or signs a transaction.",
+    tag: "INTERPRETS",
+    copy: "Converts verified evidence into structured interpretations, risks, catalysts and thesis changes. The evidence is the source of truth · the engine never invents a number or signs a transaction.",
     visual: "orbit" as const,
   },
   {
     title: "Deterministic Score",
-    copy: "Intelligence score and strategy-fit are computed from signals, not by the model. Same inputs, same output — always explainable.",
+    tag: "RULE-BASED",
+    copy: "A transparent score built from defined market, fundamental and ownership signals. Same inputs, same output · every point explainable, never a model's guess.",
     visual: "bars" as const,
   },
 ];

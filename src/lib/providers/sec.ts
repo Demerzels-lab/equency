@@ -13,10 +13,31 @@ function cikNum(cik: string | number): string {
   return String(Number(String(cik).replace(/\D/g, "")));
 }
 
+// SEC fair-access caps clients at 10 requests/second and answers bursts with 403 (sometimes 429).
+// The newly-public universe confirms every candidate against its own submissions (~60 calls),
+// so all SEC traffic in this process goes through one pacer: at most ~8 req/s, with backoff
+// retries on 403/429. Cached responses (next.revalidate) return immediately and don't count
+// against the limit in practice.
+const MIN_GAP_MS = 125;
+let nextSlot = 0;
+async function pace(): Promise<void> {
+  const now = Date.now();
+  const at = Math.max(now, nextSlot);
+  nextSlot = at + MIN_GAP_MS;
+  if (at > now) await new Promise((r) => setTimeout(r, at - now));
+}
+
 async function secGet<T>(url: string, revalidate = 300): Promise<T> {
-  const res = await fetch(url, { headers: UA, next: { revalidate } });
-  if (!res.ok) throw new Error(`SEC ${res.status} ${url}`);
-  return (await res.json()) as T;
+  for (let attempt = 0; ; attempt++) {
+    await pace();
+    const res = await fetch(url, { headers: UA, next: { revalidate } });
+    if (res.ok) return (await res.json()) as T;
+    if ((res.status === 403 || res.status === 429) && attempt < 3) {
+      await new Promise((r) => setTimeout(r, 1000 * 2 ** attempt)); // 1s, 2s, 4s
+      continue;
+    }
+    throw new Error(`SEC ${res.status} ${url}`);
+  }
 }
 
 export interface SecSubmissions {
@@ -119,18 +140,33 @@ export interface IpoHit {
   form: string;
 }
 
-/** Newly-public detection via EDGAR full-text search for final IPO prospectuses. */
+/** Newly-public detection via EDGAR full-text search for final IPO prospectuses. EDGAR returns
+ *  100 hits per page; page through the full date window (capped) so a 180-day window really
+ *  covers 180 days instead of only the newest ~3 months. */
 export async function searchRecentIpos(
   startdt: string,
   enddt: string,
   form = "424B4",
+  maxPages = 6,
 ): Promise<IpoHit[]> {
-  const url = `https://efts.sec.gov/LATEST/search-index?forms=${form}&startdt=${startdt}&enddt=${enddt}`;
-  const raw = await secGet<{
-    hits: { hits: Array<{ _source: { file_date: string; ciks: string[]; display_names: string[]; file_type: string } }> };
-  }>(url, 1800);
+  type Raw = {
+    hits: { total?: { value: number }; hits: Array<{ _source: { file_date: string; ciks: string[]; display_names: string[]; file_type: string } }> };
+  };
+  const base = `https://efts.sec.gov/LATEST/search-index?forms=${form}&startdt=${startdt}&enddt=${enddt}`;
+  const first = await secGet<Raw>(base, 1800);
+  const all = [...first.hits.hits];
+  const total = first.hits.total?.value ?? all.length;
+  for (let page = 1; page < maxPages && all.length < total; page++) {
+    try {
+      const next = await secGet<Raw>(`${base}&from=${page * 100}`, 1800);
+      if (next.hits.hits.length === 0) break;
+      all.push(...next.hits.hits);
+    } catch {
+      break; // keep what we have · a partial window is better than none
+    }
+  }
 
-  return raw.hits.hits.map((h) => {
+  return all.map((h) => {
     const dn = h._source.display_names?.[0] || "";
     const tickerMatch = dn.match(/\(([A-Z]{1,6}(?:,\s*[A-Z]{1,6})*)\)/);
     return {

@@ -18,10 +18,10 @@ export default function WatchlistPage() {
 
   return (
     <main className="page-main mx-auto max-w-[960px] px-6 pt-28 sm:pt-32 pb-20">
-      <div className="section-label mb-2">01 / LOCAL WATCHLIST</div>
-      <h1 className="editorial-h2">Companies you <span className="editorial-accent">follow.</span></h1>
+      <div className="section-label mb-2">CORE / WATCHLIST</div>
+      <h1 className="editorial-h2">The Cores you <span className="editorial-accent">follow.</span></h1>
       <p className="editorial-lead mt-2 max-w-[60ch]">
-        Device-local watchlist. Real-time updates from EDGAR and live market feeds.
+        Saved on this device. Enter any Core to see its latest evidence and whether its thesis changed since your last visit.
       </p>
 
       <div className="mt-8">

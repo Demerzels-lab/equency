@@ -7,7 +7,7 @@ export const STRATEGIES: Record<StrategyKey, StrategyConfig> = {
   growth: {
     key: "growth",
     name: "Growth",
-    tagline: "Revenue acceleration, fundamentals and institutional accumulation.",
+    tagline: "Prioritize companies showing strong fundamental and business growth signals.",
     focus: ["revenue growth", "earnings acceleration", "guidance", "business momentum", "institutional ownership", "fundamentals"],
     risk: "Medium / High",
     holdingPeriod: "3–12 months",
@@ -21,7 +21,7 @@ export const STRATEGIES: Record<StrategyKey, StrategyConfig> = {
   momentum: {
     key: "momentum",
     name: "Momentum",
-    tagline: "Price momentum, volume, catalysts and liquidity.",
+    tagline: "Prioritize market strength, volume, price behavior and emerging momentum.",
     focus: ["price momentum", "volume", "options", "catalysts", "volatility", "liquidity"],
     risk: "High",
     holdingPeriod: "2–8 weeks",
@@ -35,7 +35,7 @@ export const STRATEGIES: Record<StrategyKey, StrategyConfig> = {
   defensive: {
     key: "defensive",
     name: "Defensive",
-    tagline: "Balance-sheet quality, cash, stability and lower volatility.",
+    tagline: "Prioritize risk control, stronger evidence and lower exposure to unstable setups.",
     focus: ["balance sheet", "cash", "debt", "volatility", "institutional stability", "business quality"],
     risk: "Low / Medium",
     holdingPeriod: "6–18 months",

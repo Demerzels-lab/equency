@@ -13,7 +13,8 @@ import { CompanyEmblem } from "@/components/CompanyEmblem";
 import { ScoreGauge } from "@/components/ScoreGauge";
 import { PriceChart } from "@/components/PriceChart";
 import { WatchButton } from "@/components/WatchButton";
-import { ResearchConsole, type FeedItem } from "@/components/ResearchConsole";
+import { ResearchConsole, type ActivityEvent, type FeedItem } from "@/components/ResearchConsole";
+import { Freshness, TrustLegend, TrustTag } from "@/components/Trust";
 import { CompanyWebsitePreview } from "@/components/CompanyWebsitePreview";
 import { FundamentalsPanel, NewsPanel } from "@/components/sections";
 import { ThesisTimeline } from "@/components/ThesisTimeline";
@@ -23,6 +24,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ago, fmtDate } from "@/lib/util/dates";
 import { fmtUsd } from "@/lib/util/format";
 import type { CompanyIntelligence } from "@/lib/providers/types";
+import { MAINNET } from "@/lib/deployments";
+import { coreMission, coreStatus, dayLabel } from "@/lib/core-identity";
+import { CoreStatusPill } from "@/components/CoreStatus";
 
 export const revalidate = 60;
 
@@ -64,6 +68,12 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
   const n13 = ci.filings.filter((f) => f.form.toUpperCase().startsWith("SCHEDULE 13")).length;
   const nInsider = ci.filings.filter((f) => ["3", "4"].includes(f.form.toUpperCase())).length;
 
+  // Core identity · mission from company age, state from the latest real SEC filing (brief §14, §37).
+  const lastFiledAt = ci.filings.reduce<string | undefined>((mx, f) => (!mx || f.filedAt > mx ? f.filedAt : mx), undefined);
+  const status = coreStatus(ci.ipo.daysPublic, lastFiledAt);
+  const mission = coreMission(ci.ipo.daysPublic);
+  const vaultAsset = (MAINNET.contracts as Record<string, string | undefined>)[symbol.toUpperCase()];
+
   const catOf = (kind: string): FeedItem["cat"] =>
     kind === "Ownership" ? "Ownership" : kind === "Insider" ? "Insider" : "SEC";
   const feed: FeedItem[] = [
@@ -71,11 +81,55 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
     ...(news ?? []).map((n) => ({ cat: "News" as const, label: n.headline, at: n.publishedAt, url: n.url, tier: 3, source: n.source })),
   ].sort((a, b) => (a.at < b.at ? 1 : -1));
 
+  // Core activity log · built ONLY from real, timestamped events (brief §15, §27). No scripted lines.
+  const filingUrl = (f: { url: string }) => f.url;
+  const activity: ActivityEvent[] = [
+    {
+      at: ci.assembledAt,
+      tag: "STATE" as const,
+      text: `Core ${status.state} · ${status.basis}. Mission: ${mission.phase}.`,
+      source: "Intelligence Core",
+    },
+    {
+      at: ci.assembledAt,
+      tag: "SCORE" as const,
+      text: `Intelligence score ${score.overall ?? "n/a"}/100 recomputed from ${score.dimensions.filter((d) => d.value != null).length} rule-based signals.`,
+      source: "Deterministic score",
+      trust: "DERIVED" as const,
+    },
+    ...(m.mode === "LIVE" && m.value.price != null
+      ? [{
+          at: m.asOf,
+          tag: "OBSERVATION" as const,
+          text: `Last price ${fmtUsd(m.value.price)}${m.value.changePct != null ? ` · ${m.value.changePct >= 0 ? "+" : ""}${m.value.changePct.toFixed(2)}% on the day` : ""}.`,
+          source: "Finnhub quote",
+          trust: "VERIFIED" as const,
+        }]
+      : []),
+    ...ci.filings.slice(0, 5).map((f) => ({
+      at: f.filedAt,
+      dateOnly: true,
+      tag: "EVIDENCE" as const,
+      text: `Form ${f.form} filed${f.title ? ` · ${f.title}` : ""}.`,
+      source: "SEC EDGAR",
+      url: filingUrl(f),
+      trust: "VERIFIED" as const,
+    })),
+    ...(news ?? []).slice(0, 3).map((n) => ({
+      at: n.publishedAt,
+      tag: "EVIDENCE" as const,
+      text: n.headline,
+      source: `${n.source} · tier 3, cross-check`,
+      url: n.url,
+    })),
+  ].sort((a, b) => (a.at < b.at ? 1 : -1));
+  const latest13 = ci.filings.find((f) => f.form.toUpperCase().startsWith("SCHEDULE 13"))?.filedAt;
+
   return (
     <main className="page-main mx-auto max-w-[1400px] px-6 pt-28 sm:pt-32 pb-20">
       {/* SECTION BREADCRUMB */}
       <div className="flex items-center justify-between pb-3 mb-6 border-b border-[color:var(--color-line)]">
-        <div className="section-label mb-0">01 // INTELLIGENCE CORE · SEC GROUND TRUTH</div>
+        <div className="section-label mb-0">INTELLIGENCE CORE · ${symbol}</div>
         <div className="font-mono text-[10px] text-[color:var(--color-ink-faint)] tracking-wider uppercase">
           SEC CIK {ci.identity.cik.padStart(10, "0")} · 424B4 AUDITED
         </div>
@@ -98,7 +152,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
                 <CompareToggle ticker={symbol} />
               </div>
               <div className="font-mono mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[color:var(--color-ink-dim)]">
-                <span className="font-semibold text-[color:var(--color-pos)]">{ci.ipo.daysPublic ?? "?"} days public</span>
+                <span className="rounded-full border border-[color:var(--color-strategy)]/40 bg-[color:var(--color-strategy)]/10 px-2 py-0.5 font-semibold uppercase tracking-wider text-[color:var(--color-strategy)]">{dayLabel(ci.ipo.daysPublic)}</span>
                 <Sep /><span className="uppercase">{ci.ipo.ageBucket}</span>
                 <Sep /><span>IPO {fmtDate(ci.ipo.ipoDate)}</span>
                 <Sep /><span className="font-sans text-[color:var(--color-ink)]">{ci.identity.sicDescription}</span>
@@ -125,17 +179,39 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         </div>
       </div>
 
-      {/* VERDICT · deterministic score renders now; the AI direction/confidence/summary stream in */}
+      {/* CORE IDENTITY · the Core's persistent purpose (brief §35, §36) */}
+      <section className="mb-8 grid gap-px overflow-hidden border border-[color:var(--color-line)] bg-[color:var(--color-line)] md:grid-cols-[260px_1fr_1fr]">
+        <div className="bg-[color:var(--color-panel)] p-5">
+          <div className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-ink-faint)]">Intelligence Core</div>
+          <div className="mt-2.5"><CoreStatusPill status={status} /></div>
+          <p className="mt-2.5 font-mono text-[11px] leading-relaxed text-[color:var(--color-ink-dim)]">{status.basis}</p>
+        </div>
+        <div className="bg-[color:var(--color-panel)] p-5">
+          <div className="flex items-center justify-between gap-3">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-ink-faint)]">Current mission</span>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-accent)]">{mission.phase} · {mission.window}</span>
+          </div>
+          <p className="mt-2.5 text-sm leading-relaxed text-[color:var(--color-ink)]">{mission.mission}</p>
+        </div>
+        <div className="bg-[color:var(--color-panel)] p-5">
+          <div className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-ink-faint)]">Focus</div>
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {mission.focus.map((f) => (
+              <span key={f} className="rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-bg)] px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-ink-dim)]">{f}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* VERDICT · deterministic score renders now; the thesis direction/confidence/summary stream in */}
       <section className="mb-8 border border-[color:var(--color-line)] bg-[color:var(--color-panel)] overflow-hidden">
         <div className="grid grid-cols-1 divide-y lg:divide-y-0 lg:divide-x divide-[color:var(--color-line)] lg:grid-cols-[300px_1fr]">
           <div className="flex flex-col justify-between p-6 bg-[color:var(--color-panel-2)]/60">
             <div className="flex items-center justify-between">
-              <Suspense fallback={<span className="font-mono text-[10px] text-[color:var(--color-ink-faint)] uppercase">ANALYZING…</span>}>
+              <Suspense fallback={<span className="font-mono text-[10px] text-[color:var(--color-ink-faint)] uppercase">FORMING THESIS…</span>}>
                 <DirectionLabel ci={ci} score={score} />
               </Suspense>
-              <span className="font-mono inline-flex items-center gap-1.5 text-[9px] uppercase px-2 py-0.5 rounded-full border border-[color:var(--color-line)] bg-[color:var(--color-bg)] text-[color:var(--color-pos)] font-semibold">
-                <Dot color="var(--color-pos)" pulse /> ACTIVE CORE
-              </span>
+              <span className="inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-wider text-[color:var(--color-ink-faint)]">Intelligence score <TrustTag kind="DERIVED" /></span>
             </div>
             <div className="my-6 flex justify-center">
               <ScoreGauge value={score.overall} color="var(--color-accent)" />
@@ -148,7 +224,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
           </div>
           <div className="flex flex-col justify-between gap-6 p-6 sm:p-8 bg-[color:var(--color-panel)]">
             <div>
-              <div className="font-mono text-[10px] tracking-wider uppercase text-[color:var(--color-accent)] font-semibold mb-2">SYNTHETIC THESIS EXECUTIVE SUMMARY</div>
+              <div className="mb-2 flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-[color:var(--color-accent)]">CURRENT THESIS <TrustTag kind="INTERPRETED" /></div>
               <Suspense fallback={<SummarySkel />}>
                 <Summary ci={ci} score={score} />
               </Suspense>
@@ -181,28 +257,29 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
           </Panel>
 
           <Panel title="Research Environment" badge={<DataModeBadge mode="LIVE" />}>
-            <ResearchConsole items={feed} ticker={symbol} />
+            <ResearchConsole items={feed} activity={activity} ticker={symbol} />
           </Panel>
           <NewsPanel items={news} />
         </div>
 
         <div className="flex min-w-0 flex-col gap-3">
           {/* ROBINHOOD CHAIN ONCHAIN HUD (Brief §31, §40, §46) */}
-          <Panel title="Onchain Exposure · Robinhood Chain" badge={<span className="font-mono text-[9px] uppercase px-1.5 py-0.5 rounded border border-[color:var(--color-line)] bg-[color:var(--color-panel-2)] text-[color:var(--color-pos)] font-semibold">CHAIN 4663</span>}>
-            <Row label="Settlement Asset" value="USDG (6 decimals)" />
-            <Row label="Gas Token" value="ETH" />
-            <Row label="Stock Token Pair" value={`rh${symbol} · Verified`} />
-            <Row label="Oracle Mechanism" value="Chainlink Sub-second" />
-            <div className="mt-2 pt-2 border-t border-[color:var(--color-line)] flex items-center justify-between text-[10px] font-mono">
-              <span className="text-muted-foreground uppercase">Execution Route</span>
-              <span className="text-foreground/80 font-semibold">Non-custodial Policy Engine</span>
+          <Panel title="Capital · Robinhood Chain" badge={<span className="font-mono text-[9px] uppercase px-1.5 py-0.5 rounded border border-[color:var(--color-line)] bg-[color:var(--color-panel-2)] text-[color:var(--color-pos)] font-semibold">MAINNET 4663</span>}>
+            <Row label="Settlement asset" value="USDG (6 decimals)" />
+            <Row label="Gas token" value="ETH" />
+            <Row label="Vault asset" value={vaultAsset ? `${symbol} · registered` : "Not in AssetRegistry"} />
+            <Row label="Oracle" value="Chainlink price adapter" />
+            <div className="mt-2 pt-2 border-t border-[color:var(--color-line)] text-[10px] font-mono leading-relaxed text-muted-foreground">
+              {vaultAsset
+                ? "Registered as a real Robinhood stock token · enabled for allocation once its Chainlink feed is wired."
+                : `${symbol} has no Robinhood stock token in the vault registry yet · intelligence only.`}
             </div>
           </Panel>
 
           <Panel title="Reasoning Engine">
-            <div className="label normal-case tracking-normal text-muted-foreground">EQUENCY Reasoning Engine</div>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              Dimensions are scored deterministically from filings and market data. The engine narrates the thesis · it never sets the score.
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Converts verified evidence into structured interpretations, risks, catalysts and thesis changes. The evidence is the
+              source of truth · the score is rule-based and the engine never sets it.
             </p>
           </Panel>
 
@@ -212,6 +289,11 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
             <Row label="Day high" value={fmtUsd(m.value.dayHigh)} />
             <Row label="Day low" value={fmtUsd(m.value.dayLow)} />
             <Row label="Prev close" value={fmtUsd(m.value.prevClose)} />
+            <div className="mt-2 flex items-center justify-between">
+              <TrustTag kind="VERIFIED" />
+              {/* quotes freeze over weekends/holidays · flag only when older than 3 days */}
+              <Freshness at={m.mode === "LIVE" ? m.asOf : null} staleAfterHours={72} />
+            </div>
           </Panel>
 
           <FundamentalsPanel f={fundamentals} />
@@ -219,10 +301,13 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
           <Panel title="Ownership" badge={<DataModeBadge mode="LIVE" />}>
             <Row label="13D / 13G on file" value={String(n13)} />
             <Row label="Insider forms" value={String(nInsider)} />
-            <div className="label mt-2 normal-case tracking-normal text-muted-foreground">SEC ownership filings · verified</div>
+            <div className="mt-2 flex items-center justify-between">
+              <TrustTag kind="VERIFIED" />
+              <Freshness at={latest13} verb="Latest 13D/G" />
+            </div>
           </Panel>
 
-          <Panel title="Event Radar">
+          <Panel title="Event Radar" badge={<TrustTag kind="VERIFIED" />}>
             <div className="flex flex-col gap-2">
               {ci.radar.slice(0, 6).map((e, i) => (
                 <div key={i} className="flex items-center gap-2 text-xs">
@@ -237,11 +322,20 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
           <Suspense fallback={<Panel title="Thesis history"><div className="text-xs text-muted-foreground">Loading…</div></Panel>}>
             <TimelineWrap ci={ci} score={score} ticker={symbol} ipoDate={ci.ipo.ipoDate} />
           </Suspense>
+
+          {/* CORE MEMORY · honest "coming online" state until server-side memory exists (brief §22, §47) */}
+          <Panel title="Core Memory" badge={<span className="font-mono text-[9px] uppercase tracking-wider text-[color:var(--color-sim)]">Coming online</span>}>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              What this Core has learned about {ci.identity.name}: company, catalysts, risks, ownership and invalidated
+              assumptions. Persistent memory is coming online · today the Core rebuilds from its sources on every
+              refresh, and thesis changes are kept in the history above.
+            </p>
+          </Panel>
         </div>
       </div>
 
       {/* EVIDENCE TABLE */}
-      <Panel title="Evidence · filing timeline" className="mt-3" bodyClassName="p-0">
+      <Panel title="Evidence · SEC filing timeline" badge={<TrustTag kind="VERIFIED" />} className="mt-3" bodyClassName="p-0">
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
@@ -266,14 +360,15 @@ export default async function CompanyPage({ params }: { params: Promise<{ ticker
         </Table>
       </Panel>
 
-      <p className="mt-4 text-xs text-muted-foreground">
-        Assembled {ago(ci.assembledAt)} · every panel labelled live or simulated · no fabricated metrics
-      </p>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+        <TrustLegend />
+        <p className="text-xs text-muted-foreground">Assembled {ago(ci.assembledAt)} · every panel labelled live or simulated · no fabricated metrics</p>
+      </div>
     </main>
   );
 }
 
-/* ── streamed (AI) pieces · all share ONE cached reason() call ── */
+/* ── streamed thesis pieces · all share ONE cached reason() call ── */
 type TP = { ci: CompanyIntelligence; score: ScoreResult };
 
 async function DirectionLabel({ ci, score }: TP) {
@@ -304,7 +399,7 @@ async function Summary({ ci, score }: TP) {
 async function ThesisDetail({ ci, score }: TP) {
   const { thesis, mode } = await reason(ci, score);
   return (
-    <Panel title="Intelligence Thesis" badge={<DataModeBadge mode={mode} />} className="mb-3" bodyClassName="p-4">
+    <Panel title="Current Thesis" badge={<span className="flex items-center gap-2"><TrustTag kind="INTERPRETED" /><DataModeBadge mode={mode} /></span>} className="mb-3" bodyClassName="p-4">
       <div className="grid gap-x-8 gap-y-6 md:grid-cols-3">
         <ThesisList title="Why" items={thesis.keyDrivers} sign="+" color="var(--color-pos)" />
         <ThesisList title="Risks" items={thesis.risks} sign="−" color="var(--color-danger)" />
@@ -325,7 +420,7 @@ function ConfidenceSkel() { return <div className="flex flex-col gap-2"><Bar w="
 function SummarySkel() { return <div className="flex flex-col gap-2"><Bar /><Bar w="94%" /><Bar w="62%" /></div>; }
 function ThesisSkel() {
   return (
-    <Panel title="Intelligence Thesis" className="mb-3" bodyClassName="p-4">
+    <Panel title="Current Thesis" className="mb-3" bodyClassName="p-4">
       <div className="grid gap-8 md:grid-cols-3">
         {[0, 1, 2].map((i) => <div key={i} className="flex flex-col gap-2"><Bar w="40%" /><Bar /><Bar w="80%" /></div>)}
       </div>
@@ -339,8 +434,10 @@ function Sep() {
 
 function DimChip({ d }: { d: Dimension }) {
   const color = d.key === "risk" ? "var(--color-danger)" : "var(--color-pos)";
+  // Brief §40: what feeds it, that it's rule-based, and how fresh the inputs are.
+  const tip = `${d.label} · rule-based (deterministic)\nInputs: ${d.source}\n${d.asOf ? `Newest input: ${fmtDate(d.asOf)}` : "No dated input"}`;
   return (
-    <div>
+    <div title={tip} className="cursor-help">
       <div className="flex items-baseline justify-between gap-2">
         <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-ink-dim)] truncate">{d.label}</span>
         <span className="font-mono text-sm font-bold tabular-nums" style={{ color: d.value == null ? "var(--color-ink-faint)" : "var(--color-ink)" }}>
@@ -353,6 +450,7 @@ function DimChip({ d }: { d: Dimension }) {
         style={{ ["--c" as string]: color, opacity: d.value == null ? 0.3 : 1 }}
       />
       <div className="mt-1.5 font-mono text-[10px] leading-snug text-[color:var(--color-ink-faint)]">{d.basis}</div>
+      {d.asOf && <div className="mt-1 font-mono text-[9px] uppercase tracking-wider text-[color:var(--color-ink-faint)]/80">as of {ago(d.asOf)}</div>}
     </div>
   );
 }

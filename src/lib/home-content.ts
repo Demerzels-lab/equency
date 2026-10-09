@@ -19,29 +19,38 @@ export const CAPABILITIES = [
   { tier: "VIEW ONLY", title: "Official site", art: "┌──┐\n│WWW│\n└──┘", items: ["public pages", "capture", "no interaction"] },
 ];
 
+// Brand brief §28 · rewritten around the Core model, kept strictly to what is implemented today.
 export const FAQ = [
   {
-    q: "What is an Intelligence Core?",
-    a: "Every newly public company gets a Core that continuously researches its filings, market and signals, then turns them into an evidence-backed thesis you can act on.",
+    q: "What does an Intelligence Core actually do?",
+    a: "It monitors and researches one newly public company · SEC filings, ownership, fundamentals, market data, news and the official site · and turns that evidence into structured intelligence and an evolving thesis.",
   },
   {
     q: "Where does the data come from?",
-    a: "SEC EDGAR (Tier-1: filings, ownership, XBRL fundamentals), market quotes (Finnhub), price history (Yahoo), and the EQUENCY Reasoning Engine for synthesis. Every datum carries its source and freshness.",
+    a: "SEC EDGAR (filings, ownership, XBRL fundamentals), Finnhub (live quotes and news) and Yahoo (price history). Every output keeps its source and timestamp so you can inspect the evidence yourself.",
   },
   {
-    q: "What do 'live' and 'simulated' mean?",
-    a: "Live means read from a real source right now. Simulated is an honest placeholder for a feed not yet wired. We never dress a placeholder up as real.",
+    q: "Does the Core run continuously?",
+    a: "It refreshes from its sources on a rolling cycle (market data within about a minute, filings within minutes). When nothing new has happened it says MONITORING · it never fakes activity.",
   },
   {
-    q: "Does the AI move my money?",
-    a: "No. The AI proposes, a deterministic policy validates, and you approve. The AI never holds a key or signs a transaction.",
+    q: "Is the Core just an AI model?",
+    a: "No. It combines structured data, deterministic rule-based signals, evidence tracking and a reasoning engine that writes the narrative. The score is computed by rules, not by the model.",
   },
   {
-    q: "Is the score made up by the model?",
-    a: "No. The intelligence score and strategy-fit are computed deterministically from real signals. The model only writes the narrative, grounded in that evidence.",
+    q: "Can the thesis change?",
+    a: "Yes. The thesis is re-derived whenever the evidence changes, and every genuine change is recorded in the Core's thesis history.",
+  },
+  {
+    q: "Does the Core make investment decisions?",
+    a: "No. The Core produces intelligence and strategy recommendations. Capital only moves through your own Strategy Vault, under limits enforced on-chain, and only when you approve.",
   },
   {
     q: "Is any of this live onchain?",
-    a: "Yes. The Strategy Vault is deployed on Robinhood Chain mainnet (4663) with the real USDG, and its source is verified. Vaults ship paused; real-USDG deposits open after the external audit.",
+    a: "Yes. The Strategy Vault is live on Robinhood Chain mainnet (4663) with the real USDG, and its source is verified. Vaults ship paused; real-USDG deposits open after the external audit.",
+  },
+  {
+    q: "Is this financial advice?",
+    a: "No. EQUENCY provides research, intelligence and strategy tooling. You are responsible for your own investment decisions.",
   },
 ];

@@ -1,26 +1,17 @@
 import { NextResponse } from "next/server";
-import { searchRecentIpos } from "@/lib/providers/sec";
+import { getNewlyPublicUniverse } from "@/lib/providers/universe";
 
-export const revalidate = 1800;
+// Rendered on request, not at build: the universe needs ~185 paced SEC calls on a cold cache and
+// parallel build workers would trip SEC's rate limit. Data is cached (unstable_cache), so only
+// the first visit after a refresh pays that cost.
+export const dynamic = "force-dynamic";
 
-function isoDaysAgo(d: number): string {
-  return new Date(Date.now() - d * 86_400_000).toISOString().slice(0, 10);
-}
-
-/** Real newly-public universe (SEC 424B4) for the ⌘K command palette. */
+/** Confirmed newly-public universe (shared with Home/Explore) for ⌘K and the hero Core search. */
 export async function GET() {
   try {
-    const today = new Date().toISOString().slice(0, 10);
-    const ipos = await searchRecentIpos(isoDaysAgo(90), today, "424B4");
-    const seen = new Set<string>();
-    const universe = ipos
-      .filter((i) => {
-        if (!i.ticker || /acquisition/i.test(i.name) || seen.has(i.ticker)) return false;
-        seen.add(i.ticker);
-        return true;
-      })
+    const universe = (await getNewlyPublicUniverse())
       .slice(0, 48)
-      .map((i) => ({ ticker: i.ticker, name: i.name, filedAt: i.filedAt, cik: i.cik }));
+      .map((c) => ({ ticker: c.ticker, name: c.name, ipoDate: c.ipoDate, daysPublic: c.daysPublic, cik: c.cik }));
     return NextResponse.json({ universe });
   } catch {
     return NextResponse.json({ universe: [] });

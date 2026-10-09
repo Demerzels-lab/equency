@@ -184,7 +184,7 @@ export function StrategyWorkbench({ strategy, recs, sparks = {} }: { strategy: S
                           <span className="mono text-sm" style={{ color: "var(--color-accent)" }}>{r.ticker}</span>
                           <span className="truncate text-sm">{r.name}</span>
                         </div>
-                        <div className="label normal-case tracking-normal text-muted-foreground">{r.daysPublic ?? "?"}d public · {r.sector ?? ""}</div>
+                        <div className="label normal-case tracking-normal text-muted-foreground">{r.daysPublic != null ? `Day ${r.daysPublic} public` : "Newly public"} · {r.sector ?? ""}</div>
                       </Link>
                     </TableCell>
                     <TableCell className="mono text-right text-sm">{r.score ?? "·"}</TableCell>

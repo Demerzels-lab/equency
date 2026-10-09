@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s",
   },
   description:
-    "Every newly public company gets an Intelligence Core that continuously researches its market, business and signals.",
+    "Intelligence for the newly public. Every newly public company gets an Intelligence Core that continuously researches its business, market and signals to build an evolving, evidence-backed thesis.",
 };
 
 export const viewport: Viewport = { themeColor: "#05070d", colorScheme: "dark" };

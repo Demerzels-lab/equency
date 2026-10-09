@@ -44,3 +44,10 @@ export function ago(iso: string | undefined): string {
   const d = Math.floor(h / 24);
   return `${d}d ago`;
 }
+
+/** True when an ISO timestamp is older than `hours` (freshness / STALE flag, brand brief §41). */
+export function olderThan(iso: string | undefined | null, hours: number): boolean {
+  if (!iso) return false;
+  const t = Date.parse(iso);
+  return !Number.isNaN(t) && Date.now() - t > hours * 3_600_000;
+}

@@ -96,13 +96,13 @@ export default async function VaultPage() {
       <section className="relative overflow-hidden border-b border-[color:var(--color-line)]">
         <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
         <div className="relative mx-auto max-w-[1240px] px-6 pt-10 pb-20">
-          <div className="section-label">01 / ON-CHAIN EXECUTION</div>
+          <div className="section-label">VAULT / THE CAPITAL LAYER</div>
           <h1 className="editorial-h1">
-            Strategy <span className="editorial-accent">Vault.</span>
+            Intelligence becomes <span className="editorial-accent">capital.</span>
           </h1>
           <p className="editorial-lead mt-4 max-w-xl">
-            Where intelligence becomes capital. A non-custodial ERC-4626 vault on Robinhood Chain that holds USDG,
-            buys verified assets within limits enforced on-chain, and never lets the AI sign a transaction.
+            Review your strategy, adjust the allocation, and deploy capital through a non-custodial Strategy Vault on
+            Robinhood Chain · USDG settlement, verified assets only, every limit enforced on-chain. The Core proposes; you approve.
           </p>
 
           <VaultVerdict onMainnet={onMainnet} vaultCount={live.vaultCount} contractCount={Object.keys(MAINNET.contracts).length} />
@@ -115,7 +115,7 @@ export default async function VaultPage() {
 
       {/* flow */}
       <section className="mx-auto max-w-[1240px] px-6 py-20">
-        <div className="section-label">02 / THE NON-CUSTODIAL LOOP</div>
+        <div className="section-label">CORE → STRATEGY → VAULT</div>
         <h2 className="editorial-h2">Intelligence → Strategy → <span className="editorial-accent">Capital.</span></h2>
         <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden border border-[color:var(--color-line)] sm:grid-cols-2 lg:grid-cols-3" style={{ background: "var(--color-line)" }}>
           {FLOW.map((s) => (
@@ -133,11 +133,11 @@ export default async function VaultPage() {
       {/* architecture */}
       <section className="border-y border-[color:var(--color-line)] bg-[color:var(--color-panel)]">
         <div className="mx-auto max-w-[1240px] px-6 py-20">
-          <div className="section-label">03 / STRUCTURAL SAFETY</div>
+          <div className="section-label">STRUCTURAL SAFETY</div>
           <h2 className="editorial-h2">Safety by <span className="editorial-accent">structure.</span></h2>
           <p className="editorial-lead mt-3 max-w-xl">
-            Intelligence proposes, the deterministic policy validates, execution is bounded. The AI never
-            holds a key. Every limit lives in the contract, not the UI.
+            The Core proposes, a rule-based policy validates, execution is bounded. No model ever holds a key.
+            Every limit lives in the contract, not the UI.
           </p>
           <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden border border-[color:var(--color-line)] sm:grid-cols-2 lg:grid-cols-3" style={{ background: "var(--color-line)" }}>
             {ARCH.map((c) => (
@@ -153,7 +153,7 @@ export default async function VaultPage() {
 
       {/* verified chain facts */}
       <section className="mx-auto max-w-[1240px] px-6 py-20">
-        <div className="section-label">04 / ROBINHOOD CHAIN PROOF</div>
+        <div className="section-label">ROBINHOOD CHAIN PROOF</div>
         <h2 className="editorial-h2 mb-8">Live on Robinhood Chain <span className="editorial-accent">mainnet.</span></h2>
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="border border-[color:var(--color-line)] bg-[color:var(--color-panel)] p-6">

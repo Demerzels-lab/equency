@@ -1,4 +1,5 @@
 import { Panel, DataModeBadge } from "@/components/primitives";
+import { Freshness, TrustTag } from "@/components/Trust";
 import { fmtCompactUsd } from "@/lib/util/format";
 import { ago, fmtDate } from "@/lib/util/dates";
 import type { NewsItem } from "@/lib/providers/types";
@@ -6,7 +7,7 @@ import type { Fundamentals } from "@/lib/providers/xbrl";
 
 export function FundamentalsPanel({ f }: { f: Fundamentals }) {
   return (
-    <Panel title="Fundamentals" badge={<DataModeBadge mode={f.available ? "LIVE" : "SIMULATED"} />}>
+    <Panel title="Fundamentals" badge={<span className="flex items-center gap-2">{f.available && <TrustTag kind="VERIFIED" />}<DataModeBadge mode={f.available ? "LIVE" : "SIMULATED"} /></span>}>
       {f.available ? (
         <div className="flex flex-col">
           {f.items.map((it) => (
@@ -17,8 +18,9 @@ export function FundamentalsPanel({ f }: { f: Fundamentals }) {
               </span>
             </div>
           ))}
-          <div className="label mt-2 normal-case" style={{ letterSpacing: 0 }}>
-            Latest reported · SEC XBRL (VERIFIED tier-1)
+          <div className="mt-2 flex items-center justify-between">
+            <span className="label normal-case" style={{ letterSpacing: 0 }}>SEC XBRL · tier 1</span>
+            <Freshness at={f.items.reduce<string | undefined>((m, i) => (!m || i.filedAt > m ? i.filedAt : m), undefined)} verb="Reported" />
           </div>
         </div>
       ) : (
@@ -32,7 +34,7 @@ export function FundamentalsPanel({ f }: { f: Fundamentals }) {
 
 export function NewsPanel({ items }: { items: NewsItem[] | null }) {
   return (
-    <Panel title="News" badge={<DataModeBadge mode={items ? "LIVE" : "SIMULATED"} />}>
+    <Panel title="News" badge={<span className="flex items-center gap-2">{items && items.length > 0 && <Freshness at={items[0]?.publishedAt} verb="Newest" />}<DataModeBadge mode={items ? "LIVE" : "SIMULATED"} /></span>}>
       {items && items.length > 0 ? (
         <div className="flex flex-col gap-2.5">
           {items.slice(0, 6).map((n, i) => (

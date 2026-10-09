@@ -2,32 +2,16 @@
 // only · NO reasoning-model call here (cost control; the model runs on-demand in the
 // recommendation detail). Reuses the Phase-1 Intelligence Core per company.
 import "server-only";
-import { searchRecentIpos } from "@/lib/providers/sec";
+import { getNewlyPublicUniverse } from "@/lib/providers/universe";
 import { buildCompanyIntelligence } from "@/lib/providers/company";
 import { computeScore } from "@/lib/intelligence/score";
 import { computeStrategyFit } from "@/lib/strategy/fit";
 import type { StrategyConfig, Recommendation } from "@/lib/strategy/types";
 
-function isoDaysAgo(days: number): string {
-  return new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 10);
-}
-
-/** Candidate pool: recent operating-company 424B4 filers (skip SPAC shells). A recent
- *  424B4 can be a follow-on offering, so true newly-public status is confirmed later by
- *  days-public (≤180, brief §4) once each company's IPO date is known. */
+/** Candidate pool: the shared, SEC-confirmed newly-public universe (follow-on offerings
+ *  already excluded), freshest first. */
 export async function getUniverse(pool = 18): Promise<Array<{ cik: string; ticker: string; name: string }>> {
-  const today = new Date().toISOString().slice(0, 10);
-  const ipos = await searchRecentIpos(isoDaysAgo(120), today, "424B4");
-  const seen = new Set<string>();
-  const out: Array<{ cik: string; ticker: string; name: string }> = [];
-  for (const i of ipos) {
-    if (!i.ticker || !i.cik || /acquisition/i.test(i.name)) continue;
-    if (seen.has(i.cik)) continue;
-    seen.add(i.cik);
-    out.push({ cik: i.cik, ticker: i.ticker, name: i.name });
-    if (out.length >= pool) break;
-  }
-  return out;
+  return (await getNewlyPublicUniverse()).slice(0, pool).map((c) => ({ cik: c.cik, ticker: c.ticker, name: c.name }));
 }
 
 const NEWLY_PUBLIC_MAX_DAYS = 180;

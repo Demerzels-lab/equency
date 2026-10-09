@@ -6,13 +6,13 @@ export const metadata = { title: "Strategies · EQUENCY" };
 export default function StrategiesPage() {
   return (
     <main className="page-main mx-auto max-w-[1240px] px-6 pt-28 sm:pt-32 pb-20">
-      <div className="section-label">01 / QUANTITATIVE ARCHITECTURE</div>
+      <div className="section-label">STRATEGY / DOWNSTREAM OF INTELLIGENCE</div>
       <h1 className="editorial-h2">
-        Deterministic <span className="editorial-accent">strategy models.</span>
+        Turn intelligence into <span className="editorial-accent">strategy.</span>
       </h1>
       <p className="editorial-lead mt-3 max-w-[60ch]">
-        Each mathematical model ranks the newly public universe by deterministic fit against each company&apos;s
-        Intelligence Core. Select a strategy to inspect backtest parameters, allocation constraints, and on-chain execution.
+        Build a strategy around the newly public companies your Intelligence Cores are researching. Each mode ranks
+        every Core by rule-based fit · then you review the evidence, adjust the allocation and decide what reaches capital.
       </p>
 
       <div className="mt-12 divide-y divide-[color:var(--color-line)] border-y border-[color:var(--color-line)]">

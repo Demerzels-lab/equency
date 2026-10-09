@@ -11,6 +11,10 @@ export interface Dimension {
   value: number | null; // null => n/a, not fabricated
   available: boolean;
   basis: string;
+  /** Where the inputs come from (brief §40 tooltip). */
+  source: string;
+  /** Timestamp of the newest input behind this dimension (brief §41 freshness). */
+  asOf?: string;
 }
 
 export interface ScoreResult {
@@ -31,6 +35,11 @@ export function computeScore(ci: CompanyIntelligence, fundamentals?: Fundamental
   const n8k = count((f) => f.startsWith("8-K"));
   const nPeriodic = count((f) => f.startsWith("10-"));
 
+  // Freshness anchors for each dimension's inputs.
+  const latestFiling = ci.filings.reduce<string | undefined>((mx, f) => (!mx || f.filedAt > mx ? f.filedAt : mx), undefined);
+  const latest13 = ci.filings.filter((f) => f.form.toUpperCase().startsWith("SCHEDULE 13")).reduce<string | undefined>((mx, f) => (!mx || f.filedAt > mx ? f.filedAt : mx), undefined);
+  const latestFact = fundamentals?.items.reduce<string | undefined>((mx, i) => (!mx || i.filedAt > mx ? i.filedAt : mx), undefined);
+
   const m = ci.market;
   const hasQuote = m.mode === "LIVE" && m.value.price != null;
   const chgPct = m.value.changePct;
@@ -45,9 +54,11 @@ export function computeScore(ci: CompanyIntelligence, fundamentals?: Fundamental
       value: clamp(50 + chgPct * 2),
       available: true,
       basis: `1-day move ${chgPct >= 0 ? "+" : ""}${chgPct.toFixed(2)}% (Finnhub, live)`,
+      source: "Finnhub live quote",
+      asOf: m.asOf,
     });
   } else {
-    dims.push({ key: "momentum", label: "Momentum", value: null, available: false, basis: "No live quote (add FINNHUB_API_KEY)" });
+    dims.push({ key: "momentum", label: "Momentum", value: null, available: false, basis: "No live quote (add FINNHUB_API_KEY)", source: "Finnhub live quote" });
   }
 
   // Institutional · presence of >5% stake disclosures (SC 13D/13G), from SEC.
@@ -57,6 +68,8 @@ export function computeScore(ci: CompanyIntelligence, fundamentals?: Fundamental
     value: clamp(45 + n13 * 12),
     available: true,
     basis: `${n13} Schedule 13D/13G disclosure${n13 === 1 ? "" : "s"} on file (SEC)`,
+    source: "SEC EDGAR · Schedule 13D/13G",
+    asOf: latest13 ?? latestFiling,
   });
 
   // Narrative / disclosure activity · material-event cadence (8-K) + insider signals.
@@ -66,6 +79,8 @@ export function computeScore(ci: CompanyIntelligence, fundamentals?: Fundamental
     value: clamp(48 + n8k * 6 + Math.min(nInsider, 6) * 3),
     available: true,
     basis: `${n8k} 8-K, ${nInsider} insider form${nInsider === 1 ? "" : "s"} (SEC)`,
+    source: "SEC EDGAR · 8-K, Forms 3/4",
+    asOf: latestFiling,
   });
 
   // Fundamentals · from SEC XBRL companyfacts (real). Newly-public issuers with no
@@ -82,7 +97,7 @@ export function computeScore(ci: CompanyIntelligence, fundamentals?: Fundamental
     if (net != null) { v += net > 0 ? 18 : -8; notes.push(net > 0 ? "profitable" : "net loss"); }
     if (cash != null && cash > 0) { v += 8; notes.push("cash on balance sheet"); }
     if (equity != null && equity > 0) { v += 6; notes.push("positive equity"); }
-    dims.push({ key: "fundamentals", label: "Fundamentals", value: clamp(v), available: true, basis: `${notes.join(", ")} (SEC XBRL)` });
+    dims.push({ key: "fundamentals", label: "Fundamentals", value: clamp(v), available: true, basis: `${notes.join(", ")} (SEC XBRL)`, source: "SEC XBRL companyfacts", asOf: latestFact });
   } else {
     dims.push({
       key: "fundamentals",
@@ -90,6 +105,7 @@ export function computeScore(ci: CompanyIntelligence, fundamentals?: Fundamental
       value: null,
       available: false,
       basis: nPeriodic > 0 ? `${nPeriodic} periodic report(s) filed, facts pending` : "No 10-Q/10-K yet · no XBRL fundamentals",
+      source: "SEC XBRL companyfacts",
     });
   }
 
@@ -105,6 +121,8 @@ export function computeScore(ci: CompanyIntelligence, fundamentals?: Fundamental
     basis: [newlyPublic ? "newly public (<90d)" : null, biotech ? "clinical-stage sector" : null, n13 === 0 ? "thin institutional base" : null]
       .filter(Boolean)
       .join(", ") || "baseline",
+    source: "Days public, SIC sector, ownership filings (SEC)",
+    asOf: latestFiling,
   });
 
   // Overall · weighted blend of the AVAILABLE positive dimensions; risk inverts.
