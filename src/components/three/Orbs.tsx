@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { DepthPoints, PointerTilt, Ring, fibonacciSphere } from "./primitives";
+import { Atmosphere, DepthPoints, PointerTilt, Ring, fibonacciSphere } from "./primitives";
 
 /** Strategy orb: nested gyroscope rings around a glowing core (Boros-ball analogue). */
 export function RingOrb({ color = "#ff6a33" }: { color?: string }) {
@@ -48,13 +48,14 @@ export function DotGlobe({ color = "#5470ff" }: { color?: string }) {
   return (
     <PointerTilt strength={0.3}>
       <group ref={ref} rotation={[0.35, 0, 0]}>
-        <DepthPoints positions={pts} color={color} size={3.2} />
-        <DepthPoints positions={inner} color="#b9c6ff" size={2.2} opacity={0.35} />
+        <DepthPoints positions={pts} color={color} size={3.3} highlight={0.6} />
+        <DepthPoints positions={inner} color="#e4e9ff" size={2.2} opacity={0.4} />
         <group rotation={[Math.PI / 2 - 0.2, 0, 0]}>
           <Ring rx={1.95} color={color} opacity={0.4} />
           <Ring rx={2.1} color={color} opacity={0.15} />
         </group>
       </group>
+      <Atmosphere radius={1.85} color="#dfe6ff" intensity={0.26} power={3.2} />
     </PointerTilt>
   );
 }

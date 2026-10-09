@@ -43,8 +43,8 @@ export default async function Home() {
         <div className="pointer-events-none absolute left-1/2 top-[62%] -z-10 aspect-square w-[min(760px,120vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--color-core)_28%,transparent),transparent)] blur-2xl" />
         <HeroScene className="!absolute inset-0 -z-10" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-48 bg-gradient-to-t from-paper to-transparent" />
-        <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[560px] w-[min(980px,98vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,var(--color-paper)_10%,transparent)] opacity-60" />
-        <Reveal className="flex w-full flex-col items-center gap-5 text-center">
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[560px] w-[min(980px,98vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,var(--color-paper)_10%,transparent)] opacity-75" />
+        <Reveal className="flex w-full flex-col items-center gap-5 text-center [text-shadow:0_1px_14px_var(--color-paper),0_0_3px_var(--color-paper)]">
           <span className="rounded-full bg-card/70 px-3 py-1 font-body text-xs text-ink-2 ring-1 ring-line backdrop-blur">
             <span className="mr-2 inline-block size-1.5 animate-pulse rounded-full bg-mint align-middle" />
             {unique.length > 0 ? `${unique.length} Intelligence Cores live from SEC EDGAR` : "Intelligence Cores · SEC EDGAR"}

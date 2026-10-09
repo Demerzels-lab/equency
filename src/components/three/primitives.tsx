@@ -27,12 +27,15 @@ export function DepthPoints({
   size = 2.2,
   opacity = 0.9,
   additive = true,
+  highlight = 0,
 }: {
   positions: Float32Array;
   color: string;
   size?: number;
   opacity?: number;
   additive?: boolean;
+  /** 0..1 · lifts front-facing dots toward white (a lit "pearl" face), back stays tinted. */
+  highlight?: number;
 }) {
   const geom = useMemo(() => {
     const g = new THREE.BufferGeometry();
@@ -51,6 +54,7 @@ export function DepthPoints({
           uColor: { value: new THREE.Color(color) },
           uSize: { value: size },
           uOpacity: { value: opacity },
+          uHighlight: { value: highlight },
           uPixelRatio: { value: dpr },
         },
         vertexShader: /* glsl */ `
@@ -68,16 +72,18 @@ export function DepthPoints({
         fragmentShader: /* glsl */ `
           uniform vec3 uColor;
           uniform float uOpacity;
+          uniform float uHighlight;
           varying float vDepth;
           void main() {
             float d = length(gl_PointCoord - 0.5);
             if (d > 0.5) discard;
             float a = smoothstep(0.5, 0.15, d) * mix(0.12, 1.0, pow(vDepth, 1.6)) * uOpacity;
-            gl_FragColor = vec4(uColor, a);
+            vec3 col = mix(uColor, vec3(1.0), uHighlight * pow(vDepth, 2.2));
+            gl_FragColor = vec4(col, a);
           }
         `,
       }),
-    [color, size, opacity, dpr, additive],
+    [color, size, opacity, dpr, additive, highlight],
   );
 
   return <points geometry={geom} material={mat} />;
@@ -156,4 +162,45 @@ export function PointerTilt({ children, strength = 0.25 }: { children: React.Rea
     g.rotation.x += (-pointer.y * strength * 0.6 - g.rotation.x) * k;
   });
   return <group ref={ref}>{children}</group>;
+}
+
+/** Soft atmospheric halo: a back-face fresnel shell that glows at the limb (premium "rim light"). */
+export function Atmosphere({ radius, color = "#dfe6ff", intensity = 0.55, power = 2.6 }: { radius: number; color?: string; intensity?: number; power?: number }) {
+  const mat = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending,
+        uniforms: { uColor: { value: new THREE.Color(color) }, uIntensity: { value: intensity }, uPower: { value: power } },
+        vertexShader: /* glsl */ `
+          varying vec3 vNormal;
+          varying vec3 vView;
+          void main() {
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            vNormal = normalize(normalMatrix * normal);
+            vView = normalize(-mv.xyz);
+            gl_Position = projectionMatrix * mv;
+          }
+        `,
+        fragmentShader: /* glsl */ `
+          uniform vec3 uColor;
+          uniform float uIntensity;
+          uniform float uPower;
+          varying vec3 vNormal;
+          varying vec3 vView;
+          void main() {
+            float rim = pow(clamp(1.0 + dot(vNormal, vView), 0.0, 1.0), uPower);
+            gl_FragColor = vec4(uColor, rim * uIntensity);
+          }
+        `,
+      }),
+    [color, intensity, power],
+  );
+  return (
+    <mesh material={mat}>
+      <sphereGeometry args={[radius, 64, 64]} />
+    </mesh>
+  );
 }

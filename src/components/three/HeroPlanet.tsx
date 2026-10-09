@@ -3,11 +3,13 @@
 import { useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { DepthPoints, PointerTilt, Ring, Satellite, fibonacciSphere } from "./primitives";
+import { Atmosphere, DepthPoints, PointerTilt, Ring, Satellite, fibonacciSphere } from "./primitives";
 import { seeded } from "@/lib/rand";
 
-// Dark-sky palette: "INK" is now a cool starlight tone so wireframe/orbits read on the night bg.
-const INK = "#b9c6ff";
+// Dark-sky palette: "INK" is a near-white starlight tone so the globe reads as a lit, pearl-like
+// object on the night bg; the Core blue stays as the tint on the far side and the orbits.
+const INK = "#e4e9ff";
+const PEARL = "#c7d2ff";
 const CORE = "#6680ff";
 const STRATEGY = "#ff6a33";
 
@@ -15,7 +17,7 @@ const STRATEGY = "#ff6a33";
 function WireGlobe({ radius = 2.2 }: { radius?: number }) {
   const lines = useMemo(() => {
     const group = new THREE.Group();
-    const mat = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.2, depthWrite: false, blending: THREE.AdditiveBlending });
+    const mat = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.3, depthWrite: false, blending: THREE.AdditiveBlending });
     for (let lat = -75; lat <= 75; lat += 15) {
       const r = Math.cos((lat * Math.PI) / 180) * radius;
       const y = Math.sin((lat * Math.PI) / 180) * radius;
@@ -118,11 +120,14 @@ export function HeroPlanet() {
         <group position={[0, -1.15, 0]} scale={scale}>
           <group ref={globe} rotation={[0.25, 0, 0.12]}>
             <WireGlobe />
-            <DepthPoints positions={shell} color={CORE} size={4} opacity={1} />
+            <DepthPoints positions={shell} color={PEARL} size={4.2} opacity={1} highlight={0.75} />
           </group>
+          {/* limb glow · outside the rotating group so it stays a stable halo */}
+          <Atmosphere radius={2.62} color="#dfe6ff" intensity={0.5} />
+          <Atmosphere radius={3.05} color={CORE} intensity={0.22} power={3.4} />
 
           <group rotation={[1.38, 0, 0.12]}>
-            <Ring rx={5.6} ry={1.6} color={INK} opacity={0.18} />
+            <Ring rx={5.6} ry={1.6} color={INK} opacity={0.26} />
             <Ring rx={5.66} ry={1.64} color={INK} opacity={0.08} />
             <Satellite rx={5.6} ry={1.6} speed={0.12} color={STRATEGY} size={0.07} />
           </group>
@@ -131,7 +136,7 @@ export function HeroPlanet() {
             <Satellite rx={3.3} speed={0.22} phase={2} color={CORE} size={0.06} />
           </group>
           <group rotation={[1.9, -0.4, 0.6]}>
-            <Ring rx={2.9} ry={2.6} color={INK} opacity={0.16} />
+            <Ring rx={2.9} ry={2.6} color={INK} opacity={0.22} />
             <Satellite rx={2.9} ry={2.6} speed={-0.3} phase={4} color={INK} size={0.045} />
           </group>
           <Beam />
