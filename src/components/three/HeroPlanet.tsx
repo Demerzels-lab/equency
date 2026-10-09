@@ -17,7 +17,7 @@ const STRATEGY = "#ff6a33";
 function WireGlobe({ radius = 2.2 }: { radius?: number }) {
   const lines = useMemo(() => {
     const group = new THREE.Group();
-    const mat = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.3, depthWrite: false, blending: THREE.AdditiveBlending });
+    const mat = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.36, depthWrite: false, blending: THREE.AdditiveBlending });
     for (let lat = -75; lat <= 75; lat += 15) {
       const r = Math.cos((lat * Math.PI) / 180) * radius;
       const y = Math.sin((lat * Math.PI) / 180) * radius;
@@ -104,10 +104,11 @@ function Dust({ count = 700 }: { count?: number }) {
 /** Hero centrepiece: wire globe + point shell + tilted orbits with satellites + beam + dust. */
 export function HeroPlanet() {
   const globe = useRef<THREE.Group>(null);
-  const shell = useMemo(() => fibonacciSphere(2600, 2.24), []);
-  // Shrink the whole system on narrow (portrait) viewports so orbits stay in frame.
+  const shell = useMemo(() => fibonacciSphere(4200, 2.24), []);
+  // Hero-sized globe (≈85% of viewport height, Pendle-style); orbits run off-screen on purpose.
+  // Narrow (portrait) viewports shrink it so the globe itself stays in frame.
   const aspect = useThree((s) => s.size.width / s.size.height);
-  const scale = Math.min(1, Math.max(0.55, aspect / 1.6));
+  const scale = 1.18 * Math.min(1, Math.max(0.5, aspect / 1.6));
 
   useFrame((_, dt) => {
     if (globe.current) globe.current.rotation.y += dt * 0.06;
@@ -117,14 +118,14 @@ export function HeroPlanet() {
     <>
       <Dust />
       <PointerTilt strength={0.18}>
-        <group position={[0, -1.15, 0]} scale={scale}>
+        <group position={[0, -0.25, 0]} scale={scale}>
           <group ref={globe} rotation={[0.25, 0, 0.12]}>
             <WireGlobe />
-            <DepthPoints positions={shell} color={PEARL} size={4.2} opacity={1} highlight={0.75} />
+            <DepthPoints positions={shell} color={PEARL} size={3.6} opacity={1} highlight={0.8} />
           </group>
           {/* limb glow · outside the rotating group so it stays a stable halo */}
-          <Atmosphere radius={2.62} color="#dfe6ff" intensity={0.5} />
-          <Atmosphere radius={3.05} color={CORE} intensity={0.22} power={3.4} />
+          <Atmosphere radius={2.5} color="#dfe6ff" intensity={0.38} power={3.2} />
+          <Atmosphere radius={2.85} color={CORE} intensity={0.16} power={4.2} />
 
           <group rotation={[1.38, 0, 0.12]}>
             <Ring rx={5.6} ry={1.6} color={INK} opacity={0.26} />

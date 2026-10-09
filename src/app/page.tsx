@@ -38,23 +38,39 @@ export default async function Home() {
 
   return (
     <main>
-      {/* ── HERO · the category in one read ─────────────────────── */}
-      <section className="relative isolate flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-5 pb-16 pt-28">
-        <div className="pointer-events-none absolute left-1/2 top-[62%] -z-10 aspect-square w-[min(760px,120vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--color-core)_28%,transparent),transparent)] blur-2xl" />
+      {/* ── HERO · Pendle-style: the globe IS the hero, one headline + one line ── */}
+      <section className="relative isolate flex h-[100svh] min-h-[640px] flex-col items-center justify-center overflow-hidden px-5">
+        {/* soft core-blue glow behind the globe so it reads as lit, not flat */}
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 aspect-square w-[min(1100px,140vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--color-core)_30%,transparent),transparent_75%)] blur-3xl" />
         <HeroScene className="!absolute inset-0 -z-10" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-48 bg-gradient-to-t from-paper to-transparent" />
-        <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[560px] w-[min(980px,98vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,var(--color-paper)_10%,transparent)] opacity-75" />
-        <Reveal className="flex w-full flex-col items-center gap-5 text-center [text-shadow:0_1px_14px_var(--color-paper),0_0_3px_var(--color-paper)]">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-72 bg-gradient-to-t from-paper via-paper/80 to-transparent" />
+        <Reveal className="flex flex-col items-center gap-6 text-center [text-shadow:0_2px_24px_var(--color-paper),0_0_4px_var(--color-paper)]">
+          <h1 className="max-w-5xl text-balance text-[44px] font-light leading-[1.02] tracking-tight sm:text-7xl md:text-[88px]">
+            Intelligence for the <span className="editorial-accent">newly public.</span>
+          </h1>
+          <p className="max-w-2xl text-balance text-lg text-ink md:text-2xl">{BRAND.statement}</p>
+        </Reveal>
+        <a
+          href="#find-core"
+          aria-label="Scroll to find a Core"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.3em] text-ink-3 transition-colors hover:text-ink"
+        >
+          <span className="flex flex-col items-center gap-2">
+            Scroll
+            <span className="block h-8 w-px animate-pulse bg-gradient-to-b from-ink-3 to-transparent" />
+          </span>
+        </a>
+      </section>
+
+      {/* ── FIND A CORE · explanation, CTAs and search moved out of the hero ── */}
+      <section id="find-core" className="relative mx-auto flex max-w-3xl scroll-mt-24 flex-col items-center gap-5 px-5 pb-24 pt-16 text-center">
+        <Reveal className="flex flex-col items-center gap-5">
           <span className="rounded-full bg-card/70 px-3 py-1 font-body text-xs text-ink-2 ring-1 ring-line backdrop-blur">
             <span className="mr-2 inline-block size-1.5 animate-pulse rounded-full bg-mint align-middle" />
             {unique.length > 0 ? `${unique.length} Intelligence Cores live from SEC EDGAR` : "Intelligence Cores · SEC EDGAR"}
           </span>
-          <h1 className="max-w-4xl text-balance text-[40px] font-light leading-[1.04] tracking-tight sm:text-6xl md:text-7xl">
-            Intelligence for the <span className="editorial-accent">newly public.</span>
-          </h1>
-          <p className="max-w-2xl text-balance text-lg text-ink md:text-2xl">{BRAND.statement}</p>
-          <p className="max-w-xl text-balance font-body text-sm text-ink-2 md:text-base">{BRAND.explanation}</p>
-          <div className="mt-1 flex flex-wrap justify-center gap-3">
+          <p className="max-w-xl text-balance font-body text-base text-ink-2 md:text-lg">{BRAND.explanation}</p>
+          <div className="flex flex-wrap justify-center gap-3">
             <Btn href="/explore" accent="core" variant="solid" className="min-w-44">Explore the Minds</Btn>
             <Btn href="/#how-it-works" accent="ink" className="min-w-44">How It Works</Btn>
           </div>
