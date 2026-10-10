@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "deploy:show": "node --no-warnings --experimental-strip-types scripts/deploy-show.mts",
     "pair-core": "node --no-warnings --experimental-strip-types scripts/pair-core.mts",
-    "token-core": "node --no-warnings --experimental-strip-types scripts/token-core.mts"
+    "token-core": "node --no-warnings --experimental-strip-types scripts/token-core.mts",
+    "commodity-core": "node --no-warnings --experimental-strip-types scripts/commodity-core.mts",
+    "test:commodity-core": "node --no-warnings --experimental-strip-types --test --test-reporter=spec scripts/commodity-core.test.mts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
