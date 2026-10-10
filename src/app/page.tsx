@@ -67,17 +67,17 @@ export default async function Home() {
 
       {/* ── FIND A CORE · explanation, CTAs and search moved out of the hero ── */}
       <section id="find-core" className="relative mx-auto flex max-w-3xl scroll-mt-24 flex-col items-center gap-5 px-5 pb-24 pt-16 text-center">
-        <Reveal className="flex flex-col items-center gap-5">
+        <Reveal className="flex w-full min-w-0 flex-col items-center gap-5">
           <span className="rounded-full bg-card/70 px-3 py-1 font-body text-xs text-ink-2 ring-1 ring-line backdrop-blur">
             <span className="mr-2 inline-block size-1.5 animate-pulse rounded-full bg-mint align-middle" />
             {unique.length > 0 ? `${unique.length} Intelligence Cores live from SEC EDGAR` : "Intelligence Cores · SEC EDGAR"}
           </span>
           <p className="max-w-xl text-balance font-body text-base text-ink-2 md:text-lg">{BRAND.explanation}</p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Btn href="/explore" accent="core" variant="solid" className="min-w-44">Explore the Minds</Btn>
-            <Btn href="/#how-it-works" accent="ink" className="min-w-44">How It Works</Btn>
+          <div className="flex w-full flex-wrap justify-center gap-3 sm:w-auto">
+            <Btn href="/explore" accent="core" variant="solid" className="min-w-40 flex-1 sm:flex-none sm:min-w-44">Explore the Minds</Btn>
+            <Btn href="/#how-it-works" accent="ink" className="min-w-40 flex-1 sm:flex-none sm:min-w-44">How It Works</Btn>
           </div>
-          <div className="mt-4 flex w-full justify-center">
+          <div className="mt-4 flex w-full min-w-0 justify-center">
             <CoreSearch seed={seed} />
           </div>
         </Reveal>
@@ -115,10 +115,10 @@ export default async function Home() {
       <div className="hr-fade mx-auto max-w-7xl" />
 
       {/* ── CORE → STRATEGY · two layers of one system ───────────── */}
-      <section className="relative mx-auto grid max-w-7xl gap-16 px-5 py-24 md:grid-cols-2 md:gap-8 md:px-8">
+      <section className="relative mx-auto grid max-w-7xl gap-20 px-5 py-20 md:grid-cols-2 md:gap-8 md:px-8 md:py-24">
         {PRODUCTS.map((p, i) => (
           <Reveal key={p.key} delay={i * 0.12} className="flex flex-col items-center text-center">
-            <OrbScene kind={p.key} className="aspect-square w-full max-w-[340px]" />
+            <OrbScene kind={p.key} className="aspect-square w-full max-w-[240px] md:max-w-[340px]" />
             <div className={`mt-2 flex items-center gap-3 font-wide text-sm tracking-[0.2em] ${p.key === "core" ? "text-core" : "text-strategy"}`}>
               {p.title}
               <span className={`rounded-full px-2.5 py-1 font-sans text-[10px] font-normal tracking-[0.2em] text-ink ring-1 ring-inset ${p.key === "core" ? "ring-core" : "ring-strategy"}`}>
@@ -138,7 +138,7 @@ export default async function Home() {
       {/* ── CAPITAL · the vault, downstream of intelligence (brief §31) ── */}
       <section className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
         <Reveal>
-          <GlowCard glow="var(--color-strategy)" className="flex flex-col items-start justify-between gap-6 rounded-xl border border-line bg-card/80 p-8 backdrop-blur md:flex-row md:items-center md:p-10">
+          <GlowCard glow="var(--color-strategy)" className="flex flex-col items-start justify-between gap-6 rounded-xl border border-line bg-card/80 p-6 backdrop-blur sm:p-8 md:flex-row md:items-center md:p-10">
             <div className="max-w-2xl">
               <div className="eyebrow text-xs text-strategy">Capital · Strategy Vault</div>
               <h2 className="mt-3 text-3xl font-light md:text-4xl">From intelligence to capital.</h2>
@@ -163,18 +163,18 @@ export default async function Home() {
       <section className="relative isolate mx-auto max-w-6xl px-5 py-24 md:px-8">
         <div className="dot-field pointer-events-none absolute inset-0 -z-10" />
         <Reveal><SectionTitle>EQUENCY in Numbers</SectionTitle></Reveal>
-        <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:mt-14 sm:gap-4 md:grid-cols-3">
           {stats.map((s, i) => (
             <Reveal key={s.label} delay={i * 0.06}>
               <GlowCard
                 glow={i % 2 ? "var(--color-strategy)" : "var(--color-core)"}
-                className="flex flex-col items-center justify-center gap-2 rounded-lg border border-line bg-card/80 px-3 py-7 backdrop-blur transition-transform duration-300 hover:-translate-y-1"
+                className="flex h-full flex-col items-center justify-center gap-1.5 rounded-lg border border-line bg-card/80 px-2.5 py-5 backdrop-blur transition-transform duration-300 hover:-translate-y-1 sm:gap-2 sm:px-3 sm:py-7"
               >
-                <p className="flex items-baseline gap-0.5 text-4xl font-light">
+                <p className="flex items-baseline gap-0.5 text-3xl font-light sm:text-4xl">
                   <CountUp value={s.value} />
                   {s.suffix && <span className="text-ink-3">{s.suffix}</span>}
                 </p>
-                <h3 className="text-center text-ink">{s.label}</h3>
+                <h3 className="text-center text-sm leading-snug text-ink sm:text-base">{s.label}</h3>
                 {s.note && <span className="text-center font-body text-[11px] text-ink-3">{s.note}</span>}
               </GlowCard>
             </Reveal>
@@ -266,12 +266,12 @@ export default async function Home() {
           {CORE_TECH.map((t, i) => (
             <Reveal key={t.title} delay={i * 0.1}>
               <GlowCard className="flex h-full flex-col overflow-hidden rounded-xl border border-line bg-card">
-                <div className="aspect-[21/17] bg-gradient-to-b from-core-soft/70 to-card p-6">
+                <div className="aspect-[2/1] bg-gradient-to-b from-core-soft/70 to-card p-5 sm:aspect-[21/17] sm:p-6">
                   <TechVisual kind={t.visual} />
                 </div>
                 <div className="p-6">
                   <div className="flex items-center justify-between gap-3">
-                    <h3 className="text-2xl">{t.title}</h3>
+                    <h3 className="text-xl sm:text-2xl">{t.title}</h3>
                     <span className="rounded-full px-2 py-0.5 font-mono text-[9px] font-semibold tracking-wider text-core ring-1 ring-inset ring-core/40">{t.tag}</span>
                   </div>
                   <p className="mt-2 font-body text-ink-2">{t.copy}</p>

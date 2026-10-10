@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Btn } from "@/components/site/Btn";
 import { Reveal, SectionTitle } from "@/components/site/motion";
-import { ExpansionMap, LifecycleRail, NetworkTree, PhaseNode } from "@/components/roadmap/RoadmapVisuals";
+import { ExpansionMap, ExpansionMapMobile, LifecycleRail, NetworkTree, NetworkTreeMobile, PhaseNode } from "@/components/roadmap/RoadmapVisuals";
 import { IDEA, NETWORK, PHASES, ROADMAP_HERO, TODAY_FLOW } from "@/lib/roadmap";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export default function RoadmapPage() {
   return (
     <main className="page-main">
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="relative mx-auto max-w-7xl px-5 pb-10 pt-32 md:px-8 md:pt-40">
+      <section className="relative mx-auto max-w-7xl px-5 pb-10 pt-28 md:px-8 md:pt-40">
         <Reveal className="mx-auto flex max-w-3xl flex-col items-center text-center">
           <div className="section-label">{ROADMAP_HERO.eyebrow}</div>
           <h1 className="mt-6 text-balance text-[44px] font-light leading-[1.02] tracking-tight sm:text-6xl md:text-7xl">
@@ -22,8 +22,11 @@ export default function RoadmapPage() {
           <p className="mt-6 max-w-2xl text-balance text-lg text-ink md:text-xl">{ROADMAP_HERO.sub}</p>
           <p className="mt-4 max-w-2xl text-balance font-body text-sm leading-relaxed text-ink-3 md:text-base">{ROADMAP_HERO.support}</p>
         </Reveal>
-        <div className="mx-auto mt-12 max-w-5xl">
+        <div className="mx-auto mt-12 hidden max-w-5xl md:block">
           <ExpansionMap />
+        </div>
+        <div className="mt-10 md:hidden">
+          <ExpansionMapMobile />
         </div>
       </section>
 
@@ -126,8 +129,11 @@ export default function RoadmapPage() {
             {NETWORK.copy} <span className="text-ink">{NETWORK.emphasis}</span>
           </p>
         </Reveal>
-        <div className="mx-auto mt-14 max-w-4xl">
+        <div className="mx-auto mt-14 hidden max-w-4xl md:block">
           <NetworkTree />
+        </div>
+        <div className="mt-10 md:hidden">
+          <NetworkTreeMobile />
         </div>
       </section>
 

@@ -57,10 +57,10 @@ export default function PortfolioPage() {
   const totalPct = totalCost ? totalPnl / totalCost : 0;
 
   return (
-    <main className="page-main mx-auto max-w-[1240px] px-6 pt-28 sm:pt-32 pb-20">
-      <div className="flex items-center gap-3">
+    <main className="page-main mx-auto max-w-[1240px] px-5 sm:px-6 pt-28 sm:pt-32 pb-20">
+      <div className="flex flex-wrap items-center gap-3">
         <div className="section-label mb-0">STRATEGY / PAPER PORTFOLIO</div>
-        <span className="font-mono text-[10px] tracking-widest uppercase border border-[color:var(--color-sim)] text-[color:var(--color-sim)] px-2 py-0.5 rounded-sm">
+        <span className="whitespace-nowrap font-mono text-[10px] tracking-widest uppercase border border-[color:var(--color-sim)] text-[color:var(--color-sim)] px-2 py-0.5 rounded-sm">
           DEVICE-LOCAL
         </span>
       </div>
@@ -103,7 +103,12 @@ export default function PortfolioPage() {
       </div>
 
       {/* table */}
-      <div className="mt-6 overflow-x-auto border border-[color:var(--color-line)] bg-[color:var(--color-panel)]">
+      {rows.length === 0 && (
+        <div className="mt-6 border border-[color:var(--color-line)] bg-[color:var(--color-panel)] px-5 py-10 text-center font-mono text-xs text-[color:var(--color-ink-faint)] sm:hidden">
+          No simulated positions recorded yet. Add a ticker above to test your thesis.
+        </div>
+      )}
+      <div className={`mt-6 overflow-x-auto border border-[color:var(--color-line)] bg-[color:var(--color-panel)] ${rows.length === 0 ? "hidden sm:block" : ""}`}>
         <table className="w-full min-w-[680px] text-left border-collapse">
           <thead>
             <tr className="border-b border-[color:var(--color-line)] bg-[color:var(--color-panel-2)]/50">
@@ -117,7 +122,7 @@ export default function PortfolioPage() {
           </thead>
           <tbody className="divide-y divide-[color:var(--color-line)]">
             {rows.length === 0 && (
-              <tr>
+              <tr className="hidden sm:table-row">
                 <td colSpan={6} className="py-12 px-5 text-center font-mono text-xs text-[color:var(--color-ink-faint)]">
                   No simulated positions recorded yet. Add a ticker above to test your thesis.
                 </td>

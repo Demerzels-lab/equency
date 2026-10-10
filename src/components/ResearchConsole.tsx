@@ -103,32 +103,36 @@ export function ResearchConsole({ items, activity = [], ticker = "EQUENCY" }: { 
         <div className="space-y-1 border border-[color:var(--color-line)] bg-[color:var(--color-panel)] p-3 font-mono text-[11px] leading-relaxed">
           <div className="flex items-center justify-between border-b border-[color:var(--color-line)] pb-1.5 text-[10px] uppercase tracking-widest text-[color:var(--color-ink-3)]">
             <span>Core activity · newest first</span>
-            <span>real events · view-only</span>
+            <span className="hidden sm:inline">real events · view-only</span>
           </div>
           {activity.length === 0 && <div className="py-6 text-center text-xs text-muted-foreground">No recorded activity yet · the Core is monitoring.</div>}
           {activity.map((a, idx) => {
             const c = TAG_COLOR[a.tag];
             const body = (
               <>
-                <span suppressHydrationWarning className="w-[86px] shrink-0 pt-0.5 text-[10px] text-[color:var(--color-ink-3)]" title={a.at}>
-                  {a.dateOnly ? fmtDate(a.at) : ago(a.at)}
+                {/* meta: one line on mobile above the text, a left column on sm+ */}
+                <span className="flex shrink-0 items-center gap-2.5 sm:contents">
+                  <span suppressHydrationWarning className="shrink-0 pt-0.5 text-[10px] text-[color:var(--color-ink-3)] sm:w-[86px]" title={a.at}>
+                    {a.dateOnly ? fmtDate(a.at) : ago(a.at)}
+                  </span>
+                  <span className="shrink-0 border px-1.5 text-[9px] uppercase tracking-wider" style={{ color: c, borderColor: `color-mix(in oklab, ${c} 40%, transparent)` }}>
+                    {a.tag}
+                  </span>
+                  {a.trust && <TrustTag kind={a.trust} className="shrink-0 sm:hidden" />}
                 </span>
-                <span className="shrink-0 border px-1.5 text-[9px] uppercase tracking-wider" style={{ color: c, borderColor: `color-mix(in oklab, ${c} 40%, transparent)` }}>
-                  {a.tag}
-                </span>
-                <span className="flex-1 text-xs text-[color:var(--color-ink)]">
+                <span className="min-w-0 flex-1 break-words font-sans text-[13px] leading-snug text-[color:var(--color-ink)] sm:font-mono sm:text-xs sm:leading-relaxed">
                   {a.text}
                   <span className="ml-2 text-[10px] text-[color:var(--color-ink-3)]">via {a.source}</span>
                 </span>
-                {a.trust && <TrustTag kind={a.trust} className="shrink-0" />}
+                {a.trust && <TrustTag kind={a.trust} className="hidden shrink-0 sm:inline-flex" />}
               </>
             );
             return a.url ? (
-              <a key={idx} href={a.url} target="_blank" rel="noreferrer" className="flex items-start gap-2.5 p-1.5 transition-colors hover:bg-[color:var(--color-panel-2)]">
+              <a key={idx} href={a.url} target="_blank" rel="noreferrer" className="flex flex-col gap-1.5 border-b border-[color:var(--color-line)]/60 p-1.5 py-2.5 transition-colors last:border-0 hover:bg-[color:var(--color-panel-2)] sm:flex-row sm:items-start sm:gap-2.5 sm:border-0 sm:py-1.5">
                 {body}
               </a>
             ) : (
-              <div key={idx} className="flex items-start gap-2.5 p-1.5">{body}</div>
+              <div key={idx} className="flex flex-col gap-1.5 border-b border-[color:var(--color-line)]/60 p-1.5 py-2.5 last:border-0 sm:flex-row sm:items-start sm:gap-2.5 sm:border-0 sm:py-1.5">{body}</div>
             );
           })}
         </div>
@@ -141,11 +145,11 @@ export function ResearchConsole({ items, activity = [], ticker = "EQUENCY" }: { 
               href={e.url}
               target="_blank"
               rel="noreferrer"
-              className="group grid grid-cols-[80px_100px_1fr_auto] items-center gap-3 p-2.5 text-xs transition-colors hover:bg-secondary/40"
+              className="group grid grid-cols-[64px_1fr_auto] items-center gap-x-3 gap-y-1 p-2.5 text-xs transition-colors hover:bg-secondary/40 sm:grid-cols-[80px_100px_1fr_auto]"
             >
               <span className="text-[11px] text-muted-foreground">{fmtDate(e.at)}</span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: tierColor(e.tier) }}>{e.cat}</span>
-              <span className="truncate font-sans text-xs text-foreground/90 group-hover:text-foreground">{e.label}</span>
+              <span className="truncate text-[10px] font-semibold uppercase tracking-wider" style={{ color: tierColor(e.tier) }}>{e.cat}</span>
+              <span className="col-span-2 col-start-1 row-start-2 line-clamp-2 font-sans text-xs text-foreground/90 group-hover:text-foreground sm:col-span-1 sm:col-start-auto sm:row-start-auto sm:truncate">{e.label}</span>
               <span className="text-xs text-muted-foreground opacity-40 transition-opacity group-hover:text-foreground group-hover:opacity-100">↗</span>
             </a>
           ))}

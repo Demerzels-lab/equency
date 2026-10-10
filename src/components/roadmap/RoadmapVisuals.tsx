@@ -326,3 +326,81 @@ export function NetworkTree() {
     </svg>
   );
 }
+
+/** Phone version of the hero map: a vertical spine (the SVG labels get too small under ~700px). */
+export function ExpansionMapMobile() {
+  const reduce = useReducedMotion();
+  const row = (i: number) => ({
+    initial: reduce ? false : { opacity: 0, x: -10 },
+    whileInView: { opacity: 1, x: 0 },
+    viewport: VIEW,
+    transition: { duration: 0.6, delay: 0.1 + i * 0.1, ease: EASE },
+  });
+  return (
+    <div className="relative mx-auto max-w-sm pl-2">
+      <span className="absolute bottom-5 left-[27px] top-5 w-px bg-gradient-to-b from-core/60 via-line-2 to-strategy/50" />
+      <motion.div {...row(0)} className="relative flex items-center gap-4 py-3">
+        <span className="relative z-10 grid size-10 shrink-0 place-items-center rounded-full bg-paper ring-1 ring-core/60">
+          <span className="size-2.5 rounded-full bg-core shadow-[0_0_12px_var(--color-core)]" />
+        </span>
+        <div>
+          <div className="font-wide text-xs tracking-[0.28em] text-ink">EQUENCY</div>
+          <div className="font-mono text-[10px] tracking-[0.2em] text-ink-3">INTELLIGENCE NETWORK</div>
+        </div>
+      </motion.div>
+      <motion.div {...row(1)} className="relative flex items-center gap-4 py-3">
+        <span className="relative z-10 grid size-10 shrink-0 place-items-center rounded-full bg-paper font-mono text-[9px] text-mint ring-1 ring-mint/60">
+          <span className="absolute inset-0 animate-ping rounded-full ring-1 ring-mint/40 [animation-duration:2.6s]" />
+          LIVE
+        </span>
+        <div>
+          <div className="font-mono text-[10px] tracking-[0.18em] text-mint">TODAY</div>
+          <div className="text-base text-ink">Newly public companies</div>
+        </div>
+      </motion.div>
+      {PHASES.map((p, i) => (
+        <motion.div key={p.n} {...row(i + 2)} className="relative flex items-center gap-4 py-3">
+          <span className={clsx("relative z-10 grid size-10 shrink-0 place-items-center rounded-full border border-dashed bg-paper font-mono text-xs", p.accent === "core" ? "border-core/60 text-core" : "border-strategy/60 text-strategy")}>{p.n}</span>
+          <div className="min-w-0">
+            <div className="font-mono text-[10px] tracking-[0.18em] text-ink-3">PHASE {p.n} · {p.conditional ? "CONDITIONAL" : "ROADMAP"}</div>
+            <div className="text-base text-ink">{p.market}</div>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+/** Phone version of "One framework. Many markets." */
+export function NetworkTreeMobile() {
+  const cores = [
+    ["Stock Core", "Token Core", "core"],
+    ["Private Core", "Pre-IPO Core", "core"],
+    ["Commodity Core", "Tokenized Core", "strategy"],
+  ] as const;
+  const step = (t: string, cls = "text-ink-3") => <div className={clsx("font-mono text-[10px] tracking-[0.22em]", cls)}>{t}</div>;
+  const arrow = <div className="my-2 h-6 w-px bg-line-2" />;
+  return (
+    <div className="flex flex-col items-center text-center">
+      <div className="font-wide text-sm tracking-[0.3em] text-ink">EQUENCY</div>
+      {arrow}
+      {step("INTELLIGENCE NETWORK")}
+      {arrow}
+      <div className="grid w-full max-w-sm grid-cols-3 gap-2">
+        {cores.map(([a, b, acc]) => (
+          <div key={a} className={clsx("rounded-lg border border-dashed bg-card/50 px-1.5 py-3", acc === "core" ? "border-core/40" : "border-strategy/40")}>
+            <div className="text-[13px] leading-tight text-ink">{a}</div>
+            <div className="mx-auto my-1.5 h-3 w-px bg-line-2" />
+            <div className="text-[13px] leading-tight text-ink-2">{b}</div>
+          </div>
+        ))}
+      </div>
+      {arrow}
+      {step("SHARED INTELLIGENCE", "text-ink")}
+      {arrow}
+      <div className="font-wide text-xs tracking-[0.24em]">
+        <span className="text-core">STRATEGY</span> <span className="text-ink-3">→</span> <span className="text-strategy">CAPITAL</span>
+      </div>
+    </div>
+  );
+}
