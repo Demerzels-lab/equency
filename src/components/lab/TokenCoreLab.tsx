@@ -59,7 +59,7 @@ export function TokenCoreLab() {
         <div>
           <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em]">
             <span className="rounded-full px-2.5 py-1 text-core ring-1 ring-inset ring-core/50">Lab · Phase 01</span>
-            <span className="rounded-full px-2.5 py-1 text-ink-3 ring-1 ring-inset ring-line-2">R&amp;D preview · not live</span>
+            <span className="rounded-full px-2.5 py-1 text-ink-3 ring-1 ring-inset ring-line-2">Preview · in development</span>
           </div>
           <h1 className="mt-5 text-4xl font-light tracking-tight md:text-6xl">
             Token <span className="editorial-accent">Core.</span>

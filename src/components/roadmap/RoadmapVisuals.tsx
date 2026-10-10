@@ -2,6 +2,7 @@
 
 // Roadmap visuals: thin lines, nodes, slow motion. No particles, no fake data (brief §9–§10).
 import { motion, useReducedMotion } from "motion/react";
+import Link from "next/link";
 import clsx from "clsx";
 import { LIFECYCLE, PHASES, type Phase } from "@/lib/roadmap";
 
@@ -224,13 +225,19 @@ export function PhaseNode({ phase, last }: { phase: Phase; last?: boolean }) {
         <div>
           <div className="flex flex-wrap items-center gap-3">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">Phase {phase.n}</span>
-            <span className="rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink-3 ring-1 ring-inset ring-line-2">
-              {phase.conditional ? "Roadmap · conditional" : "Roadmap · not live"}
+            <span className={clsx("rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] ring-1 ring-inset", phase.preview ? "text-mint ring-mint/40" : "text-ink-3 ring-line-2")}>
+              {phase.preview ? "Preview · in development" : phase.conditional ? "Roadmap · conditional" : "Roadmap · not live"}
             </span>
           </div>
           <h3 className="mt-3 text-3xl font-light tracking-tight text-ink md:text-4xl">{phase.market}</h3>
           <p className={clsx("mt-3 text-lg md:text-xl", accentText)}>{phase.headline}</p>
           <p className="mt-3 max-w-2xl font-body leading-relaxed text-ink-2">{phase.copy}</p>
+
+          {phase.preview && (
+            <Link href={phase.preview.href} className="mt-6 inline-flex items-center gap-2 rounded-full px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-ink ring-1 ring-inset ring-core/60 transition-colors hover:bg-core/15">
+              <span className="size-1.5 animate-pulse rounded-full bg-mint" /> {phase.preview.label} →
+            </Link>
+          )}
 
           {/* diagram */}
           {phase.flow && phase.n === "02" && (
@@ -362,7 +369,7 @@ export function ExpansionMapMobile() {
         <motion.div key={p.n} {...row(i + 2)} className="relative flex items-center gap-4 py-3">
           <span className={clsx("relative z-10 grid size-10 shrink-0 place-items-center rounded-full border border-dashed bg-paper font-mono text-xs", p.accent === "core" ? "border-core/60 text-core" : "border-strategy/60 text-strategy")}>{p.n}</span>
           <div className="min-w-0">
-            <div className="font-mono text-[10px] tracking-[0.18em] text-ink-3">PHASE {p.n} · {p.conditional ? "CONDITIONAL" : "ROADMAP"}</div>
+            <div className="font-mono text-[10px] tracking-[0.18em] text-ink-3">PHASE {p.n} · {p.preview ? "PREVIEW" : p.conditional ? "CONDITIONAL" : "ROADMAP"}</div>
             <div className="text-base text-ink">{p.market}</div>
           </div>
         </motion.div>

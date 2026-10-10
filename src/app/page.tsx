@@ -317,7 +317,7 @@ export default async function Home() {
               <Reveal key={p.n} delay={0.08 * (i + 1)} className="flex gap-4 md:flex-col md:items-center md:text-center">
                 <span className={`grid size-12 shrink-0 place-items-center rounded-full bg-paper font-mono text-xs ring-1 ${p.accent === "core" ? "text-core ring-core/45" : "text-strategy ring-strategy/45"}`}>{p.n}</span>
                 <div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">{p.conditional ? "Roadmap · conditional" : "Roadmap"}</div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">{p.preview ? <a href={p.preview.href} className="text-mint hover:underline">Preview · try it →</a> : p.conditional ? "Roadmap · conditional" : "Roadmap"}</div>
                   <div className="mt-1 text-lg text-ink">{p.market}</div>
                   <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-3">{p.label}</div>
                 </div>
