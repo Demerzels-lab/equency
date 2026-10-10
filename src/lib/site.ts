@@ -152,8 +152,10 @@ export const FOOTER = [
 /** Ten notable US-listed IPOs shown with their official logos in the landing's "Freshly Public"
  *  strip. Logos are vendored in /public/logos (official marks, nominative use); every ticker
  *  resolves in SEC's company_tickers.json so the link opens a real Intelligence Core. */
-/** Project contract address. Set NEXT_PUBLIC_TOKEN_CA (Vercel env) when it's announced; empty shows "Announcing soon". */
-export const TOKEN_CA = (process.env.NEXT_PUBLIC_TOKEN_CA ?? "").trim();
+/** $EQUENCY ("Equency Mind") token on Robinhood Chain mainnet (4663), 18 decimals, 1B supply.
+ *  NEXT_PUBLIC_TOKEN_CA overrides it; an empty string falls back to "Announcing soon". */
+export const TOKEN_CA = (process.env.NEXT_PUBLIC_TOKEN_CA ?? "0x8c1ccd1ab61d1d6eb79ea1fa4173965dcbefb85c").trim();
+export const TOKEN_EXPLORER = TOKEN_CA ? `https://robinhoodchain.blockscout.com/token/${TOKEN_CA}` : "";
 
 /** Official EQUENCY account on X. */
 export const X_URL = "https://x.com/Equencymind";

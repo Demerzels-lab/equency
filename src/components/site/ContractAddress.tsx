@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { ArrowUpRight, Check, Copy } from "lucide-react";
 import clsx from "clsx";
-import { TOKEN_CA } from "@/lib/site";
+import { TOKEN_CA, TOKEN_EXPLORER } from "@/lib/site";
 
 /**
- * Project contract address (CA) pill. Reads NEXT_PUBLIC_TOKEN_CA at build time:
- * empty → "announcing soon" placeholder; set → full address with copy-to-clipboard.
+ * Project contract address (CA) pill: full address with copy-to-clipboard + Blockscout link.
+ * TOKEN_CA comes from lib/site (NEXT_PUBLIC_TOKEN_CA override); empty → "Announcing soon".
  */
 export function ContractAddress({ className }: { className?: string }) {
   const [copied, setCopied] = useState(false);
@@ -43,14 +43,12 @@ export function ContractAddress({ className }: { className?: string }) {
   };
 
   return (
+    <span className={clsx("inline-flex max-w-full items-center gap-1.5", className)}>
     <button
       type="button"
       onClick={copy}
       title="Copy contract address"
-      className={clsx(
-        "group inline-flex max-w-full items-center gap-2.5 rounded-full border border-core/40 bg-paper/85 px-4 py-1.5 backdrop-blur transition-colors hover:border-core/60",
-        className,
-      )}
+      className="group inline-flex max-w-full items-center gap-2.5 rounded-full border border-core/40 bg-paper/85 px-4 py-1.5 backdrop-blur transition-colors hover:border-core/60"
     >
       <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-core">CA</span>
       <span className="h-3 w-px bg-line-2" />
@@ -62,5 +60,18 @@ export function ContractAddress({ className }: { className?: string }) {
         {copied ? <Check size={14} aria-label="Copied" /> : <Copy size={14} aria-label="Copy" />}
       </span>
     </button>
+    {TOKEN_EXPLORER && (
+      <a
+        href={TOKEN_EXPLORER}
+        target="_blank"
+        rel="noopener noreferrer"
+        title="View $EQUENCY on Blockscout (Robinhood Chain)"
+        aria-label="View token on Blockscout"
+        className="grid size-8 shrink-0 place-items-center rounded-full border border-core/40 bg-paper/85 text-ink-3 backdrop-blur transition-colors hover:border-core/60 hover:text-ink"
+      >
+        <ArrowUpRight size={14} />
+      </a>
+    )}
+    </span>
   );
 }
