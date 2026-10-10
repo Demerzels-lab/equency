@@ -1,5 +1,5 @@
 // EQUENCY Roadmap content (docs/EQUENCY_Roadmap_Dev_Brief.md). Market expansion of the Intelligence
-// Core framework, NOT a feature list and NOT calendar promises. Phases are roadmap targets, not live.
+// Core framework, NOT a feature list and NOT calendar promises. Phase 01 is live; the others are roadmap targets, not live.
 
 export const ROADMAP_HERO = {
   eyebrow: "Roadmap",
@@ -32,8 +32,8 @@ export interface Phase {
   line?: string;
   flow?: string[];
   conditional?: boolean;
-  /** A working public preview of this phase (R&D, still in development). */
-  preview?: { href: string; label: string };
+  /** This phase is live: link to the working product. */
+  live?: { href: string; label: string };
 }
 
 export const PHASES: Phase[] = [
@@ -45,7 +45,7 @@ export const PHASES: Phase[] = [
     copy: "The Core connects the underlying company with its onchain representation, creating a persistent intelligence layer that evolves as both markets change.",
     label: "Company + Onchain Intelligence",
     accent: "core",
-    preview: { href: "/lab/token-core", label: "Open the Token Core preview" },
+    live: { href: "/lab/token-core", label: "Open Token Core" },
     layers: [
       { title: "Underlying company", items: ["Fundamentals", "SEC filings", "Earnings", "Corporate events", "News", "Institutional activity"] },
       { title: "Onchain representation", items: ["Token price", "Liquidity", "Volume", "Holders", "Issuer / backing", "Oracle / pricing", "DeFi integrations"] },

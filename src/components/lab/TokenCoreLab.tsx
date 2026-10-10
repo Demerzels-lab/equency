@@ -58,8 +58,8 @@ export function TokenCoreLab() {
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em]">
-            <span className="rounded-full px-2.5 py-1 text-core ring-1 ring-inset ring-core/50">Lab · Phase 01</span>
-            <span className="rounded-full px-2.5 py-1 text-ink-3 ring-1 ring-inset ring-line-2">Preview · in development</span>
+            <span className="rounded-full px-2.5 py-1 text-core ring-1 ring-inset ring-core/50">Phase 01</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-mint ring-1 ring-inset ring-mint/40"><span className="size-1.5 animate-pulse rounded-full bg-mint" />Live</span>
           </div>
           <h1 className="mt-5 text-4xl font-light tracking-tight md:text-6xl">
             Token <span className="editorial-accent">Core.</span>

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { TokenCoreLab } from "@/components/lab/TokenCoreLab";
 
-// PHASE 01 · public preview, linked from /roadmap: the Roadmap's "Newly Tokenized Stocks" phase,
-// reading real SEC EDGAR + Robinhood Chain data. Still in development.
+// PHASE 01 · live, linked from /roadmap: the Roadmap's "Newly Tokenized Stocks" phase,
+// reading real SEC EDGAR + Robinhood Chain data.
 export const metadata: Metadata = {
-  title: "Token Core · Phase 01 preview · EQUENCY",
+  title: "Token Core · Phase 01 · EQUENCY",
   description: "Every newly tokenized stock gets its own Intelligence Core: the company underneath and its token on Robinhood Chain, read as one asset.",
 };
 

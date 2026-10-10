@@ -106,8 +106,8 @@ export default function RoadmapPage() {
         <Reveal><SectionTitle>Where the Core goes next</SectionTitle></Reveal>
         <Reveal delay={0.05}>
           <p className="mx-auto mt-5 max-w-2xl text-balance text-center font-body text-ink-2">
-            Four markets, each a new node in the Intelligence Network. These are roadmap targets, not live products,
-            and they describe where the network expands, not dates.
+            Four markets, each a new node in the Intelligence Network. Phase 01 is live; the others are roadmap targets,
+            not live products, and they describe where the network expands, not dates.
           </p>
         </Reveal>
         <div className="mt-16 space-y-16">
