@@ -173,3 +173,5 @@ export const FEATURED_IPOS: { ticker: string; name: string; exchange: "NASDAQ" |
   { ticker: "RBRK", name: "Rubrik", exchange: "NYSE", listed: "Apr 2024" },
   { ticker: "RDDT", name: "Reddit", exchange: "NYSE", listed: "Mar 2024" },
 ];
+
+
