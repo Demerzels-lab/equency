@@ -252,7 +252,21 @@ export interface OnchainSide {
   activeWallets: number;
   contractCounterparties: number; // pools / curves / vaults touching the token (from recent transfers)
   sampled: number; // how many recent transfers were read
+  /** false when the transfer read failed (rate limit): flow / wallets / DeFi are unknown, not zero */
+  flowOk: boolean;
   lastTransfer: string | null;
+}
+
+/** Recent transfers of one token, retried: null (never an empty list) when the read keeps failing. */
+async function recentTransfers(rpc: string, token: string): Promise<{ transfers: Transfer[] } | null> {
+  for (let a = 0; a < 4; a++) {
+    if (a) await new Promise((r) => setTimeout(r, 1200 * 2 ** a));
+    const r = await rpcReq<{ transfers: Transfer[] }>(rpc, "alchemy_getAssetTransfers", [
+      { fromBlock: "0x0", toBlock: "latest", category: ["erc20"], withMetadata: true, contractAddresses: [token], maxCount: "0x3e8", order: "desc" },
+    ]);
+    if (r) return r;
+  }
+  return null;
 }
 
 export async function getOnchainSide(rpc: string, token: string): Promise<OnchainSide> {
@@ -263,11 +277,12 @@ export async function getOnchainSide(rpc: string, token: string): Promise<Onchai
     ethCall(rpc, token, "0x18160ddd"),
     rpcReq<string>(rpc, "eth_getStorageAt", [token, BEACON_SLOT, "latest"]),
     firstMint(rpc, token),
-    transfers(rpc, { contractAddresses: [token], maxCount: "0x3e8", order: "desc" }),
+    recentTransfers(rpc, token),
   ]);
   const decimals = d ? parseInt(d, 16) : 18;
   const now = Date.now();
-  const list = recent.transfers;
+  const flowOk = recent != null;
+  const list = recent?.transfers ?? [];
   const oldest = list.at(-1)?.metadata?.blockTimestamp;
   const sampleHours = oldest ? Math.max(0.01, (now - Date.parse(oldest)) / 3_600_000) : null;
   const wallets = new Set<string>();
@@ -295,6 +310,7 @@ export async function getOnchainSide(rpc: string, token: string): Promise<Onchai
     activeWallets: wallets.size,
     contractCounterparties: contracts,
     sampled: list.length,
+    flowOk,
     lastTransfer: list[0]?.metadata?.blockTimestamp ?? null,
   };
 }

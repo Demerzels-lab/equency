@@ -202,9 +202,9 @@ function CorePanel({ core }: { core: TokenCore }) {
           </div>
           <div className="mt-3">
             <Row k="Tokenized">{o.tokenizedDay != null ? `Day ${o.tokenizedDay}` : "—"}<span className="text-ink-3">{o.tokenizedAt ? ` · ${o.tokenizedAt.slice(0, 10)}` : ""}</span></Row>
-            <Row k="Flow">{num(o.sampled)} transfers<span className="text-ink-3">{o.sampleHours != null ? ` / ${o.sampleHours < 48 ? o.sampleHours.toFixed(1) + " h" : Math.round(o.sampleHours / 24) + " d"}` : ""}</span></Row>
-            <Row k="Wallets">{num(o.activeWallets)}</Row>
-            <Row k="DeFi">{o.contractCounterparties} contracts</Row>
+            <Row k="Flow">{o.flowOk === false ? <span className="text-ink-3">reading…</span> : <>{num(o.sampled)} transfers<span className="text-ink-3">{o.sampleHours != null ? ` / ${o.sampleHours < 48 ? o.sampleHours.toFixed(1) + " h" : Math.round(o.sampleHours / 24) + " d"}` : ""}</span></>}</Row>
+            <Row k="Wallets">{o.flowOk === false ? <span className="text-ink-3">—</span> : num(o.activeWallets)}</Row>
+            <Row k="DeFi">{o.flowOk === false ? <span className="text-ink-3">—</span> : `${o.contractCounterparties} contracts`}</Row>
           </div>
         </motion.div>
       </div>
