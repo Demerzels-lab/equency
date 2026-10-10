@@ -86,7 +86,15 @@ export async function discoverTokenizations(rpc: string, opts: { maxPages?: numb
   let key: string | undefined;
   let scanned = 0, idle = 0;
   for (let p = 0; p < (opts.maxPages ?? 40) && idle < 6; p++) {
-    const r = await transfers(rpc, { fromAddress: "0x0000000000000000000000000000000000000000", toAddress: STOCK_MINTER, maxCount: "0x3e8", order: "desc", ...(key ? { pageKey: key } : {}) });
+    // A failed page used to look like "no more pages" and silently cut the scan short in production.
+    let r: { transfers: Transfer[]; pageKey?: string } | null = null;
+    for (let a = 0; a < 4 && !r; a++) {
+      if (a) await new Promise((res) => setTimeout(res, 1000 * 2 ** a));
+      r = await rpcReq<{ transfers: Transfer[]; pageKey?: string }>(rpc, "alchemy_getAssetTransfers", [
+        { fromBlock: "0x0", toBlock: "latest", category: ["erc20"], withMetadata: true, fromAddress: "0x0000000000000000000000000000000000000000", toAddress: STOCK_MINTER, maxCount: "0x3e8", order: "desc", ...(key ? { pageKey: key } : {}) },
+      ]);
+    }
+    if (!r) throw new Error(`mint scan failed at page ${p}`); // never cache a partial scan
     const before = seen.size;
     for (const t of r.transfers) seen.add(t.rawContract.address.toLowerCase());
     idle = seen.size === before ? idle + 1 : 0;
