@@ -96,18 +96,27 @@ export async function discoverTokenizations(rpc: string, opts: { maxPages?: numb
     if (!key) break;
   }
   const out: Tokenization[] = [];
-  const list = [...seen];
-  for (let i = 0; i < list.length; i += 6) {
-    await Promise.all(
-      list.slice(i, i + 6).map(async (token) => {
-        const [at, n, s] = await Promise.all([firstMint(rpc, token), ethCall(rpc, token, "0x06fdde03"), ethCall(rpc, token, "0x95d89b41")]);
-        const name = decodeString(n) ?? "";
-        const symbol = decodeString(s) ?? "";
-        if (!at || !/robinhood token/i.test(name) || !/^[A-Z][A-Z.]{0,5}$/.test(symbol)) return;
-        out.push({ token, symbol, company: companyOf(name), tokenizedAt: at, tokenizedDay: Math.floor((Date.now() - Date.parse(at)) / DAY), listedDays: null });
-      }),
-    );
-    opts.onStep?.(`dating first mints · ${Math.min(i + 6, list.length)}/${list.length}`);
+  // A token whose RPC reads came back null (rate limit) is retried, not dropped: a partial scan
+  // silently hid newly public stocks (e.g. SPCX) in production.
+  let pending = [...seen];
+  for (let round = 0; round < 3 && pending.length; round++) {
+    const failed: string[] = [];
+    const width = round === 0 ? 6 : 2;
+    if (round > 0) await new Promise((r) => setTimeout(r, 1500));
+    for (let i = 0; i < pending.length; i += width) {
+      await Promise.all(
+        pending.slice(i, i + width).map(async (token) => {
+          const [at, n, s] = await Promise.all([firstMint(rpc, token), ethCall(rpc, token, "0x06fdde03"), ethCall(rpc, token, "0x95d89b41")]);
+          if (!at || !n || !s) return void failed.push(token);
+          const name = decodeString(n) ?? "";
+          const symbol = decodeString(s) ?? "";
+          if (!/robinhood token/i.test(name) || !/^[A-Z][A-Z.]{0,5}$/.test(symbol)) return;
+          out.push({ token, symbol, company: companyOf(name), tokenizedAt: at, tokenizedDay: Math.floor((Date.now() - Date.parse(at)) / DAY), listedDays: null });
+        }),
+      );
+      opts.onStep?.(`dating first mints · ${round ? `retry ${round} · ` : ""}${Math.min(i + width, pending.length)}/${pending.length}`);
+    }
+    pending = failed;
   }
   // newly public underlyings (Yahoo firstTradeDate), 8 at a time
   for (let i = 0; i < out.length; i += 8) {
@@ -118,17 +127,22 @@ export async function discoverTokenizations(rpc: string, opts: { maxPages?: numb
 }
 
 async function listedDaysOf(ticker: string, company: string): Promise<number | null> {
-  try {
-    const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=1d&interval=1d`, { headers: { "user-agent": "Mozilla/5.0 EQUENCY research" }, cache: "no-store" });
-    const m = ((await res.json()) as { chart?: { result?: { meta?: Record<string, unknown> }[] } }).chart?.result?.[0]?.meta;
-    if (!m || typeof m.firstTradeDate !== "number" || m.instrumentType !== "EQUITY") return null;
-    const yName = String(m.longName ?? m.shortName ?? "").toLowerCase();
-    const first = company.toLowerCase().split(/[\s,.]+/)[0];
-    if (yName && first && !yName.includes(first)) return null;
-    return Math.floor((Date.now() / 1000 - m.firstTradeDate) / 86_400);
-  } catch {
-    return null;
+  // Yahoo rate-limits cloud IPs: retry instead of silently dropping a newly public company.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=1d&interval=1d`, { headers: { "user-agent": "Mozilla/5.0 EQUENCY research" }, cache: "no-store" });
+      if (res.status === 429 || res.status >= 500) throw new Error(String(res.status));
+      const m = ((await res.json()) as { chart?: { result?: { meta?: Record<string, unknown> }[] } }).chart?.result?.[0]?.meta;
+      if (!m || typeof m.firstTradeDate !== "number" || m.instrumentType !== "EQUITY") return null;
+      const yName = String(m.longName ?? m.shortName ?? "").toLowerCase();
+      const first = company.toLowerCase().split(/[\s,.]+/)[0];
+      if (yName && first && !yName.includes(first)) return null;
+      return Math.floor((Date.now() / 1000 - m.firstTradeDate) / 86_400);
+    } catch {
+      await new Promise((r) => setTimeout(r, 800 * 2 ** attempt));
+    }
   }
+  return null;
 }
 
 /** Resolve a ticker (e.g. "SPCX") to its stock token by scanning the minter's recent mints. */

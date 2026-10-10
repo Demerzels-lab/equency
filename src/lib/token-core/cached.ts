@@ -11,7 +11,7 @@ export const discoverCached = unstable_cache(
     if (!r.length) throw new Error("empty scan");
     return r;
   },
-  ["token-core-discover-v1"],
+  ["token-core-discover-v2"],
   { revalidate: 21_600 },
 );
 
