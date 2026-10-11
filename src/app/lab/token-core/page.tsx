@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { TokenCoreLab } from "@/components/lab/TokenCoreLab";
 
-// PHASE 01 · live, linked from /roadmap: the Roadmap's "Newly Tokenized Stocks" phase,
+// PHASE 01 · live, linked from /orion: Project ORION's "Newly Tokenized Stocks" phase,
 // reading real SEC EDGAR + Robinhood Chain data.
 export const metadata: Metadata = {
   title: "Token Core · Phase 01 · EQUENCY",

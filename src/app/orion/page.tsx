@@ -6,20 +6,20 @@ import { OrionInline, OrionMark } from "@/components/roadmap/OrionMark";
 import { IDEA, NETWORK, ORION, PHASES, ROADMAP_HERO, TODAY_FLOW } from "@/lib/roadmap";
 
 export const metadata: Metadata = {
-  title: "Roadmap · EQUENCY",
+  title: "Project ORION · EQUENCY",
   description: "Project ORION: every new market gets a Mind. EQUENCY is expanding the Intelligence Core to four new markets as they emerge.",
 };
 
-export default function RoadmapPage() {
+export default function OrionPage() {
   return (
     <main className="page-main">
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="relative mx-auto max-w-7xl px-5 pb-10 pt-28 md:px-8 md:pt-40">
         <Reveal className="mx-auto flex max-w-3xl flex-col items-center text-center">
-          <div className="section-label">{ROADMAP_HERO.eyebrow}</div>
-          <h1 className="mt-6 text-balance text-[44px] font-light leading-[1.02] tracking-tight sm:text-6xl md:text-7xl">
+          <OrionMark as="h1" caption="EQUENCY's four-market expansion" />
+          <h2 className="mt-10 text-balance text-[36px] font-light leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
             Every new market <span className="editorial-accent">gets a Mind.</span>
-          </h1>
+          </h2>
           <p className="mt-6 max-w-2xl text-balance text-lg text-ink md:text-xl">{ROADMAP_HERO.sub}</p>
           <p className="mt-4 max-w-2xl text-balance font-body text-sm leading-relaxed text-ink-3 md:text-base">{ROADMAP_HERO.support}</p>
         </Reveal>
@@ -31,7 +31,7 @@ export default function RoadmapPage() {
         </div>
       </section>
 
-      {/* ── TODAY → ROADMAP · evolution, not a pivot ─────────── */}
+      {/* ── TODAY → ORION · evolution, not a pivot ─────────── */}
       <section className="mx-auto max-w-6xl px-5 py-20 md:px-8">
         <div className="grid gap-10 md:grid-cols-2">
           <Reveal className="rounded-xl border border-line bg-card/60 p-8">
@@ -49,7 +49,7 @@ export default function RoadmapPage() {
             </ol>
           </Reveal>
           <Reveal delay={0.1} className="rounded-xl border border-dashed border-line-2 p-8">
-            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3"><a href="#orion" className="text-ink-2 normal-case hover:text-ink"><OrionInline /></a> · Phase 01 live, 02–04 not live yet</div>
+            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3"><a href="#constellation" className="text-ink-2 normal-case hover:text-ink"><OrionInline /></a> · Phase 01 live, 02–04 not live yet</div>
             <h2 className="mt-4 text-2xl font-light text-ink md:text-3xl">From there, the Intelligence Core expands.</h2>
             <p className="mt-3 font-body text-sm leading-relaxed text-ink-3">
               To other markets where new assets need context, memory, and continuous intelligence.
@@ -104,10 +104,10 @@ export default function RoadmapPage() {
       <div className="hr-fade mx-auto max-w-7xl" />
 
       {/* ── PROJECT ORION · the four phases as one constellation ── */}
-      <section id="orion" className="mx-auto max-w-6xl scroll-mt-24 px-5 pt-24 md:px-8">
-        <Reveal><OrionMark /></Reveal>
+      <section id="constellation" className="mx-auto max-w-6xl scroll-mt-24 px-5 pt-24 md:px-8">
+        <Reveal className="text-center"><div className="section-label">The constellation</div></Reveal>
         <Reveal delay={0.05} className="text-center">
-          <h3 className="mt-10 text-balance text-3xl font-light tracking-tight md:text-4xl">
+          <h3 className="mt-4 text-balance text-3xl font-light tracking-tight md:text-4xl">
             {ORION.headline[0]} <span className="editorial-accent">{ORION.headline[1]}</span>
           </h3>
           <p className="mx-auto mt-5 max-w-2xl text-balance font-body leading-relaxed text-ink-2">{ORION.copy}</p>

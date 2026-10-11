@@ -320,7 +320,7 @@ export function PhaseNode({ phase, last }: { phase: Phase; last?: boolean }) {
               Phase {phase.n} · <span className={clsx("normal-case", accentText)}>{phase.star.greek}</span> {phase.star.name}
             </span>
             <span className={clsx("rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] ring-1 ring-inset", phase.live ? "text-mint ring-mint/40" : "text-ink-3 ring-line-2")}>
-              {phase.live ? "Live" : phase.conditional ? "Roadmap · conditional" : "Roadmap · not live"}
+              {phase.live ? "Live" : phase.conditional ? "Upcoming · conditional" : "Upcoming · not live"}
             </span>
           </div>
           <h3 className="mt-3 text-3xl font-light tracking-tight text-ink md:text-4xl">{phase.market}</h3>
@@ -463,7 +463,7 @@ export function ExpansionMapMobile() {
         <motion.div key={p.n} {...row(i + 2)} className="relative flex items-center gap-4 py-3">
           <span className={clsx("relative z-10 grid size-10 shrink-0 place-items-center rounded-full border border-dashed bg-paper font-mono text-xs", p.accent === "core" ? "border-core/60 text-core" : "border-strategy/60 text-strategy")}>{p.n}</span>
           <div className="min-w-0">
-            <div className="font-mono text-[10px] tracking-[0.18em] text-ink-3">PHASE {p.n} · <span className="normal-case">{p.star.greek}</span> {p.star.name.toUpperCase()} · {p.live ? "LIVE" : p.conditional ? "CONDITIONAL" : "ROADMAP"}</div>
+            <div className="font-mono text-[10px] tracking-[0.18em] text-ink-3">PHASE {p.n} · <span className="normal-case">{p.star.greek}</span> {p.star.name.toUpperCase()} · {p.live ? "LIVE" : p.conditional ? "CONDITIONAL" : "UPCOMING"}</div>
             <div className="text-base text-ink">{p.market}</div>
           </div>
         </motion.div>

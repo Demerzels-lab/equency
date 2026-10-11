@@ -7,7 +7,7 @@ import { HeroScene, OrbScene, WaveScene } from "@/components/site/Scenes";
 import { CoreSearch } from "@/components/site/CoreSearch";
 import { ContractAddress } from "@/components/site/ContractAddress";
 import { PHASES } from "@/lib/roadmap";
-import { OrionInline } from "@/components/roadmap/OrionMark";
+import { OrionInline, OrionMark } from "@/components/roadmap/OrionMark";
 import { Btn } from "@/components/site/Btn";
 import { Faq } from "@/components/site/Faq";
 import { TechVisual } from "@/components/site/TechVisual";
@@ -290,9 +290,9 @@ export default async function Home() {
 
       <div className="hr-fade mx-auto max-w-7xl" />
 
-      {/* ── ROADMAP TEASER · full story on /roadmap ──────────────── */}
+      {/* ── PROJECT ORION TEASER · full story on /orion ──────────────── */}
       <section id="roadmap" className="mx-auto max-w-7xl scroll-mt-24 px-5 py-24 md:px-8">
-        <Reveal><SectionTitle>Roadmap</SectionTitle></Reveal>
+        <Reveal><OrionMark caption="Four markets · one constellation" className="mb-4" /></Reveal>
         <Reveal delay={0.05}>
           <h2 className="mx-auto mt-6 max-w-3xl text-balance text-center text-3xl font-light leading-tight md:text-5xl">
             Every new market <span className="editorial-accent">gets a Mind.</span>
@@ -318,7 +318,7 @@ export default async function Home() {
               <Reveal key={p.n} delay={0.08 * (i + 1)} className="flex gap-4 md:flex-col md:items-center md:text-center">
                 <span className={`grid size-12 shrink-0 place-items-center rounded-full bg-paper font-mono text-xs ring-1 ${p.accent === "core" ? "text-core ring-core/45" : "text-strategy ring-strategy/45"}`}>{p.n}</span>
                 <div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">{p.live ? <a href={p.live.href} className="text-mint hover:underline">Live · try it →</a> : p.conditional ? "Roadmap · conditional" : "Roadmap"}</div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">{p.live ? <a href={p.live.href} className="text-mint hover:underline">Live · try it →</a> : p.conditional ? "Upcoming · conditional" : "Upcoming"}</div>
                   <div className="mt-1 text-lg text-ink">{p.market}</div>
                   <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-3"><span className="normal-case">{p.star.greek}</span> {p.star.name} · {p.label}</div>
                 </div>
@@ -327,7 +327,7 @@ export default async function Home() {
           </div>
         </div>
         <Reveal className="mt-12 flex justify-center">
-          <Btn href="/roadmap#orion" accent="core" className="min-w-56"><span className="inline-flex items-baseline gap-[0.45em]"><span>Explore</span><OrionInline /><span aria-hidden>→</span></span></Btn>
+          <Btn href="/orion#constellation" accent="core" className="min-w-56"><span className="inline-flex items-baseline gap-[0.45em]"><span>Explore</span><OrionInline /><span aria-hidden>→</span></span></Btn>
         </Reveal>
       </section>
 

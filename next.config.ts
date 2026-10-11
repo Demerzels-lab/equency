@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
     "@react-three/postprocessing",
     "postprocessing",
   ],
+  // The roadmap is now Project ORION: keep old links (and search results) working.
+  async redirects() {
+    return [{ source: "/roadmap", destination: "/orion", permanent: true }];
+  },
 };
 
 export default nextConfig;

@@ -3,7 +3,7 @@
 // The four phases together are codenamed Project ORION (see ORION below).
 
 export const ROADMAP_HERO = {
-  eyebrow: "Roadmap",
+  eyebrow: "Project ORION",
   headline: "Every new market gets a Mind.",
   sub: "EQUENCY is expanding beyond newly public companies to give newly emerging assets and markets their own persistent Intelligence Core.",
   support:

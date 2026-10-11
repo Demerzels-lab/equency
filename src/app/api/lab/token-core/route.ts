@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { discoverCached, tokenCoreCached } from "@/lib/token-core/cached";
 
-// PHASE 01 · Token Core preview API (/lab/token-core, linked from /roadmap).
+// PHASE 01 · Token Core preview API (/lab/token-core, linked from /orion).
 // Needs an Alchemy RPC in RH_RPC_MAINNET (alchemy_getAssetTransfers). Warmed daily by /api/cron/warm.
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;

@@ -31,6 +31,8 @@ export type NavItem = {
   href?: string;
   match?: string[];
   children?: { label: string; href: string; desc: string }[];
+  /** render as the Project ORION wordmark (codename for the four-phase expansion) */
+  orion?: boolean;
 };
 
 export const NAV: NavItem[] = [
@@ -55,7 +57,7 @@ export const NAV: NavItem[] = [
     ],
   },
   { label: "Vault", href: "/vault", match: ["/vault"] },
-  { label: "Roadmap", href: "/roadmap", match: ["/roadmap"] },
+  { label: "ORION", href: "/orion", match: ["/orion"], orion: true },
   {
     label: "Resources",
     children: [
@@ -135,7 +137,7 @@ export const FOOTER = [
     links: [
       { label: "Strategy Vault", href: "/vault" },
       { label: "Contracts", href: "/vault#contracts" },
-      { label: "Roadmap", href: "/roadmap" },
+      { label: "Project ORION", href: "/orion" },
       { label: "Block Explorer", href: "https://robinhoodchain.blockscout.com", external: true },
     ],
   },
