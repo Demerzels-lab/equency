@@ -31,8 +31,6 @@ export type NavItem = {
   href?: string;
   match?: string[];
   children?: { label: string; href: string; desc: string }[];
-  /** render as the Project ORION wordmark (codename for the four-phase expansion) */
-  orion?: boolean;
 };
 
 export const NAV: NavItem[] = [
@@ -57,7 +55,7 @@ export const NAV: NavItem[] = [
     ],
   },
   { label: "Vault", href: "/vault", match: ["/vault"] },
-  { label: "ORION", href: "/orion", match: ["/orion"], orion: true },
+  { label: "Orion", href: "/orion", match: ["/orion"] },
   {
     label: "Resources",
     children: [

@@ -7,7 +7,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { ChevronDown, Menu, Search, Star, X } from "lucide-react";
 import clsx from "clsx";
 import { NAV, X_HANDLE, X_URL, type NavItem } from "@/lib/site";
-import { OrionInline } from "@/components/roadmap/OrionMark";
 import { getWatchlist } from "@/lib/watchlist";
 import { NavConnect } from "@/components/NavConnect";
 import { Logo } from "./Logo";
@@ -74,7 +73,7 @@ export function Header() {
                       href={item.href}
                       className={clsx("block px-3 py-2 text-base transition-colors hover:text-ink", active ? "text-core" : "text-ink-2")}
                     >
-                      {item.orion ? <span className="inline-flex items-center gap-1.5"><span aria-hidden className="text-[11px] text-core">✦</span><OrionInline bare className="text-[13px]" /></span> : item.label}
+                      {item.label}
                     </Link>
                   ) : (
                     <button
@@ -176,7 +175,7 @@ export function Header() {
               {NAV.map((item, i) => (
                 <motion.div key={item.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * i + 0.1 }}>
                   {item.href ? (
-                    <Link href={item.href} className="text-2xl text-ink-2">{item.orion ? <OrionInline /> : item.label}</Link>
+                    <Link href={item.href} className="text-2xl text-ink-2">{item.label}</Link>
                   ) : (
                     <>
                       <div className="eyebrow mb-2 text-xs text-core">{item.label}</div>
