@@ -49,7 +49,7 @@ export default function OrionPage() {
             </ol>
           </Reveal>
           <Reveal delay={0.1} className="rounded-xl border border-dashed border-line-2 p-8">
-            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3"><a href="#constellation" className="text-ink-2 normal-case hover:text-ink"><OrionInline /></a> · Phase 01 live, 02–04 not live yet</div>
+            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3"><a href="#constellation" className="text-ink-2 normal-case hover:text-ink"><OrionInline /></a> · Phases 01–02 live, 03–04 not live yet</div>
             <h2 className="mt-4 text-2xl font-light text-ink md:text-3xl">From there, the Intelligence Core expands.</h2>
             <p className="mt-3 font-body text-sm leading-relaxed text-ink-3">
               To other markets where new assets need context, memory, and continuous intelligence.
@@ -140,7 +140,7 @@ export default function OrionPage() {
         <Reveal><SectionTitle>Where the Core goes next</SectionTitle></Reveal>
         <Reveal delay={0.05}>
           <p className="mx-auto mt-5 max-w-2xl text-balance text-center font-body text-ink-2">
-            Four markets, each a star of {ORION.name} and a new node in the Intelligence Network. Phase 01 is live; the others are
+            Four markets, each a star of {ORION.name} and a new node in the Intelligence Network. Phases 01 and 02 are live; the others are
             roadmap targets, not live products, and they describe where the network expands, not dates.
           </p>
         </Reveal>

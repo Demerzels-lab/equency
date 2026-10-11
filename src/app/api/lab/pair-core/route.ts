@@ -1,22 +1,12 @@
 import { NextResponse } from "next/server";
-import { unstable_cache } from "next/cache";
 import { RH_RPC_MAINNET } from "@/lib/config";
-import { buildPairCore, discoverRecentPairs, resolveQuote } from "@/lib/pair-core/core";
+import { resolveQuote } from "@/lib/pair-core/core";
+import { leadCores, pairCoreCached, pairsCached } from "@/lib/pair-core/cached";
 
-// PHASE 02 · R&D — Pair Core prototype API (internal preview at /lab/pair-core, not linked in nav).
+// PHASE 02 · Pair Core API (/lab/pair-core, linked from /orion). Warmed daily by /api/cron/warm.
+// Needs an Alchemy RPC in RH_RPC_MAINNET (alchemy_getAssetTransfers).
 export const dynamic = "force-dynamic";
-
-// Throws on an empty scan so a blocked/non-Alchemy RPC never gets cached as "no pairs" for 30 min.
-// Discovery needs alchemy_getAssetTransfers → RH_RPC_MAINNET must be an Alchemy URL.
-const discover = unstable_cache(
-  async () => {
-    const r = await discoverRecentPairs(RH_RPC_MAINNET, { perStock: 1000 });
-    if (!r.length) throw new Error("empty scan");
-    return r;
-  },
-  ["pair-core-discover-v3"],
-  { revalidate: 1800 },
-);
+export const maxDuration = 300;
 
 /** GET → stock-paired Pons launches + first Cores · ?token=0x… → one Core · ?quote=0x… → what an asset is. */
 export async function GET(req: Request) {
@@ -30,15 +20,10 @@ export async function GET(req: Request) {
     }
     if (token) {
       if (!/^0x[0-9a-fA-F]{40}$/.test(token)) return NextResponse.json({ error: "bad token" }, { status: 400 });
-      return NextResponse.json({ core: await buildPairCore(RH_RPC_MAINNET, { token }) });
+      return NextResponse.json({ core: await pairCoreCached(token) });
     }
-    const pairs = await discover();
-    // Lead with a token still on its curve, then a graduated one: both lives of a stock-paired token.
-    const onCurve = pairs.filter((p) => (p.curveProgress ?? 0) < 1);
-    const done = pairs.filter((p) => (p.curveProgress ?? 0) >= 1);
-    const lead = [onCurve[0], done[0], onCurve[1]].filter(Boolean);
-    const cores = await Promise.all(lead.map((p) => buildPairCore(RH_RPC_MAINNET, { token: p.token, quoteAddress: p.quoteAddress })));
-    return NextResponse.json({ pairs, cores });
+    const pairs = await pairsCached();
+    return NextResponse.json({ pairs, cores: await leadCores(pairs) });
   } catch {
     return NextResponse.json({ pairs: [], cores: [] });
   }

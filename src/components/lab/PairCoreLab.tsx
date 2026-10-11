@@ -119,14 +119,18 @@ export function PairCoreLab() {
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em]">
-            <span className="rounded-full px-2.5 py-1 text-strategy ring-1 ring-inset ring-strategy/50">Lab · Phase 02</span>
-            <span className="rounded-full px-2.5 py-1 text-ink-3 ring-1 ring-inset ring-line-2">R&amp;D preview · not live</span>
+            <span className="rounded-full px-2.5 py-1 text-strategy ring-1 ring-inset ring-strategy/50">Phase 02</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-mint ring-1 ring-inset ring-mint/40"><span className="size-1.5 animate-pulse rounded-full bg-mint" />Live</span>
+            <span className="rounded-full px-2.5 py-1 text-ink-3 ring-1 ring-inset ring-line-2">Observed, not endorsed</span>
           </div>
           <h1 className="mt-5 text-4xl font-light tracking-tight md:text-6xl">
             Pair <span className="editorial-accent">Core.</span>
           </h1>
           <p className="mt-3 max-w-xl font-body text-ink-2">
             Every qualifying stock-paired token gets its own Mind. One asset, two markets: the stock it is priced in, and the token onchain.
+          </p>
+          <p className="mt-2 max-w-xl font-body text-xs text-ink-3">
+            Tokens are listed as found onchain, unfiltered. Names and tickers belong to their creators. EQUENCY observes them; it does not create, rank or recommend any of them. Not investment advice.
           </p>
         </div>
         <div className="font-mono text-[11px] leading-relaxed text-ink-3">

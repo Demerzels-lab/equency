@@ -119,6 +119,15 @@ export function launchpadOf(e: LaunchEvent): string {
   return (e.launchpad ?? e.protocol ?? "?").replace("_V4", "").replace("UNISWAP", "UNISWAP v4");
 }
 
+/** Launch time = the token's first-ever transfer (its mint), from Alchemy transfer metadata. */
+export async function launchTimeOf(rpc: string, token: string): Promise<number | null> {
+  const r = await rpcReq<{ transfers: { metadata?: { blockTimestamp?: string } }[] }>(rpc, "alchemy_getAssetTransfers", [
+    { fromBlock: "0x0", toBlock: "latest", contractAddresses: [token], category: ["erc20"], maxCount: "0x1", order: "asc", withMetadata: true },
+  ]);
+  const ts = r?.transfers?.[0]?.metadata?.blockTimestamp;
+  return ts ? Date.parse(ts) : null;
+}
+
 // ── token side (curve / pool state) ─────────────────────────────────────────────
 export interface TokenState {
   protocol: string;
@@ -284,10 +293,17 @@ export async function buildPairCore(
     symbol = symbol ?? decodeString(s) ?? "???";
   }
 
-  const stock = quote.kind === "stock" ? await getStockState(quote.symbol, company(quote)) : null;
+  const [stock, launchedAt] = await Promise.all([
+    quote.kind === "stock" ? getStockState(quote.symbol, company(quote)) : Promise.resolve(null),
+    input.launchedAt != null ? Promise.resolve(input.launchedAt) : launchTimeOf(rpc, input.token),
+  ]);
   const priceUsd = market?.priceInQuote != null && stock?.price != null ? market.priceInQuote * stock.price : null;
 
   const obs: PairCoreObservation[] = [];
+  if (launchedAt != null) {
+    const h = (Date.now() - launchedAt) / 3_600_000;
+    obs.push({ k: "BORN", trust: "VERIFIED", text: `Launched ${h < 48 ? `${Math.max(1, Math.round(h))} h` : `${Math.round(h / 24)} days`} ago on ${input.launchpad ?? market?.protocol ?? "Pons"} (first mint ${new Date(launchedAt).toISOString().slice(0, 10)}).` });
+  }
   if (quote.kind === "stock") {
     obs.push({ k: "PAIR", trust: "VERIFIED", text: `Priced in ${quote.symbol} (${company(quote)}). Trades and fees settle in the stock token.` });
     obs.push({ k: "LINK", trust: "DERIVED", text: `Dollar value = curve price × ${quote.symbol}: ${quote.symbol} +1% → $${symbol} +1%, with zero trades.` });
@@ -324,7 +340,7 @@ export async function buildPairCore(
       symbol: symbol!,
       launchpad: input.launchpad ?? market?.protocol ?? "?",
       txHash: input.txHash ?? null,
-      launchedAt: input.launchedAt ?? null,
+      launchedAt: launchedAt ?? null,
     },
     quote,
     stock,
@@ -362,10 +378,15 @@ export interface DiscoveredPair {
 export async function discoverRecentPairs(rpc: string, opts: { perStock?: number; onCheck?: (n: number) => void } = {}): Promise<DiscoveredPair[]> {
   const parties = new Set<string>();
   for (const addr of Object.values(STOCK_SEEDS)) {
-    const r = await rpcReq<{ transfers: { from: string; to: string }[] }>(rpc, "alchemy_getAssetTransfers", [
-      { fromBlock: "0x0", toBlock: "latest", contractAddresses: [addr], category: ["erc20"], maxCount: "0x" + (opts.perStock ?? 400).toString(16), order: "desc" },
-    ]);
-    for (const t of r?.transfers ?? []) {
+    let r: { transfers: { from: string; to: string }[] } | null = null;
+    for (let a = 0; a < 4 && !r; a++) {
+      if (a) await new Promise((res) => setTimeout(res, 1000 * 2 ** a));
+      r = await rpcReq<{ transfers: { from: string; to: string }[] }>(rpc, "alchemy_getAssetTransfers", [
+        { fromBlock: "0x0", toBlock: "latest", contractAddresses: [addr], category: ["erc20"], maxCount: "0x" + (opts.perStock ?? 400).toString(16), order: "desc" },
+      ]);
+    }
+    if (!r) throw new Error(`pair scan failed for ${addr}`); // never return (and cache) a partial scan
+    for (const t of r.transfers) {
       if (t.from) parties.add(t.from.toLowerCase());
       if (t.to) parties.add(t.to.toLowerCase());
     }

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { PairCoreLab } from "@/components/lab/PairCoreLab";
 
-// PHASE 02 · R&D preview. Not in the nav, not indexed: an internal build of the Roadmap's
-// "Newly Launched Stock-Paired Tokens" phase, reading real Robinhood Chain data.
+// PHASE 02 · live, linked from /orion: Project ORION's "Stock-Paired Tokens on Pons" phase,
+// reading real Robinhood Chain + shrine.trade data.
 export const metadata: Metadata = {
-  title: "Pair Core · Lab · EQUENCY",
-  robots: { index: false, follow: false },
+  title: "Pair Core · Phase 02 · EQUENCY",
+  description: "Every stock-paired token on Pons gets its own Mind: the stock it is priced in, and the token onchain, read as one asset.",
 };
 
 export default function PairCoreLabPage() {

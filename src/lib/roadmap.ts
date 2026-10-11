@@ -1,5 +1,5 @@
 // EQUENCY Roadmap content (docs/EQUENCY_Roadmap_Dev_Brief.md). Market expansion of the Intelligence
-// Core framework, NOT a feature list and NOT calendar promises. Phase 01 is live; the others are roadmap targets, not live.
+// Core framework, NOT a feature list and NOT calendar promises. Phases 01–02 are live; the others are roadmap targets, not live.
 // The four phases together are codenamed Project ORION (see ORION below).
 
 export const ROADMAP_HERO = {
@@ -80,6 +80,7 @@ export const PHASES: Phase[] = [
     copy: "Tokens launched with a stock or tokenized stock as the pair. These Cores understand markets across both sides of the pair, connecting onchain behavior with the underlying stock market.",
     label: "Cross-Market Intelligence",
     accent: "strategy",
+    live: { href: "/lab/pair-core", label: "Open Pair Core" },
     line: "One asset. Two markets. One Mind.",
     flow: ["Stock / Tokenized stock", "Onchain token"],
     layers: [
