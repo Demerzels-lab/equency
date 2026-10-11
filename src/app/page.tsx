@@ -6,7 +6,7 @@ import { STRATEGY_LIST } from "@/lib/strategy/strategies";
 import { HeroScene, OrbScene, WaveScene } from "@/components/site/Scenes";
 import { CoreSearch } from "@/components/site/CoreSearch";
 import { ContractAddress } from "@/components/site/ContractAddress";
-import { PHASES } from "@/lib/roadmap";
+import { ORION, PHASES } from "@/lib/roadmap";
 import { Btn } from "@/components/site/Btn";
 import { Faq } from "@/components/site/Faq";
 import { TechVisual } from "@/components/site/TechVisual";
@@ -297,7 +297,7 @@ export default async function Home() {
             Every new market <span className="editorial-accent">gets a Mind.</span>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-balance text-center font-body text-ink-2">
-            Newly public companies are the foundation. Next, the Intelligence Core framework expands to new markets as they emerge.
+            Newly public companies are the foundation. Next, {ORION.name} expands the Intelligence Core framework to four new markets as they emerge.
           </p>
         </Reveal>
         <div className="relative mt-14">
@@ -319,14 +319,14 @@ export default async function Home() {
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">{p.live ? <a href={p.live.href} className="text-mint hover:underline">Live · try it →</a> : p.conditional ? "Roadmap · conditional" : "Roadmap"}</div>
                   <div className="mt-1 text-lg text-ink">{p.market}</div>
-                  <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-3">{p.label}</div>
+                  <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-3"><span className="normal-case">{p.star.greek}</span> {p.star.name} · {p.label}</div>
                 </div>
               </Reveal>
             ))}
           </div>
         </div>
         <Reveal className="mt-12 flex justify-center">
-          <Btn href="/roadmap" accent="core" className="min-w-56">See the full roadmap →</Btn>
+          <Btn href="/roadmap#orion" accent="core" className="min-w-56">Explore {ORION.name} →</Btn>
         </Reveal>
       </section>
 

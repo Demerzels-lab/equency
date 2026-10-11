@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Btn } from "@/components/site/Btn";
 import { Reveal, SectionTitle } from "@/components/site/motion";
-import { ExpansionMap, ExpansionMapMobile, LifecycleRail, NetworkTree, NetworkTreeMobile, PhaseNode } from "@/components/roadmap/RoadmapVisuals";
-import { IDEA, NETWORK, PHASES, ROADMAP_HERO, TODAY_FLOW } from "@/lib/roadmap";
+import { ExpansionMap, ExpansionMapMobile, LifecycleRail, NetworkTree, NetworkTreeMobile, OrionConstellation, PhaseNode } from "@/components/roadmap/RoadmapVisuals";
+import { IDEA, NETWORK, ORION, PHASES, ROADMAP_HERO, TODAY_FLOW } from "@/lib/roadmap";
 
 export const metadata: Metadata = {
   title: "Roadmap · EQUENCY",
-  description: "Every new market gets a Mind. EQUENCY is expanding the Intelligence Core to new markets as they emerge.",
+  description: "Project ORION: every new market gets a Mind. EQUENCY is expanding the Intelligence Core to four new markets as they emerge.",
 };
 
 export default function RoadmapPage() {
@@ -48,7 +48,7 @@ export default function RoadmapPage() {
             </ol>
           </Reveal>
           <Reveal delay={0.1} className="rounded-xl border border-dashed border-line-2 p-8">
-            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">Roadmap · not live yet</div>
+            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">{ORION.name} · Phase 01 live, 02–04 not live yet</div>
             <h2 className="mt-4 text-2xl font-light text-ink md:text-3xl">From there, the Intelligence Core expands.</h2>
             <p className="mt-3 font-body text-sm leading-relaxed text-ink-3">
               To other markets where new assets need context, memory, and continuous intelligence.
@@ -58,6 +58,7 @@ export default function RoadmapPage() {
                 <li key={p.n} className="flex items-center gap-3">
                   <span className={p.accent === "core" ? "text-core" : "text-strategy"}>{p.n}</span>
                   <span className="text-ink-2">{p.market}</span>
+                  <span className="ml-auto text-ink-3 normal-case tracking-normal">{p.star.greek} {p.star.name}</span>
                 </li>
               ))}
             </ol>
@@ -101,13 +102,45 @@ export default function RoadmapPage() {
 
       <div className="hr-fade mx-auto max-w-7xl" />
 
+      {/* ── PROJECT ORION · the four phases as one constellation ── */}
+      <section id="orion" className="mx-auto max-w-6xl scroll-mt-24 px-5 pt-24 md:px-8">
+        <Reveal><SectionTitle>{ORION.name}</SectionTitle></Reveal>
+        <Reveal delay={0.05} className="text-center">
+          <h2 className="mt-6 text-balance text-4xl font-light tracking-tight md:text-5xl">
+            {ORION.headline[0]} <span className="editorial-accent">{ORION.headline[1]}</span>
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-balance font-body leading-relaxed text-ink-2">{ORION.copy}</p>
+        </Reveal>
+        <div className="mx-auto mt-10 hidden max-w-3xl md:block">
+          <OrionConstellation />
+        </div>
+        <div className="mx-auto mt-10 grid max-w-sm grid-cols-2 gap-3 md:hidden">
+          {PHASES.map((p) => (
+            <div key={p.n} className={p.live ? "rounded-lg border border-mint/40 bg-card/60 p-3" : "rounded-lg border border-dashed border-line-2 p-3"}>
+              <div className="text-base text-ink">
+                <span className={p.accent === "core" ? "text-core" : "text-strategy"}>{p.star.greek}</span> {p.star.name}
+              </div>
+              <div className="mt-1 text-sm text-ink-2">{p.short}</div>
+              <div className={p.live ? "mt-2 font-mono text-[10px] tracking-[0.16em] text-mint" : "mt-2 font-mono text-[10px] tracking-[0.16em] text-ink-3"}>
+                <div>PHASE {p.n}</div>
+                <div>{p.live ? "● LIVE" : p.conditional ? "CONDITIONAL" : "NOT LIVE"}</div>
+              </div>
+            </div>
+          ))}
+          <div className="col-span-2 rounded-lg border border-mint/40 p-3 text-center font-mono text-[10px] leading-relaxed tracking-[0.14em] text-mint">
+            <span className="whitespace-nowrap">THE BELT · LIVE TODAY</span>{" "}
+            <span className="whitespace-nowrap">INTELLIGENCE → STRATEGY → CAPITAL</span>
+          </div>
+        </div>
+      </section>
+
       {/* ── PHASES · nodes on the network spine ──────────────── */}
       <section className="mx-auto max-w-6xl px-5 py-24 md:px-8">
         <Reveal><SectionTitle>Where the Core goes next</SectionTitle></Reveal>
         <Reveal delay={0.05}>
           <p className="mx-auto mt-5 max-w-2xl text-balance text-center font-body text-ink-2">
-            Four markets, each a new node in the Intelligence Network. Phase 01 is live; the others are roadmap targets,
-            not live products, and they describe where the network expands, not dates.
+            Four markets, each a star of {ORION.name} and a new node in the Intelligence Network. Phase 01 is live; the others are
+            roadmap targets, not live products, and they describe where the network expands, not dates.
           </p>
         </Reveal>
         <div className="mt-16 space-y-16">

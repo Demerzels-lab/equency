@@ -1,5 +1,6 @@
 // EQUENCY Roadmap content (docs/EQUENCY_Roadmap_Dev_Brief.md). Market expansion of the Intelligence
 // Core framework, NOT a feature list and NOT calendar promises. Phase 01 is live; the others are roadmap targets, not live.
+// The four phases together are codenamed Project ORION (see ORION below).
 
 export const ROADMAP_HERO = {
   eyebrow: "Roadmap",
@@ -8,6 +9,22 @@ export const ROADMAP_HERO = {
   support:
     "A Core does more than analyze an asset once. It continuously observes its environment, researches what matters, remembers what it learns, tracks events and evidence, and develops an evolving thesis over time.",
 };
+
+/**
+ * Project ORION: codename for the four-phase expansion. Each phase is one corner star of Orion,
+ * the belt is the live engine every phase plugs into (Intelligence → Strategy → Capital).
+ * Codename only, never a token/ticker (Orion Protocol / ORN exists).
+ */
+export const ORION = {
+  name: "Project ORION",
+  headline: ["Four markets.", "One constellation."],
+  copy: "Each phase is a star of Orion. The belt is what connects them: every new Core plugs into the same Intelligence, Strategy and Capital engine that runs EQUENCY today. A star lights up when its phase goes live.",
+  belt: [
+    { star: "Alnitak", layer: "Intelligence" },
+    { star: "Alnilam", layer: "Strategy" },
+    { star: "Mintaka", layer: "Capital" },
+  ],
+} as const;
 
 export const LIFECYCLE = [
   { k: "Born", d: "A new market emerges. A Core is initialized with an identity and a mission." },
@@ -34,11 +51,14 @@ export interface Phase {
   conditional?: boolean;
   /** This phase is live: link to the working product. */
   live?: { href: string; label: string };
+  /** Project ORION star for this phase. */
+  star: { greek: string; name: string };
 }
 
 export const PHASES: Phase[] = [
   {
     n: "01",
+    star: { greek: "α", name: "Betelgeuse" },
     market: "Newly Tokenized Stocks",
     short: "Tokenized stocks",
     headline: "Give every newly tokenized stock its own Intelligence Core.",
@@ -53,6 +73,7 @@ export const PHASES: Phase[] = [
   },
   {
     n: "02",
+    star: { greek: "β", name: "Rigel" },
     market: "Stock-Paired Tokens on Pons",
     short: "Stock-paired tokens",
     headline: "Give every qualifying stock-paired token its own Mind.",
@@ -68,6 +89,7 @@ export const PHASES: Phase[] = [
   },
   {
     n: "03",
+    star: { greek: "γ", name: "Bellatrix" },
     market: "Private / Pre-IPO",
     short: "Private / Pre-IPO",
     headline: "Give private companies intelligence before they become public.",
@@ -83,6 +105,7 @@ export const PHASES: Phase[] = [
   },
   {
     n: "04",
+    star: { greek: "κ", name: "Saiph" },
     market: "Newly Tokenized Commodities",
     short: "Tokenized commodities",
     headline: "Give newly tokenized commodities their own Intelligence Core.",

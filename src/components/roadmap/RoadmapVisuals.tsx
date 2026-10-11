@@ -118,6 +118,98 @@ export function ExpansionMap() {
   );
 }
 
+/**
+ * Project ORION: the four phases as Orion's corner stars, the belt as today's live engine
+ * (Intelligence → Strategy → Capital). A star is lit only when its phase is live.
+ */
+export function OrionConstellation() {
+  const reduce = useReducedMotion();
+  // Rough sky layout of Orion (north up, east left), widened so side labels fit.
+  const corner: Record<string, { x: number; y: number; side: "l" | "r" }> = {
+    "01": { x: 250, y: 120, side: "l" }, // α Betelgeuse
+    "03": { x: 480, y: 150, side: "r" }, // γ Bellatrix
+    "04": { x: 270, y: 540, side: "l" }, // κ Saiph
+    "02": { x: 500, y: 505, side: "r" }, // β Rigel
+  };
+  const belt = [
+    { x: 320, y: 345 },
+    { x: 375, y: 323 },
+    { x: 430, y: 301 },
+  ];
+  const meissa = { x: 362, y: 62 };
+  const dim = "var(--color-line-2)";
+  const colOf = (p: Phase) => (p.accent === "core" ? "var(--color-core)" : "var(--color-strategy)");
+  const byN = Object.fromEntries(PHASES.map((p) => [p.n, p]));
+  const link = (n: string, b: { x: number; y: number }, i: number) => {
+    const p = byN[n];
+    const c = corner[n];
+    return <Draw key={`l${n}`} d={`M ${c.x} ${c.y} L ${b.x} ${b.y}`} dashed={!p.live} stroke={p.live ? colOf(p) : dim} delay={0.5 + i * 0.15} />;
+  };
+  return (
+    <div>
+    <svg viewBox="0 0 740 640" className="h-auto w-full" role="img" aria-label="Project ORION: four roadmap phases as the corner stars of Orion, joined by the live EQUENCY belt">
+      <defs>
+        <radialGradient id="orion-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="var(--color-core)" stopOpacity="0.16" />
+          <stop offset="100%" stopColor="var(--color-core)" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <circle cx={375} cy={323} r={230} fill="url(#orion-glow)" />
+
+      {/* head + shoulders (faint) */}
+      <Draw d={`M ${corner["01"].x} ${corner["01"].y} L ${meissa.x} ${meissa.y} L ${corner["03"].x} ${corner["03"].y}`} dashed stroke={dim} delay={0.2} />
+      <circle cx={meissa.x} cy={meissa.y} r={2.5} fill="var(--color-ink-3)" opacity={0.6} />
+
+      {/* corners → belt */}
+      {link("01", belt[0], 0)}
+      {link("04", belt[0], 1)}
+      {link("03", belt[2], 2)}
+      {link("02", belt[2], 3)}
+
+      {/* belt: live today */}
+      <Draw d={`M ${belt[0].x} ${belt[0].y} L ${belt[2].x} ${belt[2].y}`} stroke="var(--color-mint)" delay={0.3} />
+      {belt.map((b, i) => (
+        <Node key={i} x={b.x} y={b.y} r={5} color="var(--color-mint)" live delay={0.35 + i * 0.1} />
+      ))}
+
+      {/* the four phases */}
+      {PHASES.map((p, i) => {
+        const c = corner[p.n];
+        const col = colOf(p);
+        const tx = c.side === "l" ? c.x - 24 : c.x + 24;
+        const anchor = c.side === "l" ? "end" : "start";
+        return (
+          <g key={p.n}>
+            {p.live ? (
+              <Node x={c.x} y={c.y} r={9} color={col} live delay={0.8 + i * 0.12} />
+            ) : (
+              <motion.g initial={reduce ? false : { opacity: 0 }} whileInView={{ opacity: 1 }} viewport={VIEW} transition={{ duration: 0.6, delay: 0.8 + i * 0.12, ease: EASE }}>
+                <circle cx={c.x} cy={c.y} r={11} fill="var(--color-paper)" stroke={col} strokeOpacity={0.55} strokeDasharray="3 4" />
+                <circle cx={c.x} cy={c.y} r={3} fill={col} opacity={0.45} />
+              </motion.g>
+            )}
+            <text x={tx} y={c.y - 14} textAnchor={anchor} className="fill-ink text-[18px]" style={{ fontFamily: "var(--font-outfit)" }}>
+              <tspan className={p.accent === "core" ? "fill-core" : "fill-strategy"}>{p.star.greek}</tspan> {p.star.name}
+            </text>
+            <text x={tx} y={c.y + 6} textAnchor={anchor} className="fill-ink-2 text-[13px]" style={{ fontFamily: "var(--font-outfit)" }}>
+              {p.short}
+            </text>
+            <text x={tx} y={c.y + 24} textAnchor={anchor} className={clsx("text-[10px] tracking-[0.18em]", p.live ? "fill-mint" : "fill-ink-3")} style={{ fontFamily: "var(--font-jbmono)" }}>
+              PHASE {p.n} · {p.live ? "● LIVE" : p.conditional ? "CONDITIONAL" : "NOT LIVE"}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+      <div className="-mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-mono text-[10px] uppercase tracking-[0.2em] text-mint">
+        <span className="size-1.5 rounded-full bg-mint" />
+        <span>The belt · live today:</span>
+        <span className="whitespace-nowrap">Intelligence → Strategy → Capital</span>
+      </div>
+    </div>
+  );
+}
+
 /** BORN → OBSERVE → RESEARCH → REMEMBER → UNDERSTAND → EVOLVE */
 export function LifecycleRail() {
   const reduce = useReducedMotion();
@@ -224,7 +316,9 @@ export function PhaseNode({ phase, last }: { phase: Phase; last?: boolean }) {
       >
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">Phase {phase.n}</span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">
+              Phase {phase.n} · <span className={clsx("normal-case", accentText)}>{phase.star.greek}</span> {phase.star.name}
+            </span>
             <span className={clsx("rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] ring-1 ring-inset", phase.live ? "text-mint ring-mint/40" : "text-ink-3 ring-line-2")}>
               {phase.live ? "Live" : phase.conditional ? "Roadmap · conditional" : "Roadmap · not live"}
             </span>
@@ -369,7 +463,7 @@ export function ExpansionMapMobile() {
         <motion.div key={p.n} {...row(i + 2)} className="relative flex items-center gap-4 py-3">
           <span className={clsx("relative z-10 grid size-10 shrink-0 place-items-center rounded-full border border-dashed bg-paper font-mono text-xs", p.accent === "core" ? "border-core/60 text-core" : "border-strategy/60 text-strategy")}>{p.n}</span>
           <div className="min-w-0">
-            <div className="font-mono text-[10px] tracking-[0.18em] text-ink-3">PHASE {p.n} · {p.live ? "LIVE" : p.conditional ? "CONDITIONAL" : "ROADMAP"}</div>
+            <div className="font-mono text-[10px] tracking-[0.18em] text-ink-3">PHASE {p.n} · <span className="normal-case">{p.star.greek}</span> {p.star.name.toUpperCase()} · {p.live ? "LIVE" : p.conditional ? "CONDITIONAL" : "ROADMAP"}</div>
             <div className="text-base text-ink">{p.market}</div>
           </div>
         </motion.div>
