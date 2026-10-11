@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Btn } from "@/components/site/Btn";
 import { Reveal, SectionTitle } from "@/components/site/motion";
 import { ExpansionMap, ExpansionMapMobile, LifecycleRail, NetworkTree, NetworkTreeMobile, OrionConstellation, PhaseNode } from "@/components/roadmap/RoadmapVisuals";
+import { OrionInline, OrionMark } from "@/components/roadmap/OrionMark";
 import { IDEA, NETWORK, ORION, PHASES, ROADMAP_HERO, TODAY_FLOW } from "@/lib/roadmap";
 
 export const metadata: Metadata = {
@@ -48,7 +49,7 @@ export default function RoadmapPage() {
             </ol>
           </Reveal>
           <Reveal delay={0.1} className="rounded-xl border border-dashed border-line-2 p-8">
-            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">{ORION.name} · Phase 01 live, 02–04 not live yet</div>
+            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3"><a href="#orion" className="text-ink-2 normal-case hover:text-ink"><OrionInline /></a> · Phase 01 live, 02–04 not live yet</div>
             <h2 className="mt-4 text-2xl font-light text-ink md:text-3xl">From there, the Intelligence Core expands.</h2>
             <p className="mt-3 font-body text-sm leading-relaxed text-ink-3">
               To other markets where new assets need context, memory, and continuous intelligence.
@@ -104,11 +105,11 @@ export default function RoadmapPage() {
 
       {/* ── PROJECT ORION · the four phases as one constellation ── */}
       <section id="orion" className="mx-auto max-w-6xl scroll-mt-24 px-5 pt-24 md:px-8">
-        <Reveal><SectionTitle>{ORION.name}</SectionTitle></Reveal>
+        <Reveal><OrionMark /></Reveal>
         <Reveal delay={0.05} className="text-center">
-          <h2 className="mt-6 text-balance text-4xl font-light tracking-tight md:text-5xl">
+          <h3 className="mt-10 text-balance text-3xl font-light tracking-tight md:text-4xl">
             {ORION.headline[0]} <span className="editorial-accent">{ORION.headline[1]}</span>
-          </h2>
+          </h3>
           <p className="mx-auto mt-5 max-w-2xl text-balance font-body leading-relaxed text-ink-2">{ORION.copy}</p>
         </Reveal>
         <div className="mx-auto mt-10 hidden max-w-3xl md:block">

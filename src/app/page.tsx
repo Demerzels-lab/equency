@@ -6,7 +6,8 @@ import { STRATEGY_LIST } from "@/lib/strategy/strategies";
 import { HeroScene, OrbScene, WaveScene } from "@/components/site/Scenes";
 import { CoreSearch } from "@/components/site/CoreSearch";
 import { ContractAddress } from "@/components/site/ContractAddress";
-import { ORION, PHASES } from "@/lib/roadmap";
+import { PHASES } from "@/lib/roadmap";
+import { OrionInline } from "@/components/roadmap/OrionMark";
 import { Btn } from "@/components/site/Btn";
 import { Faq } from "@/components/site/Faq";
 import { TechVisual } from "@/components/site/TechVisual";
@@ -297,7 +298,7 @@ export default async function Home() {
             Every new market <span className="editorial-accent">gets a Mind.</span>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-balance text-center font-body text-ink-2">
-            Newly public companies are the foundation. Next, {ORION.name} expands the Intelligence Core framework to four new markets as they emerge.
+            Newly public companies are the foundation. Next, <OrionInline className="text-ink" /> expands the Intelligence Core framework to four new markets as they emerge.
           </p>
         </Reveal>
         <div className="relative mt-14">
@@ -326,7 +327,7 @@ export default async function Home() {
           </div>
         </div>
         <Reveal className="mt-12 flex justify-center">
-          <Btn href="/roadmap#orion" accent="core" className="min-w-56">Explore {ORION.name} →</Btn>
+          <Btn href="/roadmap#orion" accent="core" className="min-w-56"><span className="inline-flex items-baseline gap-[0.45em]"><span>Explore</span><OrionInline /><span aria-hidden>→</span></span></Btn>
         </Reveal>
       </section>
 
