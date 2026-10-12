@@ -17,7 +17,7 @@ export const pairsCached = unstable_cache(
 
 const coreCached = unstable_cache(
   async (token: string, quoteAddress: string | null) => buildPairCore(RH_RPC_MAINNET, quoteAddress === null ? { token } : { token, quoteAddress }),
-  ["pair-core-core-v1"],
+  ["pair-core-core-v2"],
   { revalidate: 600 },
 );
 

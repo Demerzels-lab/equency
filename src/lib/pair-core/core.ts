@@ -69,6 +69,12 @@ async function rpcCall(rpc: string, to: string, data: string): Promise<string | 
   return r && r !== "0x" ? r : null;
 }
 
+/** ERC-20 balanceOf(holder), read live onchain; null when the call fails. */
+async function balanceOf(rpc: string, token: string, holder: string, decimals: number): Promise<number | null> {
+  const r = await rpcCall(rpc, token, "0x70a08231" + holder.slice(2).toLowerCase().padStart(64, "0"));
+  return r ? Number(BigInt(r)) / 10 ** decimals : null;
+}
+
 function decodeString(hex: string | null): string | null {
   if (!hex) return null;
   const h = hex.slice(2);
@@ -297,6 +303,11 @@ export async function buildPairCore(
     quote.kind === "stock" ? getStockState(quote.symbol, company(quote)) : Promise.resolve(null),
     input.launchedAt != null ? Promise.resolve(input.launchedAt) : launchTimeOf(rpc, input.token),
   ]);
+  // what the curve contract actually holds right now: checkable on any explorer
+  const curveAddr = !market?.graduated && typeof market?.raw?.curve === "string" ? (market.raw.curve as string) : null;
+  const [heldQuote, heldToken] = curveAddr && quote.address
+    ? await Promise.all([balanceOf(rpc, quote.address, curveAddr, quote.decimals), balanceOf(rpc, input.token, curveAddr, 18)])
+    : [null, null];
   const priceUsd = market?.priceInQuote != null && stock?.price != null ? market.priceInQuote * stock.price : null;
 
   const obs: PairCoreObservation[] = [];
@@ -322,6 +333,12 @@ export async function buildPairCore(
       text: `Bonding curve ${(market.curveProgress * 100).toFixed(1)}% filled${thr != null ? ` · graduates at ${thr.toLocaleString("en-US", { maximumFractionDigits: 4 })} ${quote.symbol}${stock?.price != null ? ` (≈ ${usd(thr * stock.price)})` : ""}` : ""}.`,
     });
   }
+  if (curveAddr && heldQuote != null && heldToken != null)
+    obs.push({
+      k: "HELD",
+      trust: "VERIFIED",
+      text: `Curve contract ${curveAddr.slice(0, 6)}…${curveAddr.slice(-4)} holds ${heldQuote.toLocaleString("en-US", { maximumFractionDigits: 2 })} ${quote.symbol} and ${heldToken.toLocaleString("en-US", { maximumFractionDigits: 0 })} $${symbol} (balanceOf, read onchain).`,
+    });
   if (market?.graduated)
     obs.push({
       k: "POOL",
